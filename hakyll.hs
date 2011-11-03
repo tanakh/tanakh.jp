@@ -105,7 +105,7 @@ makeTagList tagg posts =
 config :: HakyllConfiguration
 config = defaultHakyllConfiguration { deployCommand = deploy }
   where
-    deploy = "./hakyll.hs rebuild"
+    deploy = "./hakyll.hs rebuild && cp -r _site/ ~/www/"
 
 feedConfiguration :: FeedConfiguration
 feedConfiguration = FeedConfiguration
