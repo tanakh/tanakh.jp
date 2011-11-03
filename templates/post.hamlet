@@ -1,5 +1,5 @@
 <h1>#{title}
-<p>tags: #{prettytags}
+<p>Tags: #{prettytags}
 
 <div.buttons>
 
@@ -16,6 +16,15 @@
   <script type="text/javascript" src="http://s.hatena.ne.jp/js/HatenaStar.js">
   <script type="text/javascript">
     Hatena.Star.Token = '8816e3129cbb2b7a20e457ff47a261dcac014f2a';
+    Hatena.Star.SiteConfig = {
+      entryNodes: {
+        'div.content': {
+          uri: 'h1 a',
+          title: 'h1',
+          container: 'h1'
+        }
+      }
+    };
 
 #{body}
 
