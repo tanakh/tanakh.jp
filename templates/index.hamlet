@@ -1,0 +1,32 @@
+<h1>純粋関数空間
+<p>
+  ここは田中英行(Hideyuki Tanaka, a.k.a tanakh)の個人ページです。
+
+<h2>最近の投稿
+<ul>
+  #{posts}
+
+<div.clearfix>
+
+<div.left-column>
+  <h2>About Me
+  <p>
+    <img.left src="/img/me.jpg">
+    (株)Preferred Infrastructureで働くプログラマ。
+    <a href="http://haskell.org/">Haskell</a>愛好家。
+    競技プログラミング愛好家。
+    専門はプログラミング言語理論。
+    仕事では大規模データを扱うデータ構造やアルゴリズムの研究をしています。
+
+<div.right-column>
+  <h2>Links
+  <ul>
+    <li><a href="http://twitter.com/tanakh">Twitter</a>
+    <li><a href="http://www.facebook.com/tanakh7">Facebook</a>
+    <li><a href="http://github.com/tanakh">github</a>
+    <li><a href="http://www.topcoder.com/tc?module=MemberProfile&cr=22627322">TopCoder (haskell-master)</a>
+    <li><a href="http://codeforces.com/profile/tanakh">codeforces</a>
+    <li><a href="http://d.hatena.ne.jp/tanakh/">Old blog (日本語)</a>
+    <li><img src="http://services.nexodyne.com/email/icon/Qyf6OpJe94acmA4LucnO/bbdAtUU%3D/R01haWw%3D/0/image.png">
+
+<div.clearfix>

@@ -1,0 +1,5 @@
+<li>
+    <a style="font-size: 110%" href="#{url}">#{title}</a>
+    &nbsp;‒ <span class="soft">#{date}</span>
+    <div>
+        #{description}

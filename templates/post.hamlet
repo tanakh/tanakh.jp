@@ -1,0 +1,45 @@
+<h1>#{title}
+<p>tags: #{prettytags}
+
+<div.buttons>
+
+  <a href="https://twitter.com/share" class="twitter-share-button" data-count="horizontal" data-via="tanakh" data-lang="ja">ツイート
+  <script type="text/javascript" src="//platform.twitter.com/widgets.js">
+
+  <div class="fb-like" data-href="http://tanakh.jp" data-send="true" data-layout="button_count" data-show-faces="true">
+
+  <a href="http://b.hatena.ne.jp/entry/http://tanakh.jp" class="hatena-bookmark-button" data-hatena-bookmark-title="純粋関数空間" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" />
+  <script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async">
+
+  <g:plusone>
+
+  <script type="text/javascript" src="http://s.hatena.ne.jp/js/HatenaStar.js"></script>
+  <script type="text/javascript">
+    Hatena.Star.Token = '8816e3129cbb2b7a20e457ff47a261dcac014f2a';
+  </script>
+
+#{body}
+
+<p>
+  <div#disqus_thread>
+  <script type="text/javascript">
+    var disqus_shortname = 'tanakh-jp';
+
+    var disqus_identifier = '#{url}';
+    var disqus_url = 'http://tanakh' + '#{url}';
+    var disqus_title = '#{title}';
+
+    var disqus_developer = 1;
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+
+  <noscript>
+    Please enable JavaScript to view the 
+    <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.
+
+  <a href="http://disqus.com" class="dsq-brlink">
+    blog comments powered by <span.logo-disqus>Disqus</span>
