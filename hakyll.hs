@@ -60,6 +60,9 @@ main = hakyllWith config $ do
           defaultHakyllWriterOptions { writerHtml5 = True }
           id
         >>> arr (renderDateField "date" "%Y/%m/%e" "Date unknown")
+        >>> arr (renderDateField "d_year" "%Y" "Date unknown")
+        >>> arr (renderDateField "d_month" "%b" "Date unknown")
+        >>> arr (renderDateField "d_date" "%e" "Date unknown")
         >>> renderTagsField "prettytags" (fromCapture "tags/*")
         >>> applyTemplateCompiler "templates/post.hamlet"
         >>> applyTemplateCompiler "templates/default.hamlet"

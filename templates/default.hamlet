@@ -16,6 +16,7 @@
   <!-- CSS concatenated and minified via ant build script-->
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/css/syntax.css">
+  <link rel="stylesheet" href="/css/calendar.css">
   <!-- end CSS-->
 
   <link rel="stylesheet" href="/css/default.css">
