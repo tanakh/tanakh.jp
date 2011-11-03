@@ -8,15 +8,14 @@
 
   <div class="fb-like" data-href="http://tanakh.jp" data-send="true" data-layout="button_count" data-show-faces="true">
 
-  <a href="http://b.hatena.ne.jp/entry/http://tanakh.jp" class="hatena-bookmark-button" data-hatena-bookmark-title="純粋関数空間" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" />
+  <a href="http://b.hatena.ne.jp/entry/http://tanakh.jp#{url}" class="hatena-bookmark-button" data-hatena-bookmark-title="#{title} - 純粋関数空間" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" />
   <script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async">
 
   <g:plusone>
 
-  <script type="text/javascript" src="http://s.hatena.ne.jp/js/HatenaStar.js"></script>
+  <script type="text/javascript" src="http://s.hatena.ne.jp/js/HatenaStar.js">
   <script type="text/javascript">
     Hatena.Star.Token = '8816e3129cbb2b7a20e457ff47a261dcac014f2a';
-  </script>
 
 #{body}
 
