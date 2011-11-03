@@ -6,7 +6,6 @@ import Data.Monoid
 
 import Hakyll
 import Text.Pandoc
-import Text.XHtml.Strict
 
 main :: IO ()
 main = hakyllWith config $ do
@@ -49,7 +48,7 @@ main = hakyllWith config $ do
         pageCompilerWithPandoc
           defaultHakyllParserState
           defaultHakyllWriterOptions { writerHtml5 = True }
-          googlePrettify
+          id
         >>> applyTemplateCompiler "templates/default.hamlet"
         >>> relativizeUrlsCompiler
 
@@ -59,7 +58,7 @@ main = hakyllWith config $ do
         pageCompilerWithPandoc
           defaultHakyllParserState
           defaultHakyllWriterOptions { writerHtml5 = True }
-          googlePrettify
+          id
         >>> arr (renderDateField "date" "%Y/%m/%e" "Date unknown")
         >>> renderTagsField "prettytags" (fromCapture "tags/*")
         >>> applyTemplateCompiler "templates/post.hamlet"
@@ -114,9 +113,3 @@ feedConfiguration = FeedConfiguration
     , feedAuthorName = "Hideyuki Tanaka"
     , feedRoot = "http://tanakh.jp"
     }
-
-googlePrettify :: Pandoc -> Pandoc
-googlePrettify doc = bottomUp f doc where
-  f (CodeBlock _ code) =
-    RawBlock "html" $ "<pre class=\"prettyprint\">" ++ stringToHtmlString code ++ "</pre>"
-  f b = b

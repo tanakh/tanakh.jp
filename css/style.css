@@ -140,8 +140,9 @@ li {
     margin-bottom: 3px;
 }
 
-pre.prettyprint {
+pre.sourceCode {
     padding: 5px 5px 5px 5px;
+    border: 1px solid #999;
 }
 
 .topbar {

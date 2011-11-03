@@ -15,14 +15,12 @@
 
   <!-- CSS concatenated and minified via ant build script-->
   <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/syntax.css">
   <!-- end CSS-->
 
   <link rel="stylesheet" href="/css/default.css">
 
   <script src="/js/libs/modernizr-2.0.6.min.js"></script>
-
-  <link rel="stylesheet" href="/google-code-prettify/prettify.css">
-  <script type="text/javascript" src="/google-code-prettify/prettify.js">
 
   <script type="text/javascript" src="https://apis.google.com/js/plusone.js">
     {lang: 'ja'}

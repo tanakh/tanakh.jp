@@ -8,6 +8,8 @@ tags: test, other
 
 Haskellのさらなる普及を目指して新しくブログを始めようと思います。
 
-    main :: IO ()
-    main = do
-      putStrLn "Hello, Haskell World!"
+~~~~{.haskell}
+main :: IO ()
+main = do
+  putStrLn "Hello, Haskell World!"
+~~~~
