@@ -12,12 +12,12 @@
   <a href="https://twitter.com/share" class="twitter-share-button" data-count="horizontal" data-via="tanakh" data-lang="ja">ツイート
   <script type="text/javascript" src="//platform.twitter.com/widgets.js">
 
-  <div class="fb-like" data-href="http://tanakh.jp" data-send="true" data-layout="button_count" data-show-faces="true">
+  <div class="fb-like" data-href="http://tanakh.jp#{url}" data-send="false" data-layout="button_count" data-show-faces="false">
 
   <a href="http://b.hatena.ne.jp/entry/http://tanakh.jp#{url}" class="hatena-bookmark-button" data-hatena-bookmark-title="#{title} - 純粋関数空間" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" />
   <script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async">
 
-  <g:plusone>
+  <g:plusone size="medium" href="http://tanakh.jp#{url}">
 
   <script type="text/javascript" src="http://s.hatena.ne.jp/js/HatenaStar.js">
   <script type="text/javascript">

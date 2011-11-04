@@ -28,15 +28,13 @@
 
 <body onload="prettyPrint()">
   <div#fb-root>
-  <script type="text/javascript">
-    (function(d, s, id) {
-       var js, fjs = d.getElementsByTagName(s)[0];
-       if (d.getElementById(id)) {return;}
-       js = d.createElement(s); js.id = id;
-       js.src = '//connect.facebook.net/ja_JP/all.js#xfbml=1';
-       fjs.parentNode.insertBefore(js, fjs);
-     }(document, 'script', 'facebook-jssdk'));
-  </script>
+  <script>(function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) {return;}
+      js = d.createElement(s); js.id = id;
+      js.src = '//connect.facebook.net/ja_JP/all.js#xfbml=1';
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
 
   <header.topbar>
     <div.container>
@@ -80,7 +78,7 @@
   <!-- end scripts-->
 
 
-  <script> // Change UA-XXXXX-X to be your site's ID
+  <script>
     window._gaq = [['_setAccount','UA-26679036-1'],['_setDomainName','tanakh.jp'],['_trackPageview'],['_trackPageLoadTime']];
     Modernizr.load({
       load: ('https:' == location.protocol ? '//ssl' : '//www') + '.google-analytics.com/ga.js'
