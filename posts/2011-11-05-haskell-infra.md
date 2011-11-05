@@ -142,7 +142,7 @@ Pandocのサポートする任意のフォーマットでページを記述す�
 私はmarkdownが好きなのでこのページはmarkdownで書いています。
 これらに加えて[Literate Haskell](http://www.haskell.org/haskellwiki/Literate_programming)
 のソースもサポートされていますので、lhs+markdownのように
-そのままHaskellのコードとして実行できるページなども各個とができます。
+そのままHaskellのコードとして実行できるページなども書くことができます。
 
 また今回は使っていませんが、pandocの出力は、pdfやepubなど
 もっとたくさんのフォーマットをサポートしているので、
