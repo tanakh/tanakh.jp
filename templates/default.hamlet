@@ -12,6 +12,7 @@
   <meta name="author" content="Hideyuki Tanaka">
 
   <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link href="http://tanakh.jp/rss.xml" rel="alternate" title="RSS" type="application/rss+xml">
 
   <!-- CSS concatenated and minified via ant build script-->
   <link rel="stylesheet" href="/css/style.css">

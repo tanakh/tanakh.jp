@@ -42,7 +42,7 @@
     var disqus_shortname = 'tanakh-jp';
 
     var disqus_identifier = '#{url}';
-    var disqus_url = 'http://tanakh' + '#{url}';
+    var disqus_url = 'http://tanakh.jp' + '#{url}';
     var disqus_title = '#{title}';
 
     var disqus_developer = 1;
