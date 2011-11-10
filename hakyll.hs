@@ -19,14 +19,15 @@ main = hakyllWith config $ do
 
     match "css/*" $ do
       route idRoute
-      -- compile compressCssCompiler
-      compile copyFileCompiler
+      compile compressCssCompiler
+      -- compile copyFileCompiler
 
-    match "google-code-prettify/*" $ do
+    match (list ["robots.txt", "humans.txt", "favicon.ico"]) $ do
       route idRoute
       compile copyFileCompiler
-   
-    match (list ["robots.txt", "humans.txt", "favicon.ico"]) $ do
+      
+    -- pub dir
+    match "pub/**" $ do
       route idRoute
       compile copyFileCompiler
     
