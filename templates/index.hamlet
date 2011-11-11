@@ -30,3 +30,43 @@
     <li><img src="http://services.nexodyne.com/email/icon/Qyf6OpJe94acmA4LucnO/bbdAtUU%3D/R01haWw%3D/0/image.png">
 
 <div.clearfix>
+
+<div.left-column>
+
+  <div align="center">
+    <img src="http://haskell.org/wikistatic/haskellwiki_logo.png">
+    <br>
+    このページは<br>
+    <a href="http://haskell.org/">スーパーλさんパワー</a>により<br>
+    運営されています
+
+<div.right-column>
+  <script src="http://widgets.twimg.com/j/2/widget.js">
+  <script>
+    new TWTR.Widget({
+    version: 2,
+    type: 'profile',
+    rpp: 4,
+    interval: 30000,
+    width: '250',
+    height: 200,
+    theme: {
+      shell: {
+        background: '#333333',
+        color: '#ffffff'
+      },
+      tweets: {
+        background: '#000000',
+        color: '#ffffff',
+        links: '#4aed05'
+      }
+    },
+    features: {
+      scrollbar: true,
+      loop: true,
+      live: true,
+     behavior: 'default'
+    } 
+    }).render().setUser('tanakh').start();
+
+<div.clearfix>

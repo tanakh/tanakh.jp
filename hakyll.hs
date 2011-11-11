@@ -43,7 +43,7 @@ main = hakyllWith config $ do
 
     match "templates/*" $ compile templateCompiler
       
-    match (list ["pub.md"]) $ do
+    match (list ["pub.md", "about.md"]) $ do
       route $ setExtension "html"
       compile $
         pageCompilerWithPandoc
