@@ -43,7 +43,17 @@ main = hakyllWith config $ do
 
     match "templates/*" $ compile templateCompiler
       
-    match "*.md" $ do
+    match (list ["pub.md"]) $ do
+      route $ setExtension "html"
+      compile $
+        pageCompilerWithPandoc
+          defaultHakyllParserState
+          defaultHakyllWriterOptions { writerHtml5 = True }
+          id
+        >>> applyTemplateCompiler "templates/default.hamlet"
+        >>> relativizeUrlsCompiler
+    
+    match "pub/*.md" $ do
       route $ setExtension "html"
       compile $
         pageCompilerWithPandoc
