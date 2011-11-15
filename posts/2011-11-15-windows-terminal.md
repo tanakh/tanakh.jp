@@ -13,7 +13,7 @@ tags: windows, devenv
 
 ## Terminal Emulator選び
 
-Windowsをお使いの皆様ならご存じかとは思いますが、デフォルトのTerminal Emulatorである cmd.exe が良くないです。挙動、フォント云々の話をするまでもなく、横幅が80文字固定なのがどうしようもありません。
+Windowsをお使いの皆様ならご存じかとは思いますが、デフォルトのTerminal Emulatorである cmd.exe が良くないです。 <del>挙動、フォント云々の話をするまでもなく、横幅が80文字固定なのがどうしようもありません。</del> プロパティのレイアウトのところから幅の変更ができるようでした。ご指摘ありがとうございます。
 
 [この辺](http://en.wikipedia.org/wiki/List_of_terminal_emulators)を見てWindowsで動作するものを一通り試してみたのですが、動作がおかしいか、フォントが気に入らないか、プロプライエタリかで、どれもよくないなあという結論を一度は下しました。
 
