@@ -1,5 +1,5 @@
 ---
-title: Windows上で最高のターミナルを構築する方法
+title: Windowsで最高のターミナルを構築する方法
 description: Windowsでのまともなターミナル環境を探索する
 tags: windows, devenv
 ---
