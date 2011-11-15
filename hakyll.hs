@@ -9,7 +9,7 @@ import Text.Pandoc
 
 main :: IO ()
 main = hakyllWith config $ do
-    match "img/*" $ do
+    match "img/**" $ do
       route idRoute
       compile copyFileCompiler
 
