@@ -6,6 +6,8 @@ title: Publications
 
 ## 講演・発表資料
 
+* [エラー処理を書いてはいけない](/pub/pfi-seminar-2011-12-08.html) @PFIセミナー 2011/12/08
+
 * [Haskellの楽しみ：手続き操作型というパラダイム](/pub/unisys-tech-2011-11-09.html) 技術交流会@日本ユニシス 2011/11/09
 
 * [pficommonとMessagePack-RPC](http://jubat.us/_static/tanakh/presen.html) @[Jubatus Workshop](http://www.zusaar.com/event/165003) 2011/11/07
