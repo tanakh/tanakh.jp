@@ -116,7 +116,7 @@ getAllUpperLowerPattern str =
 ## 'filesystem-conduit'
 
 おまけで、2つ目の例なのですが、[filesystem-conduit](http://hackage.haskell.org/package/filesystem-conduit) というパッケージに、
-ディレクトリのファイル名のSouceを生成する関数があります。
+ディレクトリのファイル名の `Source` を生成する関数があります。
 
 ~~~ {.haskell}
 traverse
