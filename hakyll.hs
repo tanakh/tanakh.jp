@@ -5,10 +5,65 @@ import Control.Arrow
 import Data.Monoid
 
 import Hakyll
-import Text.Pandoc
 
 main :: IO ()
 main = hakyllWith config $ do
+  -- Tags
+  create "tags" $
+    requireAll "posts/*" (\_ ps -> readTags ps :: Tags String)
+
+  -- Add a tag list compiler for every tag
+  match "tags/*" $ route $ setExtension ".html"
+  metaCompile $ require_ "tags"
+    >>> arr tagsMap
+    >>> arr (map (\(t, q) -> (tagIdentifier t, makeTagList t q)))
+
+  -- RSS
+  match "rss.xml" $ route idRoute
+  create "rss.xml" $ requireAll_ "posts/*" >>> renderRss feedConfiguration
+
+  -- index
+  match "index.html" $ route idRoute
+  create "index.html" $ constA mempty
+    >>> arr (setField "title" "Home")
+    >>> requireA "tags" (setFieldA "tags" (renderTagList'))
+    >>> setFieldPageList (take 3 . recentFirst)
+          "templates/postitem.hamlet" "posts" "posts/*"
+    >>> applyTemplateCompiler "templates/index.hamlet"
+    >>> applyTemplateCompiler "templates/default.hamlet"
+
+  -- pages
+  match (list ["pub.md", "about.md"]) $ do
+    route $ setExtension "html"
+    compile $
+      pageCompilerWithPandoc
+        defaultHakyllParserState
+        defaultHakyllWriterOptions
+        id
+      >>> applyTemplateCompiler "templates/default.hamlet"
+      >>> relativizeUrlsCompiler
+    
+  -- blog posts
+  match "posts/*.md" $ do
+    route $ setExtension "html"
+    compile $
+      pageCompilerWithPandoc
+        defaultHakyllParserState
+        defaultHakyllWriterOptions
+        id
+      >>> arr (renderDateField "date" "%Y/%m/%e" "Date unknown")
+      >>> arr (renderDateField "d_year" "%Y" "Date unknown")
+      >>> arr (renderDateField "d_month" "%b" "Date unknown")
+      >>> arr (renderDateField "d_date" "%e" "Date unknown")
+      >>> renderTagsField "prettytags" (fromCapture "tags/*")
+      >>> applyTemplateCompiler "templates/post.hamlet"
+      >>> applyTemplateCompiler "templates/default.hamlet"
+      >>> relativizeUrlsCompiler
+
+  -- templates
+  match "templates/*" $ compile templateCompiler
+      
+  -- static contents
   match "img/**" $ do
     route idRoute
     compile copyFileCompiler
@@ -25,65 +80,10 @@ main = hakyllWith config $ do
     route idRoute
     compile copyFileCompiler
 
-  -- pub dir
   match "pub/**" $ do
     route idRoute
     compile copyFileCompiler
     
-  -- Tags
-  create "tags" $
-    requireAll "posts/*" (\_ ps -> readTags ps :: Tags String)
-
-  -- Add a tag list compiler for every tag
-  match "tags/*" $ route $ setExtension ".html"
-  metaCompile $ require_ "tags"
-    >>> arr tagsMap
-    >>> arr (map (\(t, q) -> (tagIdentifier t, makeTagList t q)))
-
-  match "templates/*" $ compile templateCompiler
-      
-  -- pages
-  match (list ["pub.md", "about.md"]) $ do
-    route $ setExtension "html"
-    compile $
-      pageCompilerWithPandoc
-        defaultHakyllParserState
-        defaultHakyllWriterOptions { writerHtml5 = True }
-        id
-      >>> applyTemplateCompiler "templates/default.hamlet"
-      >>> relativizeUrlsCompiler
-    
-  -- blog posts
-  match "posts/*.md" $ do
-    route $ setExtension "html"
-    compile $
-      pageCompilerWithPandoc
-        defaultHakyllParserState
-        defaultHakyllWriterOptions { writerHtml5 = True }
-        id
-      >>> arr (renderDateField "date" "%Y/%m/%e" "Date unknown")
-      >>> arr (renderDateField "d_year" "%Y" "Date unknown")
-      >>> arr (renderDateField "d_month" "%b" "Date unknown")
-      >>> arr (renderDateField "d_date" "%e" "Date unknown")
-      >>> renderTagsField "prettytags" (fromCapture "tags/*")
-      >>> applyTemplateCompiler "templates/post.hamlet"
-      >>> applyTemplateCompiler "templates/default.hamlet"
-      >>> relativizeUrlsCompiler
-
-  -- RSS
-  match "rss.xml" $ route idRoute
-  create "rss.xml" $ requireAll_ "posts/*" >>> renderRss feedConfiguration
-
-  -- index
-  match "index.html" $ route idRoute
-  create "index.html" $ constA mempty
-    >>> arr (setField "title" "Home")
-    >>> requireA "tags" (setFieldA "tags" (renderTagList'))
-    >>> setFieldPageList (take 3 . recentFirst)
-          "templates/postitem.hamlet" "posts" "posts/*"
-    >>> applyTemplateCompiler "templates/index.hamlet"
-    >>> applyTemplateCompiler "templates/default.hamlet"
-
   where
     renderTagList' :: Compiler (Tags String) String
     renderTagList' = renderTagList tagIdentifier
@@ -111,8 +111,8 @@ config = defaultHakyllConfiguration
 
 feedConfiguration :: FeedConfiguration
 feedConfiguration = FeedConfiguration
-    { feedTitle       = "Purely Functional Space - a personal blog of tanakh"
-    , feedDescription = "Personal blog of tanakh"
-    , feedAuthorName  = "Hideyuki Tanaka"
-    , feedRoot        = "http://tanakh.jp"
-    }
+  { feedTitle       = "Purely Functional Space - a personal blog of tanakh"
+  , feedDescription = "Personal blog of tanakh"
+  , feedAuthorName  = "Hideyuki Tanaka"
+  , feedRoot        = "http://tanakh.jp"
+  }
