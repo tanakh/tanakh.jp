@@ -11,7 +11,7 @@
 <div.left-column>
   <h2>About Me
   <p>
-    <img.left src="/img/me.jpg">
+    <img.left width=240 src="/img/me-ss.jpg">
     (株)Preferred Infrastructureで働くプログラマ。
     <a href="http://haskell.org/">Haskell</a>愛好家。
     競技プログラミング愛好家。
