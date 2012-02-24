@@ -60,6 +60,15 @@ main = hakyllWith config $ do
       >>> applyTemplateCompiler "templates/default.hamlet"
       >>> relativizeUrlsCompiler
 
+  -- Post list
+  match "posts.html" $ route idRoute
+  create "posts.html" $ constA mempty
+    >>> arr (setField "title" "Posts")
+    >>> setFieldPageList recentFirst "templates/postitem.hamlet" "posts" "posts/*"
+    >>> applyTemplateCompiler "templates/posts.hamlet"
+    >>> applyTemplateCompiler "templates/default.hamlet"
+    >>> relativizeUrlsCompiler
+
   -- templates
   match "templates/*" $ compile templateCompiler
       
