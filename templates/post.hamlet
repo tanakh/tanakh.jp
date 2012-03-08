@@ -12,6 +12,10 @@
   <a href="https://twitter.com/share" class="twitter-share-button" data-count="horizontal" data-via="tanakh" data-lang="ja">ツイート
   <script type="text/javascript" src="//platform.twitter.com/widgets.js">
 
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ["\\(","\\)"]] } });
+  <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML">
+
   <div class="fb-like" data-href="http://tanakh.jp#{url}" data-send="false" data-layout="button_count" data-show-faces="false">
 
   <a href="http://b.hatena.ne.jp/entry/http://tanakh.jp#{url}" class="hatena-bookmark-button" data-hatena-bookmark-title="#{title} - 純粋関数空間" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" />

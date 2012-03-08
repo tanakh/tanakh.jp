@@ -5,6 +5,7 @@ import Control.Arrow
 import Data.Monoid
 
 import Hakyll
+import Text.Pandoc
 
 main :: IO ()
 main = hakyllWith config $ do
@@ -49,7 +50,7 @@ main = hakyllWith config $ do
     compile $
       pageCompilerWithPandoc
         defaultHakyllParserState
-        defaultHakyllWriterOptions
+        defaultHakyllWriterOptions { writerHTMLMathMethod = MathJax "http://cdn.mathjax.org/mathjax/latest/MathJax.js" }
         id
       >>> arr (renderDateField "date" "%Y/%m/%e" "Date unknown")
       >>> arr (renderDateField "d_year" "%Y" "Date unknown")
