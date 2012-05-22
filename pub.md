@@ -6,6 +6,8 @@ title: Publications
 
 ## 講演・発表資料
 
+* [Conduitの今](/pub/yesod-1.0-conduit.html) @[Yesod1.0勉強会](http://partake.in/events/76f421e7-c3ca-49bf-b28e-f9ede8032f0b) 2012/04/22
+
 * [Peggy: 新しい時代のパーザジェネレータ](/pub/haskell-bnk-peggy-2011-12-16.html) @[Haskell忘年会](http://partake.in/events/6082c32d-9951-4242-9e98-0a7391515dde) 2011/12/16
 
 * [エラー処理を書いてはいけない](/pub/pfi-seminar-2011-12-08.html) @PFIセミナー 2011/12/08
