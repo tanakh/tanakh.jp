@@ -11,6 +11,8 @@ title: Publications
 
 ## 講演・発表資料
 
+* [エラー処理の抽象化](/pub/exception-logging-study-2012-06-28/exception.html) [source](/pub/exception-logging-study-2012-06-28/exception.md) @[LOG.debug("nice catch!")](http://connpass.com/event/607/) 2012/06/26
+
 * [すごいHaskellたのしく裏話！](/pub/haskell-day-2012-05-27.html) @[Haskell Day 2012](http://partake.in/events/ab7f77b4-7541-47a4-867d-21a096ca883c) 2012/05/27
 
 * [Conduitの今](/pub/yesod-1.0-conduit.html) @[Yesod1.0勉強会](http://partake.in/events/76f421e7-c3ca-49bf-b28e-f9ede8032f0b) 2012/04/22

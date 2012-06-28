@@ -20,7 +20,8 @@
 
 とんでもないところに来てしまったぞ (((´･_･`))) ﾌﾞﾙﾌﾞﾙ
 
-![java](http://java-ja.yoshiori.org/index.php?plugin=attach&refer=FrontPage&openfile=ComfyChairRadSmall.jpg)
+![java-ja](java-ja.png)
+![java](java.jpg)
 
 ## 本日のお話
 
@@ -278,7 +279,7 @@ class Main {
 
 * 推奨するエラー通知手段を扱いやすく言語を設計する
 
-    * タプルがでエラー処理するために、
+    * タプルでエラー処理するために、
       それを扱いやすくしたGoとか
 
 ### 例外使うべからず？
