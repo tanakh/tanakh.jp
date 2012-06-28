@@ -4,7 +4,14 @@ title: Publications
 
 # Publications
 
+## 書籍
+
+* [すごいHaskellたのしく学ぼう!](http://estore.ohmsha.co.jp/titles/978427406885P) Miran Lipovača著 田中英行・村主崇行共訳
+    * <iframe src="http://rcm-jp.amazon.co.jp/e/cm?lt1=_blank&bc1=FFFFFF&IS2=1&nou=1&bg1=FFFFFF&fc1=000000&lc1=0000FF&t=peropero0b-22&o=9&p=8&l=as4&m=amazon&f=ifr&ref=ss_til&asins=4274068854" style="width:120px;height:240px;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0"></iframe>
+
 ## 講演・発表資料
+
+* [すごいHaskellたのしく裏話！](/pub/haskell-day-2012-05-27.html) @[Haskell Day 2012](http://partake.in/events/ab7f77b4-7541-47a4-867d-21a096ca883c) 2012/05/27
 
 * [Conduitの今](/pub/yesod-1.0-conduit.html) @[Yesod1.0勉強会](http://partake.in/events/76f421e7-c3ca-49bf-b28e-f9ede8032f0b) 2012/04/22
 
@@ -32,4 +39,6 @@ title: Publications
 
 ## その他
 
-* [関数型λカ娘](http://www.paraiso-lang.org/ikmsm/books/c80.html) @コミックマーケット80 (2011夏)
+* [簡約!? λカ娘(二期)](http://www.paraiso-lang.org/ikmsm/books/c81.html) @コミックマーケット81 (2011冬)
+
+* [簡約!? λカ娘](http://www.paraiso-lang.org/ikmsm/books/c80.html) @コミックマーケット80 (2011夏)
