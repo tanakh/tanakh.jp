@@ -65,7 +65,7 @@ QuickCheckでは、（デフォルトでは）徐々に小さい入力から大�
 prop_sort xs =
   let ys = sort xs in
   and (zipWith (<=) ys (drop 1 ys)) && -- すべての隣接要素が昇順
-  nulll (xs \\ ys) && null (ys \\ xs)  -- 同じ要素を含んでいる
+  null (xs \\ ys) && null (ys \\ xs)  -- 同じ要素を含んでいる
 ~~~
 
 しかし、実際想定解を計算するほうが楽なケースもあります。
