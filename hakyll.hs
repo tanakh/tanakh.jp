@@ -43,7 +43,7 @@ main = hakyllWith config $ do
         id
       >>> applyTemplateCompiler "templates/default.hamlet"
       >>> relativizeUrlsCompiler
-    
+
   -- blog posts
   match "posts/*.md" $ do
     route $ setExtension "html"
@@ -72,7 +72,7 @@ main = hakyllWith config $ do
 
   -- templates
   match "templates/*" $ compile templateCompiler
-      
+
   -- static contents
   match "img/**" $ do
     route idRoute
@@ -93,7 +93,7 @@ main = hakyllWith config $ do
   match "pub/**" $ do
     route idRoute
     compile copyFileCompiler
-    
+
   where
     renderTagList' :: Compiler (Tags String) String
     renderTagList' = renderTagList tagIdentifier
