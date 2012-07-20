@@ -11,7 +11,7 @@ title: Publications
 
 ## 講演・発表資料
 
-* [たのしいHaskellのツールチェインとC++](/pub/pfi-seminar-2012-07-19.html) [source](/pub/pfi-seminar-2012-07-19.md) @PFIセミナー 2012/07/19
+* [たのしいHaskellのツールチェインとC++](/pub/pfi-seminar-2012-07-19/main.html) [source](/pub/pfi-seminar-2012-07-19/main.md) @PFIセミナー 2012/07/19
 
 * [エラー処理の抽象化](/pub/exception-logging-study-2012-06-28/exception.html) [source](/pub/exception-logging-study-2012-06-28/exception.md) @[LOG.debug("nice catch!")](http://connpass.com/event/607/) 2012/06/26
 
