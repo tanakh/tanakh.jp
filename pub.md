@@ -11,7 +11,7 @@ title: Publications
 
 ## 講演・発表資料
 
-* [Beautiful Error Handling](/pub/programming-symposium-2012/main.html#1) [source](/pub/programming-symposium-2012/main.md) @[http://spro2012.prosym.jp/](2012年夏のプログラミング・シンポジウム) 2012/08/25
+* [Beautiful Error Handling](/pub/programming-symposium-2012/main.html#1) [source](/pub/programming-symposium-2012/main.md) @[2012年夏のプログラミング・シンポジウム](http://spro2012.prosym.jp/) 2012/08/25
 
 * [たのしいHaskellのツールチェインとC++](/pub/pfi-seminar-2012-07-19/main.html#1) [source](/pub/pfi-seminar-2012-07-19/main.md) @PFIセミナー 2012/07/19
 
