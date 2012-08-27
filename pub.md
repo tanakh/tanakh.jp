@@ -11,21 +11,23 @@ title: Publications
 
 ## 講演・発表資料
 
-* [たのしいHaskellのツールチェインとC++](/pub/pfi-seminar-2012-07-19/main.html) [source](/pub/pfi-seminar-2012-07-19/main.md) @PFIセミナー 2012/07/19
+* [Beautiful Error Handling](/pub/programming-symposium-2012/main.html#1) [source](/pub/programming-symposium-2012/main.md) @[http://spro2012.prosym.jp/](2012年夏のプログラミング・シンポジウム) 2012/08/25
 
-* [エラー処理の抽象化](/pub/exception-logging-study-2012-06-28/exception.html) [source](/pub/exception-logging-study-2012-06-28/exception.md) @[LOG.debug("nice catch!")](http://connpass.com/event/607/) 2012/06/26
+* [たのしいHaskellのツールチェインとC++](/pub/pfi-seminar-2012-07-19/main.html#1) [source](/pub/pfi-seminar-2012-07-19/main.md) @PFIセミナー 2012/07/19
 
-* [すごいHaskellたのしく裏話！](/pub/haskell-day-2012-05-27.html) @[Haskell Day 2012](http://partake.in/events/ab7f77b4-7541-47a4-867d-21a096ca883c) 2012/05/27
+* [エラー処理の抽象化](/pub/exception-logging-study-2012-06-28/exception.html#1) [source](/pub/exception-logging-study-2012-06-28/exception.md) @[LOG.debug("nice catch!")](http://connpass.com/event/607/) 2012/06/26
 
-* [Conduitの今](/pub/yesod-1.0-conduit.html) @[Yesod1.0勉強会](http://partake.in/events/76f421e7-c3ca-49bf-b28e-f9ede8032f0b) 2012/04/22
+* [すごいHaskellたのしく裏話！](/pub/haskell-day-2012-05-27.html#1) @[Haskell Day 2012](http://partake.in/events/ab7f77b4-7541-47a4-867d-21a096ca883c) 2012/05/27
 
-* [Peggy: 新しい時代のパーザジェネレータ](/pub/haskell-bnk-peggy-2011-12-16.html) @[Haskell忘年会](http://partake.in/events/6082c32d-9951-4242-9e98-0a7391515dde) 2011/12/16
+* [Conduitの今](/pub/yesod-1.0-conduit.html#1) @[Yesod1.0勉強会](http://partake.in/events/76f421e7-c3ca-49bf-b28e-f9ede8032f0b) 2012/04/22
 
-* [エラー処理を書いてはいけない](/pub/pfi-seminar-2011-12-08.html) @PFIセミナー 2011/12/08
+* [Peggy: 新しい時代のパーザジェネレータ](/pub/haskell-bnk-peggy-2011-12-16.html#1) @[Haskell忘年会](http://partake.in/events/6082c32d-9951-4242-9e98-0a7391515dde) 2011/12/16
 
-* [Haskellの楽しみ：手続き操作型というパラダイム](/pub/unisys-tech-2011-11-09.html) 技術交流会@日本ユニシス 2011/11/09
+* [エラー処理を書いてはいけない](/pub/pfi-seminar-2011-12-08.html#1) @PFIセミナー 2011/12/08
 
-* [pficommonとMessagePack-RPC](http://jubat.us/_static/tanakh/presen.html) @[Jubatus Workshop](http://www.zusaar.com/event/165003) 2011/11/07
+* [Haskellの楽しみ：手続き操作型というパラダイム](/pub/unisys-tech-2011-11-09.html#1) 技術交流会@日本ユニシス 2011/11/09
+
+* [pficommonとMessagePack-RPC](http://jubat.us/_static/tanakh/presen.html#1) @[Jubatus Workshop](http://www.zusaar.com/event/165003) 2011/11/07
 
 * [できる！並列・並行プログラミング](http://www.slideshare.net/pfi/ss-9780450) @PFI社内技術セミナー 2011/10/20
 
