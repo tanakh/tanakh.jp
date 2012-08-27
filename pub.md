@@ -45,6 +45,8 @@ title: Publications
 
 ## その他
 
+* [簡約!? λカ娘(算)](http://www.paraiso-lang.org/ikmsm/books/c82.html) @コミックマーケット82 (2012夏)
+
 * [簡約!? λカ娘(二期)](http://www.paraiso-lang.org/ikmsm/books/c81.html) @コミックマーケット81 (2011冬)
 
 * [簡約!? λカ娘](http://www.paraiso-lang.org/ikmsm/books/c80.html) @コミックマーケット80 (2011夏)
