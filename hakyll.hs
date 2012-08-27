@@ -124,5 +124,6 @@ feedConfiguration = FeedConfiguration
   { feedTitle       = "Purely Functional Space - a personal blog of tanakh"
   , feedDescription = "Personal blog of tanakh"
   , feedAuthorName  = "Hideyuki Tanaka"
+  , feedAuthorEmail = "tanaka.hideyuki@gmail.com"
   , feedRoot        = "http://tanakh.jp"
   }
