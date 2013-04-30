@@ -8,19 +8,11 @@ import           Hakyll
 --------------------------------------------------------------------------------
 main :: IO ()
 main = hakyll $ do
-    match "img/*" $ do
-        route   idRoute
-        compile copyFileCompiler
-
     match "css/*" $ do
         route   idRoute
         compile compressCssCompiler
 
-    match "js/*" $ do
-        route   idRoute
-        compile copyFileCompiler
-
-    match "pub/**" $ do
+    match ("img/**" .||. "js/**" .||. "pub/**" .||. "robots.txt" .||. "favicon.ico" .||. "404.html") $ do
         route idRoute
         compile copyFileCompiler
 
