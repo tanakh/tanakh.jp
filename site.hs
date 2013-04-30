@@ -7,7 +7,7 @@ import           Hakyll
 
 --------------------------------------------------------------------------------
 main :: IO ()
-main = hakyll $ do
+main = hakyllWith config $ do
     match "css/*" $ do
         route   idRoute
         compile compressCssCompiler
@@ -91,3 +91,9 @@ postList tags pattern sortFilter = do
     posts   <- sortFilter =<< loadAll pattern
     itemTpl <- loadBody "templates/post-item.html"
     applyTemplateList itemTpl (postCtx tags) posts
+
+--------------------------------------------------------------------------------
+config :: Configuration
+config = defaultConfiguration
+    { deployCommand = "cp -r _site /c/Users/tanakh/Dropbox/www/tanakh.jp/"
+    }
