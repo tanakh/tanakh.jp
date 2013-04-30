@@ -1,0 +1,7 @@
+*.o
+_cache/
+_site/
+*.hi
+css/bootstrap.min.css_
+*.sublime-project
+*.sublime-workspace

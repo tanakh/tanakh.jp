@@ -1,0 +1,37 @@
+.social {
+  display: inline-block;
+  height: 30px;
+  overflow: hidden;
+  text-align: left;
+  vertical-align: bottom;
+}
+
+.hatena {
+  float: left;
+  height: 30px;
+  width: 120px;
+  overflow: hidden;
+}
+
+.twitter {
+  float: left;
+  height: 30px;
+  width: 120px;
+  overflow:hidden;
+}
+
+.facebook {
+  float: left;
+  height: 20px;
+  width: 120px;
+  line-height: 20px;
+  overflow: hidden;
+}
+
+.gplus {
+  float: left;
+  height: 20px;
+  width: 75px;
+  line-height: 20px;
+  overflow: hidden;
+}

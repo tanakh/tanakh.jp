@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html><head><title>Beautiful Error Handling</title>
+<meta charset="utf-8">
+<script src="http://html5slides.googlecode.com/svn/trunk/slides.js"></script>
+<style></style>
+<style>table.sourceCode,tr.sourceCode,td.lineNumbers,td.sourceCode,table.sourceCode pre{margin:0;padding:0;border:0;vertical-align:baseline;border:none}td.lineNumbers{border-right:1px solid #AAAAAA;text-align:right;color:#AAAAAA;padding-right:5px;padding-left:5px}td.sourceCode{padding-left:5px}code.sourceCode span.kw{color:#007020;font-weight:bold}code.sourceCode span.dt{color:#902000}code.sourceCode span.dv{color:#40a070}code.sourceCode span.bn{color:#40a070}code.sourceCode span.fl{color:#40a070}code.sourceCode span.ch{color:#4070a0}code.sourceCode span.st{color:#4070a0}code.sourceCode span.co{color:#60a0b0;font-style:italic}code.sourceCode span.ot{color:#007020}code.sourceCode span.al{color:red;font-weight:bold}code.sourceCode span.fu{color:#06287e}code.sourceCode span.er{color:red;font-weight:bold}</style>
+</head>
+<body style="display: none"><section class="slides layout-regular "><article><h1>Beautiful Error Handling</h1>
+<p>田中英行 <a href="mailto:tanakh@preferred.jp" alt=""><a href="mailto:tanakh@preferred.jp">&lt;tanakh@preferred.jp&gt;</a>
+</a>
+</p>
+<p>2012年夏のプログラミング・シンポジウム</p>
+</article>
+<article><h3>自己紹介</h3>
+<ul><li><p>田中英行 (@<a href="https://twitter.com/tanakh" alt="">tanakh</a>
+, <a href="http://tanakh.jp" alt=""><a href="http://tanakh.jp">http://tanakh.jp</a>
+</a>
+)</p>
+</li>
+<li><p>(株)Preferred Infrastructure勤務のプログラマ</p>
+</li>
+<li><p>Haskell 愛好家</p>
+<ul><li>BASIC(20年), C++(15年), Haskell(10年)</li>
+</ul>
+</li>
+<li><p>「すごいHaskellたのしく学ぼう！」 (Learn You a Haskell for Great Good!　の和訳)</p>
+<ul><li><p>好評発売中！！</p>
+<a href="http://www.amazon.co.jp/gp/product/4274068854/ref=as_li_ss_il?ie=UTF8&camp=247&creative=7399&creativeASIN=4274068854&linkCode=as2&tag=peropero0b-22"><img border="0" src="http://ws.assoc-amazon.jp/widgets/q?_encoding=UTF8&ASIN=4274068854&Format=_SL160_&ID=AsinImage&MarketPlace=JP&ServiceVersion=20070822&WS=1&tag=peropero0b-22" ></a><img src="http://www.assoc-amazon.jp/e/ir?t=peropero0b-22&l=as2&o=9&a=4274068854" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" /></li>
+</ul>
+</li>
+</ul>
+</article>
+<article><h3>概要</h3>
+<ul><li><p>エラー処理に美しさを！</p>
+</li>
+<li><p>エラー処理の抽象化</p>
+</li>
+<li><p>Haskellでのアプローチ</p>
+</li>
+</ul>
+</article>
+<article><h2>エラー処理に美しさを！</h2>
+</article>
+<article><h3>背景</h3>
+<ul><li><p>エラー処理は醜くなりがち</p>
+</li>
+<li><p>なんで汚くなるのか？</p>
+<ul><li>これまで適切な抽象化が行われて来なかったから</li>
+</ul>
+</li>
+<li><p>なぜそういう状況になっているのか？</p>
+<ul><li><p>大きな原因の一つはプログラミング言語の記述力の問題</p>
+</li>
+<li><p>fine-grained な処理の抽象化、リッチな型システム、etc...</p>
+</li>
+</ul>
+</li>
+</ul>
+</article>
+<article><h3>エラー処理の例(1)</h3>
+<pre><code class="sourceCode cpp"><span class="dt">int</span> foo(...)
+{
+  <span class="dt">int</span> fd = open(...);
+  <span class="kw">if</span> (fd &lt; <span class="dv">0</span>) <span class="kw">return</span> -<span class="dv">1</span>; <span class="co">// &lt;- error handling</span>
+  ...
+}</code></pre>
+</article>
+<article><h3>エラー処理の例(2)</h3>
+<pre><code class="sourceCode cpp"><span class="dt">int</span> foo(...)
+{
+  <span class="dt">int</span> fd = open(...);
+  <span class="kw">if</span> (fd &lt; <span class="dv">0</span>) <span class="kw">return</span> -<span class="dv">1</span>; <span class="co">// &lt;- error handling</span>
+  <span class="dt">int</span> fe = open(...);
+  <span class="kw">if</span> (fe &lt; <span class="dv">0</span>) {          <span class="co">// &lt;- error handling</span>
+    close(fd);           <span class="co">// &lt;- error handling</span>
+    <span class="kw">return</span> -<span class="dv">1</span>;           <span class="co">// &lt;- error handling</span>
+  }                      <span class="co">// &lt;- error handling</span>
+}</code></pre>
+</article>
+<article><h3>エラー処理の例(3)</h3>
+<pre><code class="sourceCode cpp"><span class="dt">int</span> foo(...)
+{
+  <span class="dt">int</span> fd = open(...);
+  <span class="kw">if</span> (fd &lt; <span class="dv">0</span>) <span class="kw">return</span> -<span class="dv">1</span>; <span class="co">// &lt;- error handling</span>
+  <span class="dt">int</span> fe = open(...);
+  <span class="kw">if</span> (fe &lt; <span class="dv">0</span>) {          <span class="co">// &lt;- error handling</span>
+    close(fd);           <span class="co">// &lt;- error handling</span>
+    <span class="kw">return</span> -<span class="dv">1</span>;           <span class="co">// &lt;- error handling</span>
+  }                      <span class="co">// &lt;- error handling</span>
+  <span class="dt">int</span> ff = open(...);
+  <span class="kw">if</span> (ff &lt; <span class="dv">0</span>) {          <span class="co">// &lt;- error handling</span>
+    close(fe);           <span class="co">// &lt;- error handling</span>
+    close(fd);           <span class="co">// &lt;- error handling</span>
+    <span class="kw">return</span> -<span class="dv">1</span>;           <span class="co">// &lt;- error handling</span>
+  }                      <span class="co">// &lt;- error handling</span>
+  ...
+}</code></pre>
+</article>
+<article><h3>一方…</h3>
+<p>そういう背景からか、</p>
+<ul><li><p>エラー処理を Ugly に、愚直に書いてあるプログラムが良いプログラムであ る</p>
+</li>
+<li><p>Ugly なエラー処理を、きちんともれなく書けるプログラマが良いプログラ マである</p>
+</li>
+</ul>
+<p>という風潮も</p>
+</article>
+<article><h3>なぜエラー処理に美しさが必要なのか？</h3>
+<ul><li><p>→ プログラムに美しさが必要だから</p>
+</li>
+<li><p>→ なぜプログラムに美しさが必要なのか？</p>
+</li>
+<li><p>→ 多分、竹内先生が語って下さっているはず</p>
+</li>
+</ul>
+</article>
+<article><h3>所感</h3>
+<p>美しいプログラムは</p>
+<ul><li><p>完結で、理解しやすい</p>
+<ul><li>理解したとおりに動作する</li>
+</ul>
+</li>
+<li><p>変更しやすい</p>
+<ul><li>変更するときに考慮するべきことが少ない</li>
+</ul>
+</li>
+</ul>
+<p>つまり</p>
+<ul><li>バグリにくい</li>
+</ul>
+<p>（あくまでテクニカルに）</p>
+</article>
+<article><h3>個人的な思惑</h3>
+<ul><li><p>プログラムを書くということを職人芸にしたくない</p>
+<ul><li>現状、職人芸的なところは大きい</li>
+</ul>
+</li>
+<li><p>例えば、優れたプログラマだからといって</p>
+<ul><li>STLのアルゴリズムを実装できる必要はない</li>
+</ul>
+</li>
+<li><p>なぜか？</p>
+<ul><li>ライブラリになっているから、それを使えばいい</li>
+</ul>
+</li>
+<li><p>ではエラー処理は…？</p>
+<ul><li>現状同じ構図ではない</li>
+<li>同じものをもたらしたい</li>
+</ul>
+</li>
+</ul>
+</article>
+<article><h3>何が必要なのか？</h3>
+<p>エラー処理の抽象化が必要である</p>
+<ul><li><p>抽象化されていれば</p>
+<ul><li>ライブラリの形として、再利用可能</li>
+<li>退屈なコードの繰り返しがなくなる</li>
+<li>誰でも簡単に正しいエラー処理が書ける</li>
+</ul>
+</li>
+</ul>
+<p>という理想の世界</p>
+</article>
+<article><h2>エラー処理の抽象化</h2>
+</article>
+<article><h3>そもそもエラー処理とは</h3>
+<p>プログラムの実行中に発生するエラーに対して、 正しく回復処理・あるいは報告を行い、 何事もなかったかのように動き続ける堅牢なソフトウェアを書くための処理</p>
+<ul><li><p>報告して終了するだけで十分な場合もある</p>
+<ul><li>e.g. 単機能のコマンドラインプログラム</li>
+</ul>
+</li>
+</ul>
+</article>
+<article><h3>様々なエラー</h3>
+<ul><li>ハードウェア由来<ul><li>無線ネットワークが切れた *　ディスクが壊れた</li>
+</ul>
+</li>
+<li>不正な引数<ul><li>存在しないファイル名でファイルを開いた</li>
+<li>メールアドレス渡すところに名前渡した</li>
+</ul>
+</li>
+<li>呼び出し先の問題<ul><li>タイムアウト</li>
+<li>HTTP 503</li>
+</ul>
+</li>
+<li>単なるバグ<ul><li>ぬるぽ, assertion failure, etc...</li>
+</ul>
+</li>
+</ul>
+</article>
+<article><h3>エラー通知の手段の一例</h3>
+<ul><li>int型の返り値<ul><li>C言語のAPI</li>
+</ul>
+</li>
+<li>nullableな返り値<ul><li>fopen, java.util.Map.get(), HaskellのMaybe</li>
+</ul>
+</li>
+<li>返り値とエラー情報のタプル<ul><li>Goのライブラリなど</li>
+</ul>
+</li>
+<li>返り値とエラーの直和型<ul><li>HaskellのEitherなど</li>
+</ul>
+</li>
+<li>オブジェクトをエラー状態にする<ul><li>STLのstreamクラスなど</li>
+</ul>
+</li>
+<li>例外を投げる<ul><li>Javaのライブラリ、その他近代的なものほとんど</li>
+</ul>
+</li>
+</ul>
+</article>
+<article><h3>どれを使うべきか？</h3>
+<p>実際のところ一長一短</p>
+<ul><li><p>返り値にエンコードするタイプは容易にチェック忘れ</p>
+<ul><li>無視するほうが面倒なデザインのほうが望ましい</li>
+</ul>
+</li>
+<li><p>例外を用いるタイプは処理系のサポートが必要</p>
+<ul><li>例外安全性との関係</li>
+<li>例外安全なプログラムを書くのはとても大変</li>
+</ul>
+</li>
+<li><p>いずれの場合にも同様の安全性は必要</p>
+<ul><li><p>「エラー安全性」</p>
+<p><a href="http://k_satoda.users.sourceforge.net/article/suggestion-of-error-safety.html" alt=""><a href="http://k_satoda.users.sourceforge.net/article/suggestion-of-error-safety.html">http://k_satoda.users.sourceforge.net/article/suggestion-of-error-safety.html</a>
+</a>
+</p>
+</li>
+</ul>
+</li>
+</ul>
+</article>
+<article><h3>言語・標準ライブラリのデザインの問題</h3>
+<p>どのエラー通知を使うかは、言語デザインにも関わる</p>
+<ul><li><p>Javaなど、例外とGCをあわせて提供する</p>
+</li>
+<li><p>Goなど、例外をサポートしないという選択肢</p>
+</li>
+</ul>
+</article>
+<article><h3>例外への批判</h3>
+<ul><li><p>例外はコストが大きい</p>
+</li>
+<li><p>例外はコントロールフローがわからなくなる</p>
+<ul><li>goto みたいなもん、しかし…</li>
+</ul>
+</li>
+<li>フローを追いかけるのはいずれにせよ大きなプログラムでは困難<ul><li>Composabilityから性質を保証すべき（あとで）</li>
+</ul>
+</li>
+</ul>
+</article>
+<article><h3>エラー処理が言語の設計にまで影響を及ぼす理由</h3>
+<p>複数のエラーを組み合わせて使うことが難しい</p>
+<ul><li><p>なぜ複数のエラー通知手段を用いるのが難しいのか？</p>
+<ul><li>エラー通知手段ごとに、異なる方法でエラーを捕まえなければならない から</li>
+</ul>
+</li>
+</ul>
+<pre><code class="sourceCode java">{
+  <span class="kw">try</span> {
+    Hoge h = <span class="kw">new</span> <span class="fu">Hoge</span>(foo);
+    Moge i = h.<span class="fu">find</span>(x);
+    <span class="kw">if</span> (i == <span class="kw">null</span>) {
+        ...
+    }
+  }
+  <span class="kw">catch</span>(HogeException e) {
+    ...
+  }
+}</code></pre>
+</article>
+<article><h3>使い分けたい時もある</h3>
+<ul><li><p>Java は全般的に例外でエラーを通知する</p>
+</li>
+<li><p>Map.get()など、null で返すインターフェースもある</p>
+</li>
+</ul>
+<p>そもそも、何をエラーとして扱うかという話でもある</p>
+<ul><li><p>実際、使い分けたほうが綺麗になることもある</p>
+<ul><li>インターフェース上の制約で自由な実装ができないのは残念</li>
+</ul>
+</li>
+</ul>
+</article>
+<article><h3>エラー通知とエラーハンドリングの切り離し</h3>
+<p>そのために必要なもの</p>
+<ul><li><p>エラーの抽象化</p>
+<ul><li>多相的なエラー通知<ul><li>コンテクストによって違うエラーを生成</li>
+<li>nullableを返して欲しいところではnullを、例外を期待するところ では例外を投げる, etc...</li>
+</ul>
+</li>
+<li>多相的なエラーハンドラ<ul><li>すべてのエラー通知手段に対して動作するエラーハンドラ</li>
+<li>これもコンテクストによって変化</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</article>
+<article><h3>そんなのができるのか・使えるのか？</h3>
+<p>メモリ管理との対比</p>
+<ul><li><p>GCなんか使えない（昔）</p>
+<ul><li>↔ GCを持つ処理系が多数（今）</li>
+</ul>
+</li>
+<li><p>神経すり減らしてエラー処理を書くべし（今）</p>
+<ul><li>↔ 手でエラー処理を書くとか考えられない（私の思い描く未来）</li>
+</ul>
+</li>
+</ul>
+</article>
+<article><h2>Haskellでのアプローチ</h2>
+</article>
+<article><h3>エラーの抽象化に望まれること</h3>
+<ul><li><p>エラー処理の抜けを検出できること</p>
+</li>
+<li><p>エラーに関する情報が型に現れること</p>
+</li>
+<li><p>Composableであること</p>
+</li>
+</ul>
+</article>
+<article><h3>Composable</h3>
+<p>プログラムを組み合わせ可能であるということ</p>
+<ul><li>正しいプログラムを組み合わせても正しい</li>
+</ul>
+<p>正しいとは（ここでは）</p>
+<ul><li><p>特定のプロパティ</p>
+<ul><li>メモリを漏らさない</li>
+<li>落ちない</li>
+<li>エラーを正しく伝達する</li>
+<li>などなど</li>
+</ul>
+</li>
+</ul>
+<p>これを組み合わせたプログラムにおいても保持する</p>
+</article>
+<article><h3>例外</h3>
+<p>cf. 例外は抽象化の一例ではあるが、Composableではない</p>
+<pre><code class="sourceCode java"><span class="kw">class</span> Hoge {
+  <span class="kw">public</span> <span class="dt">void</span> <span class="fu">foo</span>() {
+    <span class="kw">try</span> {
+      DB db = <span class="kw">new</span> <span class="fu">DB</span>(...);
+      <span class="kw">try</span> {
+        <span class="kw">if</span> (db.<span class="fu">getRow</span>(...)) {
+          ...
+        }
+      }
+      <span class="kw">catch</span>(...) {
+        ...
+      }
+    }
+    <span class="kw">catch</span>(...) {
+      db.<span class="fu">release</span>();
+    }
+  }
+}</code></pre>
+</article>
+<article><h3>Haskellでは</h3>
+<p>モナドを用いるアプローチ</p>
+<ul><li>モナドは、Composable</li>
+<li>モナドは、ポリモーフィック</li>
+<li>モナドは、多相的で強く型付けされる</li>
+</ul>
+</article>
+<article><h3>Error モナド　(in mtl)</h3>
+<pre><code class="sourceCode haskell"><span class="kw">class</span> (<span class="kw">Monad</span> m) <span class="ot">=&gt;</span> <span class="dt">MonadError</span> e m <span class="fu">|</span> m <span class="ot">-&gt;</span> e <span class="kw">where</span>
+    <span class="co">-- | Is used within a monadic computation to begin exception processing.</span>
+<span class="ot">    throwError ::</span> e <span class="ot">-&gt;</span> m a
+
+    <span class="co">{- |</span>
+<span class="co">    A handler function to handle previous errors and return to normal execution.</span>
+<span class="co">    A common idiom is:</span>
+
+<span class="co">    &gt; do { action1; action2; action3 } `catchError` handler</span>
+
+<span class="co">    where the @action@ functions can call &#39;throwError&#39;.</span>
+<span class="co">    Note that @handler@ and the do-block must have the same return type.</span>
+<span class="co">    -}</span>
+<span class="ot">    catchError ::</span> m a <span class="ot">-&gt;</span> (e <span class="ot">-&gt;</span> m a) <span class="ot">-&gt;</span> m a</code></pre>
+<p>エラーの送信(throwError)、エラーの受信(catchError)</p>
+</article>
+<article><h3>Error モナド</h3>
+<p>IO例外を扱えるようにする</p>
+<pre><code class="sourceCode haskell"><span class="kw">instance</span> <span class="dt">MonadError</span> <span class="dt">IOException</span> <span class="dt">IO</span> <span class="kw">where</span>
+    throwError <span class="fu">=</span> <span class="fu">ioError</span>
+    catchError <span class="fu">=</span> <span class="fu">catch</span></code></pre>
+<p>Eitherを扱えるようにする</p>
+<pre><code class="sourceCode haskell"><span class="kw">instance</span> <span class="dt">Error</span> e <span class="ot">=&gt;</span> <span class="dt">MonadError</span> e (<span class="dt">Either</span> e) <span class="kw">where</span>
+    throwError             <span class="fu">=</span> <span class="kw">Left</span>
+    <span class="kw">Left</span>  l <span class="ot">`catchError`</span> h <span class="fu">=</span> h l
+    <span class="kw">Right</span> r <span class="ot">`catchError`</span> _ <span class="fu">=</span> <span class="kw">Right</span> r
+
+<span class="kw">instance</span> (<span class="kw">Monad</span> m, <span class="dt">Error</span> e) <span class="ot">=&gt;</span> <span class="dt">MonadError</span> e (<span class="dt">ErrorT</span> e m) <span class="kw">where</span>
+    throwError <span class="fu">=</span> ErrorT.throwError
+    catchError <span class="fu">=</span> ErrorT.catchError</code></pre>
+</article>
+<article><h3>エラーハンドラの抽象化へ</h3>
+<p>よくあるパターンを抽象化できるようになる</p>
+<ul><li>エラー無視</li>
+<li>n回試行</li>
+<li>a が失敗したら b を実行</li>
+</ul>
+<p>これらを組み合わせて、</p>
+<ul><li>aかbのダウンロードが成功するまで10回繰り返して、 失敗したエラーは無 視して（もしくはログに出して） 終了するHTTPクライアント</li>
+</ul>
+</article>
+<article><h3>抽象化：エラー無視</h3>
+<pre><code class="sourceCode haskell"><span class="ot">ign ::</span> <span class="dt">MonadError</span> e m <span class="ot">=&gt;</span> m () <span class="ot">-&gt;</span> m ()
+ign m <span class="fu">=</span> m <span class="ot">`catchError`</span> (\e <span class="ot">-&gt;</span> <span class="fu">return</span> ())</code></pre>
+<p>受け取ったエラーを無視するだけのコード</p>
+</article>
+<article><h3>抽象化：n回試行</h3>
+<pre><code class="sourceCode haskell"><span class="ot">tryN ::</span> <span class="dt">MonadError</span> e m <span class="ot">=&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> m a <span class="ot">-&gt;</span> m a
+tryN n m <span class="fu">=</span> go n <span class="kw">where</span>
+  go <span class="dv">1</span> <span class="fu">=</span> m
+  go i <span class="fu">=</span> m <span class="ot">`catchError`</span> (\e <span class="ot">-&gt;</span> go (i<span class="dv">-1</span>))</code></pre>
+<p>失敗したらカウンタを減らして再度実行</p>
+</article>
+<article><h3>抽象化：aが失敗したらbを実行</h3>
+<pre><code class="sourceCode haskell"><span class="fu">or</span><span class="ot"> ::</span> <span class="dt">MonadError</span> e m <span class="ot">=&gt;</span> m a <span class="ot">-&gt;</span> m a <span class="ot">-&gt;</span> m a
+<span class="fu">or</span> a b <span class="fu">=</span> <span class="kw">do</span>
+  a <span class="ot">`catchError`</span> (\_ <span class="ot">-&gt;</span> b)</code></pre>
+<p>エラーハンドラでbを実行する</p>
+</article>
+<article><h3>組み立てる</h3>
+<pre><code class="sourceCode haskell">main <span class="fu">=</span> ign <span class="fu">$</span> tryN <span class="dv">10</span> <span class="fu">$</span> <span class="kw">do</span>
+  download <span class="st">&quot;http://xxx/aznn.png&quot;</span> <span class="ot">`or`</span>
+  download <span class="st">&quot;http://xxx/prpr.png&quot;</span></code></pre>
+<p>あんなコードやこんなコードも自由自在！</p>
+</article>
+<article><h3>技術的な課題</h3>
+<p>Composableであっても（正しくても）、 記述力が十分とは限らない。</p>
+<ul><li>例えば、モナド変換子<ul><li>catchError の実装のために、モナドの”持ち下げ”が必要</li>
+</ul>
+</li>
+<li>例<ul><li>try :: IO a -&gt; IO (Either e a) に、 hoge :: StateT s IO a を渡したい、など</li>
+</ul>
+</li>
+</ul>
+</article>
+<article><h3>monad-control</h3>
+<p>これに対する解答が最近ようやく確立</p>
+<pre><code class="sourceCode haskell"><span class="kw">class</span> <span class="dt">MonadTrans</span> t <span class="ot">=&gt;</span> <span class="dt">MonadTransControl</span> t <span class="kw">where</span>
+  <span class="kw">data</span> <span class="dt">StT</span><span class="ot"> t ::</span> <span class="fu">*</span> <span class="ot">-&gt;</span> <span class="fu">*</span><span class="dt">Source</span>
+
+<span class="ot">  liftWith ::</span> <span class="kw">Monad</span> m <span class="ot">=&gt;</span> (<span class="dt">Run</span> t <span class="ot">-&gt;</span> m a) <span class="ot">-&gt;</span> t m aSource
+
+  <span class="co">-- liftWith is similar to lift in that it lifts a computation from the argument monad to the constructed monad.</span>
+  <span class="co">-- Instances should satisfy similar laws as the MonadTrans laws:</span>
+
+  <span class="co">-- restoreT :: Monad m =&gt; m (StT t a) -&gt; t m a</span>
+
+<span class="kw">type</span> <span class="dt">Run</span> t <span class="fu">=</span> forall n b<span class="fu">.</span> <span class="kw">Monad</span> n <span class="ot">=&gt;</span> t n b <span class="ot">-&gt;</span> n (<span class="dt">StT</span> t b)</code></pre>
+<p>ともかく、それなりに課題もある</p>
+</article>
+<article><h3>別のアプローチ</h3>
+<ul><li><p>Verification</p>
+<ul><li>プログラムの性質を何らかの方法で検証する</li>
+</ul>
+</li>
+<li><p>Effect Analysis</p>
+<ul><li>プログラムのEffect（IO, 例外, totality, etc...）を推論、型付けす る</li>
+<li>プログラミング言語 Koka</li>
+<li>ICFP2012 で今年からワークショップが開催</li>
+</ul>
+</li>
+</ul>
+</article>
+<article><h2>まとめ</h2>
+</article>
+<article><h3>まとめ</h3>
+<ul><li><p>エラー処理に美しさを！</p>
+</li>
+<li><p>エラーハンドラの抽象化</p>
+<ul><li>退屈な繰り返しを避けられる</li>
+<li>適切なエラー通知手段を選べる</li>
+<li>エラー処理が簡潔かつ確実になる</li>
+<li>プログラムが美しくなる！</li>
+</ul>
+</li>
+</ul>
+<br> <br> <br><center>Thank you for listening!</center>
+
+</article>
+</section>
+</body>
+</html>

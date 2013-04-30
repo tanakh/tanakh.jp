@@ -1,0 +1,56 @@
+---
+title: Home
+---
+
+<h2>純粋関数空間</h2>
+
+<div class="row">
+    <div class="span6">
+        <p>ここは田中英行(Hideyuki Tanaka, a.k.a tanakh)の個人ページです。</p>
+
+        <h2>Recent Posts</h2>
+
+        <ul>
+            $posts$
+        </ul>
+
+        <p>…or you can find more in the <a href="/archive.html">archives</a>.
+    </div>
+
+    <div class="span4">
+        <p><img src="/img/me-ss.jpg" width="250px" /><p>
+
+        <p>
+        <script src="http://widgets.twimg.com/j/2/widget.js">
+        </script>
+        <script>
+          new TWTR.Widget({
+          version: 2,
+          type: 'profile',
+          rpp: 4,
+          interval: 30000,
+          width: '250',
+          height: 200,
+          theme: {
+            shell: {
+              background: '#333333',
+              color: '#ffffff'
+            },
+            tweets: {
+              background: '#000000',
+              color: '#ffffff',
+              links: '#4aed05'
+            }
+          },
+          features: {
+            scrollbar: true,
+            loop: true,
+            live: true,
+           behavior: 'default'
+          } 
+          }).render().setUser('tanakh').start();
+        </script>
+        </p>
+    </div>
+</div>
+

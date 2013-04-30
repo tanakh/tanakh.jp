@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html><head><title>たのしいHaskellのツールチェインとC++</title><meta charset="utf-8"><script src="http://html5slides.googlecode.com/svn/trunk/slides.js"></script><style></style><style>table.sourceCode,tr.sourceCode,td.lineNumbers,td.sourceCode,table.sourceCode pre{margin:0;padding:0;border:0;vertical-align:baseline;border:none}td.lineNumbers{border-right:1px solid #AAAAAA;text-align:right;color:#AAAAAA;padding-right:5px;padding-left:5px}td.sourceCode{padding-left:5px}code.sourceCode span.kw{color:#007020;font-weight:bold}code.sourceCode span.dt{color:#902000}code.sourceCode span.dv{color:#40a070}code.sourceCode span.bn{color:#40a070}code.sourceCode span.fl{color:#40a070}code.sourceCode span.ch{color:#4070a0}code.sourceCode span.st{color:#4070a0}code.sourceCode span.co{color:#60a0b0;font-style:italic}code.sourceCode span.ot{color:#007020}code.sourceCode span.al{color:red;font-weight:bold}code.sourceCode span.fu{color:#06287e}code.sourceCode span.er{color:red;font-weight:bold}</style></head><body style="display: none"><section class="slides layout-regular "><article><h1>たのしいHaskellのツールチェインとC++</h1><p>田中英行 <a href="mailto:tanakh@preferred.jp" alt=""><a href="mailto:tanakh@preferred.jp">&lt;tanakh@preferred.jp&gt;</a></a></p><p>PFIセミナー 2012/07/19</p></article><article><h3>自己紹介</h3><ul><li><p>田中英行, <a href="http://twitter.com/tanakh" alt="">@tanakh</a>, <a href="http://tanakh.jp" alt=""><a href="http://tanakh.jp">http://tanakh.jp</a></a></p></li><li><p>PFIで働くプログラマ</p></li><li><p>Haskell愛好家</p><ul><li><p>拙訳「すごいHaskellたのしく学ぼう! 」発売中</p><iframe src="http://rcm-jp.amazon.co.jp/e/cm?lt1=_blank&bc1=000000&IS2=1&bg1=FFFFFF&fc1=000000&lc1=0000FF&t=peropero0b-22&o=9&p=8&l=as4&m=amazon&f=ifr&ref=ss_til&asins=4274068854" style="width:120px;height:240px;" scrolling="no" marginwidth="0" marginheight="0" frameborder="0"></iframe></li></ul></li></ul></article><article><h3>本日の概要</h3><ul><li><p>ソフトウェアテストを取り巻く環境</p></li><li><p>C/C++のコードをQuickCheckする</p></li><li><p>C/C++のコードをCriterionでパフォーマンス測定する</p></li></ul></article><article><h2>テスト駆動開発</h2></article><article><h3>Not enough!</h3><p><img class="centered" src="ne.png" alt=""></p><div class="source">
+    <a href="http://blog.fogus.me/2012/06/20/not-enough/" alt=""><a href="http://blog.fogus.me/2012/06/20/not-enough/">http://blog.fogus.me/2012/06/20/not-enough/</a></a><div>
+</article><article><p><img class="centered" src="notenough.png" alt=""></p><div class="source">
+    <a href="http://evanfarrer.blogspot.ca/2012/06/unit-testing-isnt-enough-you-need.html" alt=""><a href="http://evanfarrer.blogspot.ca/2012/06/unit-testing-isnt-enough-you-need.html">http://evanfarrer.blogspot.ca/2012/06/unit-testing-isnt-enough-you-need.html</a></a><div>
+
+</article><article><h3>Static typing is not enough!</h3><p><img class="centered" src="stine.png" alt=""></p><div class="source">
+    <a href="http://blog.fogus.me/2012/06/20/not-enough/" alt=""><a href="http://blog.fogus.me/2012/06/20/not-enough/">http://blog.fogus.me/2012/06/20/not-enough/</a></a><div>
+</article><article><h3>Contracts are not enough!</h3><p><img class="centered" src="cane.png" alt=""></p><div class="source">
+    <a href="http://blog.fogus.me/2012/06/20/not-enough/" alt=""><a href="http://blog.fogus.me/2012/06/20/not-enough/">http://blog.fogus.me/2012/06/20/not-enough/</a></a><div>
+</article><article><h3>XX are not enough!</h3><p><img class="centered" src="nes.png" alt=""></p><p>（オチがそれかよ…）</p></article><article><h3>絶対にバグのないプログラムを書く方法</h3><p><img class="centered" src="pdd.png" alt=""></p><div class="source">
+    <a href="http://www.iij-ii.co.jp/lab/techdoc/coqt/" alt=""><a href="http://www.iij-ii.co.jp/lab/techdoc/coqt/">http://www.iij-ii.co.jp/lab/techdoc/coqt/</a></a><div>
+
+</article><article><h3>一般的な話</h3><ul><li><a href="http://en.wikipedia.org/wiki/Software_testing" alt="">テスト</a>はプログラムの正しさを <strong>保証しない</strong></li><li><p><a href="http://en.wikipedia.org/wiki/Design_by_contract" alt="">契約</a>（Contract）はプログラムの正しさを <strong>保証しない</strong></p></li><li><a href="http://en.wikipedia.org/wiki/Type_system" alt="">型</a>はプログラムの正しさを <strong>保証しない</strong> が、<ul><li>ある種の性質は保証できる</li></ul></li></ul><br><ul><li><a href="http://en.wikipedia.org/wiki/Interactive_theorem_proving" alt="">証明</a>はプログラムの正しさを <strong>証明する</strong></li></ul></article><article><h3>定理証明系</h3><ul><li><p>定理証明 ⇒ Fully Dependent Typedなプログラミング言語でプログラムを書く</p><ul><li><a href="http://coq.inria.fr/" alt="">Coq</a> / <a href="http://wiki.portal.chalmers.se/agda/pmwiki.php" alt="">Agda2</a></li></ul></li><li><p>実は、ある型のプログラムを書くことは、ある命題の証明と対応する！</p><ul><li><a href="http://en.wikipedia.org/wiki/Curry%E2%80%93Howard_correspondence" alt="">カリー＝ハワード同型対応</a></li><li>「型↔命題」「プログラム↔証明」</li></ul></li></ul><p><img class="centered" src="http://aprendehaskell.es/_images/curry.png" alt=""></p></article><article><h3>なぜコードの正しさを証明しないのか？</h3><ul><li><p>定理証明の付いたコードを書くのは大変</p><ul><li><p>そもそもむずい</p><ul><li>普通に書くのはとても難しいので、tacticを用いて、 ゴールを分割し、穴埋めしながら書く</li></ul></li><li><p>コードがでかくなる</p><ul><li>証明なしのコードの10倍以上になるとか</li><li><a href="http://compcert.inria.fr/" alt="">COMPCERT</a> (Coqで証明されたCコンパイラ作るプロジェクト)</li></ul></li></ul></li></ul><p><small>（こんなことを書きつつ、私はあまり詳しくないです…すみません）</small></p></article><article><h3>コードの品質のために、我々は何をするべきか？</h3><ul><li><p>コードの正しさを保証することと、そのコストはトレードオフ</p></li><li><p>何をやって何をやらざるかは単に開発コストの問題</p><ul><li>これは情報学の問題でも数学の問題でもない</li></ul></li><li><p>スイートスポットを攻めるべき</p><ul><li>小さいコストで大きなリターンを得られるものから採用する</li></ul></li></ul></article><article><h3>In my opinion...</h3><ul><li><p>ユニットテスト</p><ul><li>やらないよりはやった方がいい</li></ul></li><li><p>静的型付け</p><ul><li>効果大</li><li>テストは型の代用ではない</li></ul></li><li><p>証明</p><ul><li>無理 (´&gt;_&gt;`)</li></ul></li></ul></article><article><h3>テストに「ちょい足し」</h3><ul><li><p>Generative Test</p><ul><li>テストケースを乱数で自動生成</li><li>普通のユニットテストを書くコストと大差がない</li><li>コストをはるかに上回る恩恵！</li></ul></li></ul><p>ぜひ Generative Test をやりましょう！</p></article><article><h3>だけど…</h3><ul><li><p>利用できる言語が限られる</p><ul><li><a href="http://hackage.haskell.org/package/QuickCheck" alt="">QuickCheck</a> が有名<ul><li>Haskell, Erlang</li><li>実際よく使われてる</li></ul></li><li>他の言語にも類似の実装が割りとあるが、完成度はまちまち<ul><li><a href="http://software.legiasoft.com/quickcheck/" alt="">C++実装</a> もあるが…</li><li>バージョン0.02 ... イマイチ感メンテナンスされてない感 ...</li></ul></li></ul></li></ul></article><article><h3>そういう事なら</h3><pre>
+　 　　　　 |
+　 　＼　　__　　／
+　 　＿　（ｍ）　＿ﾋﾟｺｰﾝ
+　 　　　　|ミ|
+　 　 ／ 　｀´　 ＼
+　　　　　(´･_･`) HaskellのQuickCheckでC++コードを
+　　　　　ノヽノヽ テストすればいいじゃまいか！？
+　　　　　　　くく
+</pre>
+
+</article><article><h2>QuickCheck</h2></article><article><h3>QuickCheckについて</h3><ul><li><p><a href="http://www.cse.chalmers.se/~rjmh/QuickCheck/" alt=""><a href="http://www.cse.chalmers.se/~rjmh/QuickCheck/">http://www.cse.chalmers.se/~rjmh/QuickCheck/</a></a></p><ul><li>ICFP 2000 初出（？）</li><li>ICFP 2010、「最も世の中に影響を与えた10年前の論文」<ul><li>（これが最も影響あったということに、関数プログラミングの影響力の小ささが窺い知れる…）</li></ul></li><li>強力な型システムとあわせて、Haskellコードの品質向上に 実際大きく貢献している</li></ul></li></ul></article><article><h3>Quick start of QuickCheck</h3><ol><li><p><a href="http://hackage.haskell.org/platform/" alt="">Haskell Platform</a> をインストール</p></li><li><p>テストを含む cabal プロジェクトを作る</p></li><li><p>テストを書く</p></li><li><p>テストを実行</p></li><li><p>繰り返し</p></li></ol></article><article><h3>Haskell Platform インストール</h3><p>ダウンロードして、マウスをホチポチすれば入る（Linux以外） <img class="centered" src="hp.png" alt=""></p></article><article><h3>cabal プロジェクトを作る</h3><p><code>&gt; cabal init</code> とタイプして、適当に質問に答える</p><pre><code class="sourceCode bash">PS C:\Users\tanakh\Dropbox\project\tmp\qc-test<span class="kw">&gt;</span> cabal init
+Package name? [default: qc-test]
+Package version? [default: 0.1.0.0]
+Please choose a license:
+ * 1) <span class="kw">(</span>none<span class="kw">)</span>
+   2) GPL-2
+   3) GPL-3
+...
+What does the package build:
+   1) Library
+   2) Executable
+Your choice? 2
+Include documentation on what each field means <span class="kw">(</span>y/n<span class="kw">)</span>? [default: n]
+Guessing dependencies...
+...
+Generating qc-test.cabal...</code></pre></article><article><h3>プロジェクトにテストを追加</h3><p><code>&lt;プロジェクト名&gt;.cabal</code> というファイルが生成されたはずなので、それを編集</p><pre><code class="sourceCode haskell">name<span class="fu">:</span>                qc<span class="fu">-</span>test
+version<span class="fu">:</span>             <span class="fl">0.1</span><span class="fu">.</span><span class="fl">0.0</span>
+<span class="co">-- synopsis:            </span>
+<span class="co">-- description:         </span>
+license<span class="fu">:</span>             <span class="dt">BSD3</span>
+（略…）
+executable qc<span class="fu">-</span>test
+  main<span class="fu">-</span>is<span class="fu">:</span>             main<span class="fu">.</span>hs
+  build<span class="fu">-</span>depends<span class="fu">:</span>       base <span class="fu">==</span><span class="fl">4.5</span><span class="fu">.*</span>
+<span class="co">-- ↓これを追加</span>
+test<span class="fu">-</span>suite hoge<span class="fu">-</span>test
+  <span class="kw">type</span><span class="fu">:</span>                exitcode<span class="fu">-</span>stdio<span class="dv">-1</span><span class="fu">.</span><span class="dv">0</span>
+  main<span class="fu">-</span>is<span class="fu">:</span>             test<span class="fu">.</span>hs
+  build<span class="fu">-</span>depends<span class="fu">:</span>       base  <span class="fu">==</span><span class="fl">4.5</span><span class="fu">.*</span>
+                     , hspec <span class="fu">&gt;=</span><span class="fl">1.3</span></code></pre></article><article><h3>なんかプログラム書く</h3><ul><li>今回はリストの足し算をする関数を書いてみます</li></ul><pre><code class="sourceCode haskell"><span class="ot">mySum ::</span> [<span class="dt">Int</span>] <span class="ot">-&gt;</span> <span class="dt">Int</span>
+mySum [x] <span class="fu">=</span> x
+mySum (x<span class="fu">:</span>xs) <span class="fu">=</span> x <span class="fu">+</span> mySum xs</code></pre></article><article><h3>テストを書く</h3><ul><li><p><code>test.hs</code> に普通のユニットテストを書きます</p><ul><li><a href="http://hspec.github.com/" alt="">hspec</a>という<a href="http://rspec.info/" alt="">RSpec</a>インスパイアなテストフレームワークと</li><li><a href="http://hackage.haskell.org/package/HUnit" alt="">HUnit</a> という単体テストライブラリを使用</li></ul></li></ul><pre><code class="sourceCode haskell"><span class="kw">import</span> <span class="dt">Test.Hspec</span>
+
+<span class="ot">main ::</span> <span class="dt">IO</span> ()
+main <span class="fu">=</span> hspec <span class="fu">$</span> <span class="kw">do</span>
+  describe <span class="st">&quot;sum function&quot;</span> <span class="fu">$</span> <span class="kw">do</span>
+    it <span class="st">&quot;is correct&quot;</span> <span class="fu">$</span> <span class="kw">do</span>
+      mySum [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>] <span class="ot">`shouldBe`</span> <span class="dv">6</span>
+      mySum [<span class="dv">1</span> <span class="fu">..</span> <span class="dv">10</span>] <span class="ot">`shouldBe`</span> <span class="dv">55</span></code></pre><p>思いつくままにテストケースを書きます</p></article><article><h3>テストを実行</h3><pre><code class="sourceCode bash"><span class="kw">&gt;</span> cabal build
+Building qc-test-0.1.0.0...
+Preprocessing executable <span class="st">&#39;qc-test&#39;</span> <span class="kw">for</span> qc-test-0.1.0.0...
+[1 of 1] Compiling Main             <span class="kw">(</span> main.hs, dist\build\qc-test\qc-test-tmp\Main.o <span class="kw">)</span>
+Linking dist\build\qc-test\qc-test.exe ...
+Preprocessing <span class="kw">test</span> suite <span class="st">&#39;hoge-test&#39;</span> <span class="kw">for</span> qc-test-0.1.0.0...
+[1 of 1] Compiling Main             <span class="kw">(</span> test.hs, dist\build\hoge-test\hoge-test-tmp\Main.o <span class="kw">)</span>
+Linking dist\build\hoge-test\hoge-test.exe ...
+<span class="kw">&gt;</span> cabal <span class="kw">test</span>
+Running 1 <span class="kw">test</span> suites...
+Test suite hoge-test: RUNNING...
+Test suite hoge-test: PASS
+Test suite logged to: dist\<span class="kw">test</span>\qc-test-0.1.0.0-hoge-test.log
+1 of 1 <span class="kw">test</span> suites <span class="kw">(</span>1 of 1 <span class="kw">test</span> cases<span class="kw">)</span> passed.</code></pre><p>パスしたようですね！</p></article><article><h3>QuickCheck のテストを書く</h3><ul><li><p>QuickCheckのテストケースは関数（プロパティという）</p><ul><li><strong>「何か」</strong> （ここでは <code>Int</code> のリスト） を受け取り、<code>Bool</code> を返す関数</li><li>QuickCheckが、関数の引数（テストデータ）を適当にたくさん生成する</li><li>すべてのテストデータについて <code>True</code> が帰ればパス</li></ul></li></ul><pre><code class="sourceCode haskell"><span class="ot">prop_mySum ::</span> [<span class="dt">Int</span>] <span class="ot">-&gt;</span> <span class="dt">Bool</span>
+prop_mySum xs <span class="fu">=</span>
+  mySum xs <span class="fu">==</span> <span class="fu">sum</span> xs <span class="co">-- sum は標準のリストの総和を求める関数</span></code></pre><p>簡単でしょう？</p></article><article><h3>テストフレームワークに組み込み</h3><ul><li>prop 関数に記述とプロパティを渡す</li></ul><pre><code class="sourceCode haskell"><span class="kw">import</span> <span class="dt">Test.Hspec</span>
+<span class="kw">import</span> <span class="dt">Test.Hspec.HUnit</span>
+<span class="kw">import</span> <span class="dt">Test.Hspec.QuickCheck</span> <span class="co">-- これを追加</span>
+<span class="co">-- (略)</span>
+
+<span class="ot">main ::</span> <span class="dt">IO</span> ()
+main <span class="fu">=</span> hspec <span class="fu">$</span> <span class="kw">do</span>
+  describe <span class="st">&quot;sum function&quot;</span> <span class="fu">$</span> <span class="kw">do</span>
+    it <span class="st">&quot;is correct&quot;</span> <span class="fu">$</span> <span class="kw">do</span>
+      mySum [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>] <span class="ot">`shouldBe`</span> <span class="dv">6</span>
+      mySum [<span class="dv">1</span> <span class="fu">..</span> <span class="dv">10</span>] <span class="ot">`shouldBe`</span> <span class="dv">55</span>
+
+    prop <span class="st">&quot;is equivalent to sum&quot;</span> <span class="fu">$</span> <span class="co">-- これを</span>
+      prop_mySum                  <span class="co">-- 追加</span></code></pre></article><article><h3>別な書き方</h3><ul><li>直に書いても良い</li></ul><pre><code class="sourceCode haskell"><span class="kw">import</span> <span class="dt">Test.Hspec</span>
+<span class="kw">import</span> <span class="dt">Test.Hspec.HUnit</span>
+<span class="kw">import</span> <span class="dt">Test.Hspec.QuickCheck</span>
+<span class="co">-- (略)</span>
+
+<span class="ot">main ::</span> <span class="dt">IO</span> ()
+main <span class="fu">=</span> hspec <span class="fu">$</span> <span class="kw">do</span>
+  describe <span class="st">&quot;sum function&quot;</span> <span class="fu">$</span> <span class="kw">do</span>
+    it <span class="st">&quot;is correct&quot;</span> <span class="fu">$</span> <span class="kw">do</span>
+      mySum [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>] <span class="ot">`shouldBe`</span> <span class="dv">6</span>
+      mySum [<span class="dv">1</span> <span class="fu">..</span> <span class="dv">10</span>] <span class="ot">`shouldBe`</span> <span class="dv">55</span>
+
+    prop <span class="st">&quot;is equivalent to sum&quot;</span> <span class="fu">$</span> \xs <span class="ot">-&gt;</span>
+      mySym xs <span class="fu">==</span> <span class="fu">sum</span> xs</code></pre></article><article><h3>QuickCheck テストの実行</h3><ul><li>テストフレームワークが面倒を見てくれるので、同じように実行するだけ！</li></ul><pre><code class="sourceCode bash"><span class="kw">&gt;</span> cabal build <span class="kw">&amp;&amp;</span> cabal <span class="kw">test</span>
+Running 1 <span class="kw">test</span> suites...
+Test suite hoge-test: RUNNING...
+
+<span class="kw">sum</span> <span class="kw">function</span>
+ - is correct
+ - is equivalent to <span class="kw">sum</span> FAILED [1]
+
+1) <span class="kw">sum</span> <span class="kw">function</span><span class="fu"> is</span> equivalent to <span class="kw">sum</span> FAILED
+*** Failed! Exception: <span class="st">&#39;test.hs:(6,1)-(7,27): Non-exhaustive patterns in function mySum&#39;</span> <span class="kw">(</span>after 1 <span class="kw">test):</span>
+[]
+...
+0 of 1 <span class="kw">test</span> suites <span class="kw">(</span>0 of 1 <span class="kw">test</span> cases<span class="kw">)</span> passed.</code></pre><p>おや(棒)、テストがコケたみたいですね</p></article><article><h3>テストの結果</h3><ul><li>どのテストが、どの入力で、どういう理由でこけたかが出力</li></ul><pre><code class="sourceCode haskell">   <span class="fu">-</span> is equivalent to <span class="fu">sum</span> <span class="dt">FAILED</span> [<span class="dv">1</span>]</code></pre><pre><code class="sourceCode haskell"><span class="fu">&gt;</span> <span class="dv">1</span>) <span class="fu">sum</span> function is equivalent to <span class="fu">sum</span> <span class="dt">FAILED</span>
+<span class="fu">&gt;</span> <span class="fu">***</span> <span class="dt">Failed</span><span class="fu">!</span> <span class="dt">Exception</span><span class="fu">:</span> <span class="ch">&#39;test.hs:(6,1)-(7,27): Non-exhaustive patterns in function mySum&#39;</span> (after <span class="dv">1</span> test)<span class="fu">:</span>
+<span class="fu">&gt;</span> []</code></pre><p>どうやら、空のリストの時にエラーになっているようです</p><pre><code class="sourceCode haskell"><span class="ot">mySum ::</span> [<span class="dt">Int</span>] <span class="ot">-&gt;</span> <span class="dt">Int</span>
+mySum [x] <span class="fu">=</span> x    ←   あっ(´･_･<span class="ot">`)</span>
+<span class="ot">mySum (x:xs) = x + mySum xs</span></code></pre></article><article><h3>修正＆再実行</h3><pre><code class="sourceCode haskell">mySum [] <span class="fu">=</span> <span class="dv">0</span>
+mySum (x<span class="fu">:</span>xs) <span class="fu">=</span> x <span class="fu">+</span> mySum xs</code></pre><p>直して、再実行</p><pre><code class="sourceCode bash"><span class="kw">&gt;</span> cabal <span class="kw">test</span>
+Running 1 <span class="kw">test</span> suites...
+Test suite hoge-test: RUNNING...
+Test suite hoge-test: PASS
+Test suite logged to: dist\<span class="kw">test</span>\qc-test-0.1.0.0-hoge-test.log
+1 of 1 <span class="kw">test</span> suites <span class="kw">(</span>1 of 1 <span class="kw">test</span> cases<span class="kw">)</span> passed.</code></pre><p>ふう、事なきを得ました。</p></article><article><h3>C++のコードをテストする</h3><ul><li><p>C++のコードをQuickCheckする</p></li><li><p>HaskellからC++のコードを呼び出せば良い</p><ul><li>HaskellからC++（C）のコードを呼び出すのはとても簡単</li><li>FFI (Foreign Function Interface) を用いる</li></ul></li></ul></article><article><h3>HaskellからC++コードを呼び出す</h3><ul><li>まず、C++のコードを書きます</li></ul><pre><code class="sourceCode cpp"><span class="dt">int</span> add(<span class="dt">int</span> x, <span class="dt">int</span> y)
+{
+    <span class="kw">return</span> x * y; <span class="co">// わざと間違えてます！！</span>
+}</code></pre></article><article><h3>.cabal ファイルを編集</h3><pre><code class="sourceCode haskell">test<span class="fu">-</span>suite hoge<span class="fu">-</span>test
+  <span class="kw">type</span><span class="fu">:</span>                exitcode<span class="fu">-</span>stdio<span class="dv">-1</span><span class="fu">.</span><span class="dv">0</span>
+  main<span class="fu">-</span>is<span class="fu">:</span>             test<span class="fu">.</span>hs
+  build<span class="fu">-</span>depends<span class="fu">:</span>       base <span class="fu">==</span><span class="fl">4.5</span><span class="fu">.*</span>
+                     , hspec
+                     , <span class="dt">QuickCheck</span>
+  <span class="co">-- ↓ C++ファイルを c-sources に列挙して外部ライブラリにstdc++を追加</span>
+  c<span class="fu">-</span>sources<span class="fu">:</span>           hoge<span class="fu">.</span>cpp
+  extra<span class="fu">-</span>libraries<span class="fu">:</span>     stdc<span class="fu">++</span></code></pre></article><article><h3>C++を呼び出すコードを書く</h3><p><code>foreign import ccall</code> で <code>cdecl</code> 呼び出し規約の関数を呼び出せる</p><pre><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE ForeignFunctionInterface #-}</span>
+<span class="kw">import</span> <span class="dt">Test.Hspec</span>
+<span class="kw">import</span> <span class="dt">Test.Hspec.HUnit</span>
+<span class="kw">import</span> <span class="dt">Test.Hspec.QuickCheck</span>
+<span class="kw">import</span> <span class="dt">Test.QuickCheck</span>
+<span class="kw">import</span> <span class="dt">Test.QuickCheck.Property</span>
+
+<span class="ot">main ::</span> <span class="dt">IO</span> ()
+main <span class="fu">=</span> hspec <span class="fu">$</span> <span class="kw">do</span>
+  describe <span class="st">&quot;add function&quot;</span> <span class="fu">$</span> <span class="kw">do</span>
+    prop <span class="st">&quot;it corrects&quot;</span> <span class="fu">$</span> \x y <span class="ot">-&gt;</span> <span class="kw">do</span>
+      morallyDubiousIOProperty <span class="fu">$</span> <span class="kw">do</span> <span class="co">-- テスト中でIOをやるための関数</span>
+        z <span class="ot">&lt;-</span> add x y
+        <span class="fu">return</span> <span class="fu">$</span> z <span class="fu">==</span> x <span class="fu">+</span> y
+
+foreign <span class="kw">import</span> ccall<span class="ot"> add ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> <span class="dt">Int</span></code></pre></article><article><h3>テスト実行</h3><pre><code class="sourceCode haskell"><span class="fu">&gt;</span> cabal test
+<span class="dt">Running</span> <span class="dv">1</span> test suites<span class="fu">...</span>
+<span class="dt">Test</span> suite hoge<span class="fu">-</span>test<span class="fu">:</span> <span class="fu">RUNNING...</span>
+
+add function
+ <span class="fu">-</span> it corrects <span class="dt">FAILED</span> [<span class="dv">1</span>]
+
+<span class="dv">1</span>) add function it corrects <span class="dt">FAILED</span>
+<span class="fu">***</span> <span class="dt">Failed</span><span class="fu">!</span> <span class="dt">Falsifiable</span> (after <span class="dv">1</span> test <span class="fu">and</span> <span class="dv">2</span> shrinks)<span class="fu">:</span>
+<span class="dv">0</span>
+<span class="dv">1</span>
+
+
+<span class="dt">Finished</span> <span class="kw">in</span> <span class="fl">0.0120</span> seconds, used <span class="fl">0.0156</span> seconds <span class="kw">of</span> <span class="dt">CPU</span> time
+
+<span class="dv">1</span> example, <span class="dv">1</span> failure
+<span class="dt">Test</span> suite hoge<span class="fu">-</span>test<span class="fu">:</span> <span class="dt">FAIL</span>
+<span class="dt">Test</span> suite logged to<span class="fu">:</span> dist\test\qc<span class="fu">-</span>test<span class="dv">-0</span><span class="fu">.</span><span class="fl">1.0</span><span class="fu">.</span><span class="dv">0</span><span class="fu">-</span>hoge<span class="fu">-</span>test<span class="fu">.log</span>
+<span class="dv">0</span> <span class="kw">of</span> <span class="dv">1</span> test suites (<span class="dv">0</span> <span class="kw">of</span> <span class="dv">1</span> test cases) passed<span class="fu">.</span></code></pre></article><article><h3>C++コードをQuickCheck</h3><pre><code class="sourceCode haskell"><span class="fu">#</span>include <span class="fu">&lt;</span>vector<span class="fu">&gt;</span>
+using namespace std;
+
+int vsum(<span class="fu">const</span> vector<span class="fu">&lt;</span>int<span class="fu">&gt;</span> <span class="fu">&amp;</span>v) {
+  int ret <span class="fu">=</span> <span class="dv">0</span>;
+  for (size_t i <span class="fu">=</span> <span class="dv">0</span>; i <span class="fu">&lt;</span> v<span class="fu">.</span>size(); <span class="fu">++</span>i)
+    ret <span class="fu">+=</span> v[i];
+  <span class="fu">return</span> ret;
+}</code></pre><p>これをテストしたいが、Haskellのデータ構造とのマーシャリングが面倒なので、 ラッパ関数を書く</p><pre><code class="sourceCode haskell">extern <span class="st">&quot;C&quot;</span> int c_vsum(int <span class="fu">*</span>p, int n) {
+  <span class="fu">return</span> vsum(vector<span class="fu">&lt;</span>int<span class="fu">&gt;</span>(p, p<span class="fu">+</span>n));
+}</code></pre></article><article><h3>テストコード</h3><pre><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE ForeignFunctionInterface #-}</span>
+<span class="kw">import</span> <span class="dt">Test.Hspec</span>
+<span class="kw">import</span> <span class="dt">Test.Hspec.HUnit</span>
+<span class="kw">import</span> <span class="dt">Test.Hspec.QuickCheck</span>
+<span class="kw">import</span> <span class="dt">Test.QuickCheck</span>
+<span class="kw">import</span> <span class="dt">Test.QuickCheck.Property</span>
+<span class="kw">import</span> <span class="dt">Foreign</span>
+<span class="kw">import</span> <span class="dt">Foreign.C</span>
+
+<span class="ot">main ::</span> <span class="dt">IO</span> ()
+main <span class="fu">=</span> hspec <span class="fu">$</span> <span class="kw">do</span>
+  describe <span class="st">&quot;add function&quot;</span> <span class="fu">$</span> <span class="kw">do</span>
+    prop <span class="st">&quot;it corrects&quot;</span> <span class="fu">$</span> \xs <span class="ot">-&gt;</span> <span class="kw">do</span>
+      morallyDubiousIOProperty <span class="fu">$</span> <span class="kw">do</span>
+        withArrayLen (<span class="fu">map</span> <span class="fu">fromIntegral</span> xs) <span class="fu">$</span> \len ptr <span class="ot">-&gt;</span> <span class="kw">do</span>
+          ret <span class="ot">&lt;-</span> c_vsum ptr (<span class="fu">fromIntegral</span> len)
+          <span class="fu">return</span> <span class="fu">$</span> <span class="fu">fromIntegral</span> ret <span class="fu">==</span> (<span class="fu">sum</span><span class="ot"> xs ::</span> <span class="dt">Int</span>)
+
+foreign <span class="kw">import</span> ccall<span class="ot"> c_vsum ::</span> <span class="dt">Ptr</span> <span class="dt">CInt</span> <span class="ot">-&gt;</span> <span class="dt">CInt</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> <span class="dt">CInt</span></code></pre></article><article><h3>テスト実行</h3><pre><code class="sourceCode haskell"><span class="fu">&gt;</span> cabal test
+<span class="dt">Running</span> <span class="dv">1</span> test suites<span class="fu">...</span>
+<span class="dt">Test</span> suite hoge<span class="fu">-</span>test<span class="fu">:</span> <span class="fu">RUNNING...</span>
+<span class="dt">Test</span> suite hoge<span class="fu">-</span>test<span class="fu">:</span> <span class="dt">FAIL</span>
+<span class="dt">Test</span> suite logged to<span class="fu">:</span> dist\test\qc<span class="fu">-</span>test<span class="dv">-0</span><span class="fu">.</span><span class="fl">1.0</span><span class="fu">.</span><span class="dv">0</span><span class="fu">-</span>hoge<span class="fu">-</span>test<span class="fu">.log</span>
+<span class="dv">0</span> <span class="kw">of</span> <span class="dv">1</span> test suites (<span class="dv">0</span> <span class="kw">of</span> <span class="dv">1</span> test cases) passed<span class="fu">.</span></code></pre><p>C++のテストがQuickCheckできました(´^_^`)!</p></article><article><h2>ベンチマーク</h2></article><article><h3><a href="http://bos.github.com/criterion/" alt="">Criterion</a></h3><ul><li><p>Haskellのベンチマークフレームワーク</p><ul><li>カッコいいレポートページが出る</li></ul></li></ul><iframe src="http://bos.github.com/criterion/"></iframe>
+</article><article><h3>Criterionの特徴</h3><ul><li><p>時間計測のオーバーヘッドの計測と除去</p></li><li><p>多数回の繰り返しとブートストラップ法による統計データ計算</p></li><li><p>短い実行時間のプログラムを正確に計測できる</p></li><li><p>かっこいいレポートページが出る！</p></li></ul><p>C++でも使いたい！</p></article><article><h3>C++をCriterion</h3><ul><li>こいつにC++を食わせると…？</li></ul><p>とりあえず適当にソートプログラム書いてみた</p><pre><code class="sourceCode cpp"><span class="ot">#include &lt;vector&gt;</span>
+<span class="ot">#include &lt;algorithm&gt;</span>
+<span class="kw">using</span> <span class="kw">namespace</span> std;
+
+<span class="kw">extern</span> <span class="st">&quot;C&quot;</span>
+<span class="dt">void</span> vsort(<span class="dt">int</span> *p, <span class="dt">int</span> n)
+{
+  vector v(p, p+n);
+  sort(v.begin(), v.end());
+}</code></pre></article><article><h3>ベンチマークを cabalファイルに追加</h3><pre><code class="sourceCode haskell">benchmark hoge<span class="fu">-</span>bench
+  <span class="kw">type</span><span class="fu">:</span>                exitcode<span class="fu">-</span>stdio<span class="dv">-1</span><span class="fu">.</span><span class="dv">0</span>
+  main<span class="fu">-</span>is<span class="fu">:</span>             bench<span class="fu">.</span>hs
+  build<span class="fu">-</span>depends<span class="fu">:</span>       base <span class="fu">==</span><span class="fl">4.5</span><span class="fu">.*</span>
+                     , criterion
+                     , random
+  c<span class="fu">-</span>sources<span class="fu">:</span>           hoge<span class="fu">.</span>cpp
+  extra<span class="fu">-</span>libraries<span class="fu">:</span>     stdc<span class="fu">++</span></code></pre></article><article><h3>Criterion書く</h3><pre><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE ForeignFunctionInterface #-}</span>
+<span class="kw">import</span> <span class="dt">Control.Monad</span>
+<span class="kw">import</span> <span class="dt">Data.List</span>
+<span class="kw">import</span> <span class="dt">Foreign</span>
+<span class="kw">import</span> <span class="dt">Foreign.C</span>
+<span class="kw">import</span> <span class="dt">System.Random</span>
+
+<span class="kw">import</span> <span class="dt">Criterion.Main</span>
+
+main <span class="fu">=</span> <span class="kw">do</span>
+  <span class="kw">let</span> len <span class="fu">=</span> <span class="dv">1000</span>
+  xs <span class="ot">&lt;-</span> replicateM len <span class="fu">$</span> randomRIO (<span class="dv">0</span>, <span class="dv">1000</span>)
+  defaultMain
+    [ bgroup <span class="st">&quot;sort&quot;</span>
+      [ bench <span class="st">&quot;c++&quot;</span>     <span class="fu">$</span> whnfIO <span class="fu">$</span> withArrayLen (<span class="fu">map</span> <span class="fu">fromIntegral</span> xs) <span class="fu">$</span> \len ptr <span class="ot">-&gt;</span>
+         vsort ptr (<span class="fu">fromIntegral</span> len)
+      , bench <span class="st">&quot;haskell&quot;</span> <span class="fu">$</span> nf <span class="fu">sort</span> (<span class="ot">xs ::</span> [<span class="dt">Int</span>])
+      ]
+    ]
+
+foreign <span class="kw">import</span> ccall<span class="ot"> vsort ::</span> <span class="dt">Ptr</span> <span class="dt">CInt</span> <span class="ot">-&gt;</span> <span class="dt">CInt</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> ()</code></pre></article><article><h3>ベンチマーク実行</h3><pre><code class="sourceCode haskell"><span class="fu">&gt;</span> cabal bench
+<span class="dt">Running</span> <span class="dv">1</span> benchmarks<span class="fu">...</span>
+<span class="dt">Benchmark</span> hoge<span class="fu">-</span>bench<span class="fu">:</span> <span class="fu">RUNNING...</span>
+warming up
+estimating clock resolution<span class="fu">...</span>
+<span class="fu">...</span>
+
+benchmarking <span class="fu">sort/</span>c<span class="fu">++</span>
+mean<span class="fu">:</span> <span class="fl">54.11847</span> us, lb <span class="fl">53.89714</span> us, ub <span class="fl">54.40775</span> us, ci <span class="fl">0.950</span>
+std dev<span class="fu">:</span> <span class="fl">1.288492</span> us, lb <span class="fl">1.016472</span> us, ub <span class="fl">1.923825</span> us, ci <span class="fl">0.950</span>
+found <span class="dv">5</span> outliers among <span class="dv">100</span> samples (<span class="fl">5.0</span><span class="fu">%</span>)
+  <span class="dv">4</span> (<span class="fl">4.0</span><span class="fu">%</span>) high mild
+  <span class="dv">1</span> (<span class="fl">1.0</span><span class="fu">%</span>) high severe
+variance introduced by outliers<span class="fu">:</span> <span class="fl">17.107</span><span class="fu">%</span>
+variance is moderately inflated by outliers
+
+benchmarking <span class="fu">sort/</span>haskell
+mean<span class="fu">:</span> <span class="fl">363.3632</span> us, lb <span class="fl">361.8362</span> us, ub <span class="fl">365.6127</span> us, ci <span class="fl">0.950</span>
+std dev<span class="fu">:</span> <span class="fl">9.413442</span> us, lb <span class="fl">7.040128</span> us, ub <span class="fl">14.36999</span> us, ci <span class="fl">0.950</span>
+found <span class="dv">4</span> outliers among <span class="dv">100</span> samples (<span class="fl">4.0</span><span class="fu">%</span>)
+  <span class="dv">3</span> (<span class="fl">3.0</span><span class="fu">%</span>) high mild
+  <span class="dv">1</span> (<span class="fl">1.0</span><span class="fu">%</span>) high severe
+variance introduced by outliers<span class="fu">:</span> <span class="fl">19.973</span><span class="fu">%</span>
+variance is moderately inflated by outliers
+<span class="dt">Benchmark</span> hoge<span class="fu">-</span>bench<span class="fu">:</span> <span class="dt">FINISH</span></code></pre></article><article><h3>結果</h3><p><a href="./result.html" alt="">結果</a></p><iframe src="./result.html">
+</iframe>
+</article><article><h2>まとめ</h2></article><article><h3>まとめ</h3><ul><li><p>QuickCheckでC++でもハッピープロパティテストライフを</p></li><li><p>ベンチも取れるよ</p></li><li><p>Haskellのツールチェインたのしい</p></li></ul></article></section></body></html>
