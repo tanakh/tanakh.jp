@@ -1,8 +1,15 @@
 --------------------------------------------------------------------------------
-{-# LANGUAGE OverloadedStrings #-}
-import           Data.Char   (toLower)
-import           Data.Monoid (mappend, mconcat)
+{-# LANGUAGE DeriveDataTypeable #-}
+{-# LANGUAGE OverloadedStrings  #-}
+
+import           Control.Monad (when)
+import           Data.Binary   (Binary (..))
+import           Data.Char     (toLower)
+import           Data.Monoid   (mappend, mconcat)
+import           Data.Typeable (Typeable (..))
 import           Hakyll
+import           System.Cmd    (system)
+import           System.Exit   (ExitCode (..))
 
 
 --------------------------------------------------------------------------------
@@ -73,6 +80,16 @@ main = hakyllWith config $ do
                 >>= loadAndApplyTemplate "templates/default.html" (postCtx tags)
                 >>= relativizeUrls
 
+    match "tools/*.html" $ do
+        route idRoute
+        compile $ getResourceBody
+            >>= loadAndApplyTemplate "templates/default.html" (postCtx tags)
+            >>= relativizeUrls
+
+    match "tools/*.hs" $ do
+        route $ setExtension "js"
+        compile fayCompiler
+
     match "templates/*" $ compile templateCompiler
 
 
@@ -97,3 +114,29 @@ config :: Configuration
 config = defaultConfiguration
     { deployCommand = "cp -r _site /c/Users/tanakh/Dropbox/www/tanakh.jp/"
     }
+
+--------------------------------------------------------------------------------
+-- | This will copy any file directly by using a system call
+data FayFile = FayFile
+    deriving (Show, Eq, Ord, Typeable)
+
+
+--------------------------------------------------------------------------------
+instance Binary FayFile where
+    put FayFile = return ()
+    get         = return FayFile
+
+
+--------------------------------------------------------------------------------
+instance Writable FayFile where
+    write dst item = do
+        ec <- system $
+            "fay --package fay-jquery "
+            ++ toFilePath (itemIdentifier item)
+            ++ " -O -o "
+            ++ dst
+        when (ec /= ExitSuccess) $ fail $ show ec
+
+--------------------------------------------------------------------------------
+fayCompiler :: Compiler (Item FayFile)
+fayCompiler = makeItem FayFile
