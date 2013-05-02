@@ -11,7 +11,6 @@ import           Hakyll
 import           System.Cmd    (system)
 import           System.Exit   (ExitCode (..))
 
-
 --------------------------------------------------------------------------------
 main :: IO ()
 main = hakyllWith config $ do
@@ -52,6 +51,30 @@ main = hakyllWith config $ do
                 >>= loadAndApplyTemplate "templates/default.html" archiveCtx
                 >>= relativizeUrls
 
+    match "tools/*.html" $ do
+        route idRoute
+        compile $ getResourceBody
+            >>= loadAndApplyTemplate "templates/tool.html"    defaultContext
+            >>= loadAndApplyTemplate "templates/default.html" defaultContext
+            >>= relativizeUrls
+
+    match "tools/*.hs" $ do
+        route $ setExtension "js"
+        compile fayCompiler
+
+    create ["tools.html"] $ do
+        route idRoute
+        compile $ do
+            let toolsCtx =
+                    field "posts" (\_ -> toolList "tools/*.html" recentFirst) `mappend`
+                    constField "title" "適当ツールズ" `mappend`
+                    defaultContext
+
+            makeItem ""
+                >>= loadAndApplyTemplate "templates/archive.html" toolsCtx
+                >>= loadAndApplyTemplate "templates/default.html" toolsCtx
+                >>= relativizeUrls
+
     -- Post tags
     tagsRules tags $ \tag pattern -> do
         let title = "Posts tagged " ++ tag
@@ -68,7 +91,6 @@ main = hakyllWith config $ do
                 >>= loadAndApplyTemplate "templates/default.html" defaultContext
                 >>= relativizeUrls
 
-
     match "index.html" $ do
         route idRoute
         compile $ do
@@ -79,16 +101,6 @@ main = hakyllWith config $ do
                 >>= applyAsTemplate indexCtx
                 >>= loadAndApplyTemplate "templates/default.html" (postCtx tags)
                 >>= relativizeUrls
-
-    match "tools/*.html" $ do
-        route idRoute
-        compile $ getResourceBody
-            >>= loadAndApplyTemplate "templates/default.html" (postCtx tags)
-            >>= relativizeUrls
-
-    match "tools/*.hs" $ do
-        route $ setExtension "js"
-        compile fayCompiler
 
     match "templates/*" $ compile templateCompiler
 
@@ -108,6 +120,15 @@ postList tags pattern sortFilter = do
     posts   <- sortFilter =<< loadAll pattern
     itemTpl <- loadBody "templates/post-item.html"
     applyTemplateList itemTpl (postCtx tags) posts
+
+
+--------------------------------------------------------------------------------
+toolList :: Pattern -> ([Item String] -> Compiler [Item String]) -> Compiler String
+toolList pattern sortFilter = do
+    tools   <- sortFilter =<< loadAll pattern
+    itemTpl <- loadBody "templates/tool-item.html"
+    applyTemplateList itemTpl defaultContext tools
+
 
 --------------------------------------------------------------------------------
 config :: Configuration
@@ -136,6 +157,7 @@ instance Writable FayFile where
             ++ " -O -o "
             ++ dst
         when (ec /= ExitSuccess) $ fail $ show ec
+
 
 --------------------------------------------------------------------------------
 fayCompiler :: Compiler (Item FayFile)
