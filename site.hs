@@ -133,7 +133,7 @@ toolList pattern sortFilter = do
 --------------------------------------------------------------------------------
 config :: Configuration
 config = defaultConfiguration
-    { deployCommand = "cp -r _site /c/Users/tanakh/Dropbox/www/tanakh.jp/"
+    { deployCommand = "rm -rf /c/Users/tanakh/Dropbox/www/tanakh.jp/_site; cp -r _site /c/Users/tanakh/Dropbox/www/tanakh.jp/"
     }
 
 --------------------------------------------------------------------------------

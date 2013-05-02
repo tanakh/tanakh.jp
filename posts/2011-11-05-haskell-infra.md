@@ -1,7 +1,7 @@
 ---
 title: HakyllとpandocとMighttpdでサイトを作った話
 description: HakyllとpandocとMighttpdでサイトを作った
-tags: haskell
+tags: Haskell, Hakyll
 ---
 
 ## このページについて
@@ -119,7 +119,7 @@ main = do
   match "css/*" $ do
     route idRoute
     compile compressCssCompiler
-  
+
   ...
 ~~~
 
