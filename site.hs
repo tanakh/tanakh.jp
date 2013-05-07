@@ -29,9 +29,9 @@ main = hakyllWith config $ do
             >>= loadAndApplyTemplate "templates/default.html" defaultContext
             >>= relativizeUrls
 
-    tags <- buildTags "posts/*" (fromCapture "tags/*.html" . map toLower)
+    tags <- buildTags "posts/*.md" (fromCapture "tags/*.html" . map toLower)
 
-    match "posts/*" $ do
+    match "posts/*.md" $ do
         route $ setExtension "html"
         compile $ pandocCompiler
             >>= loadAndApplyTemplate "templates/post.html"    (postCtx tags)
@@ -42,7 +42,7 @@ main = hakyllWith config $ do
         route idRoute
         compile $ do
             let archiveCtx =
-                    field "posts" (\_ -> postList tags "posts/*" recentFirst) `mappend`
+                    field "posts" (\_ -> postList tags "posts/*.md" recentFirst) `mappend`
                     constField "title" "Archives"              `mappend`
                     defaultContext
 
@@ -95,7 +95,7 @@ main = hakyllWith config $ do
         route idRoute
         compile $ do
             let indexCtx = field "posts" $ \_ ->
-                                postList tags "posts/*" $ fmap (take 3) . recentFirst
+                                postList tags "posts/*.md" $ fmap (take 3) . recentFirst
 
             getResourceBody
                 >>= applyAsTemplate indexCtx
