@@ -1,3 +1,16 @@
+body {
+  font-size: 16px;
+  font-family: "Open Sans",Calibri,Candara,Arial,Meiryo,sans-serif;
+}
+
+ul.nav {
+  font-size: 14px;
+}
+
+.info {
+  font-size: 14px;
+}
+
 .social {
   display: inline-block;
   height: 30px;
