@@ -5,13 +5,25 @@ import           JQuery
 import           Prelude
 
 totsuzenize :: String -> String
-totsuzenize str = unlines [hdr, ctr, ftr]
+totsuzenize str = unlines $ [hdr] ++ ctr ++ [ftr]
   where
-    hdr = "＿" ++ concat (replicate (w + 2) "人") ++ "＿"
-    ctr = "＞　" ++ str ++ "　＜"
-    ftr = "￣Y" ++ concat (replicate w "^Y") ++ "￣"
+    strs = lines str
+    w = maximum $ map width strs
+    adjs = map (adjust w) strs
 
-    w = (sum (map len str) + 1 ) `div` 2
+    hdr = "＿" ++ cr (w + 2) "人" ++ "＿"
+    ctr = map (\ss -> "＞　" ++ ss ++ "　＜") adjs
+    ftr = "￣Y" ++ cr (w + 1) "^Y" ++ "￣"
+
+    adjust w ss = p ++ ss ++ f where
+      v = width ss
+      m = w - v
+      p = cr (m `div` 2) "　" ++ cr (m `mod` 2) " "
+      f = cr (m `mod` 2) " " ++ cr (m `div` 2) "　"
+
+    cr n = concat . replicate n
+
+    width ss = (sum (map len ss) + 1 ) `div` 2
     len c
       | c <= '\x7f' = 1
       | otherwise = 2
