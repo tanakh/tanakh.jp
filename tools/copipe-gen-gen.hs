@@ -86,7 +86,7 @@ newQuery :: Fay CopipeQuery
 newQuery = ffi "new Parse.Query(Parse.Object.extend('CopipeObject'))"
 
 getQuery :: CopipeQuery -> String -> (CopipeGenerator -> Fay ()) -> Fay () -> Fay ()
-getQuery = ffi "(%1).get(%2, {success: function(object){(%3)(object.toJSON())}, error: function(object, err){(%4)()}})"
+getQuery = ffi "(%1).get(%2, {success: function(object){object.increment('pv',1);object.save();(%3)(object.toJSON())}, error: function(object, err){(%4)()}})"
 
 -- aux
 
