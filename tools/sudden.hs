@@ -13,7 +13,7 @@ totsuzenize str = unlines $ [hdr] ++ ctr ++ [ftr]
 
     hdr = "＿" ++ cr (w + 2) "人" ++ "＿"
     ctr = map (\ss -> "＞　" ++ ss ++ "　＜") adjs
-    ftr = "￣Y" ++ cr (w + 1) "^Y" ++ "￣"
+    ftr = "￣Y" ++ cr w "^Y" ++ "￣"
 
     adjust w ss = p ++ ss ++ f where
       v = width ss
