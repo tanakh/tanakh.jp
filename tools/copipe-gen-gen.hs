@@ -92,15 +92,18 @@ getPopular :: CopipeQuery -> (String -> CopipeGenerator -> Fay ()) -> Fay ()
 getPopular = ffi "(%1).greaterThan('pv',1).descending('pv').limit(10).find({success: function(results){console.log(results);for(var i=0;i<results.length;i++){(%2)(results[i].toJSON()['objectId'],results[i].toJSON())}}})"
 
 getRecent :: CopipeQuery -> (String -> CopipeGenerator -> Fay ()) -> Fay ()
-getRecent = ffi "(%1).greaterThan('pv',1).descending('updatedAt').limit(10).find({success: function(results){console.log(results);for(var i=0;i<results.length;i++){(%2)(results[i].toJSON()['objectId'],results[i].toJSON())}}})"
+getRecent = ffi "(%1).greaterThan('pv',0).descending('updatedAt').limit(10).find({success: function(results){console.log(results);for(var i=0;i<results.length;i++){(%2)(results[i].toJSON()['objectId'],results[i].toJSON())}}})"
 
 -- aux
 
 get :: a -> String -> Fay String
 get = ffi "(%1)[%2]"
 
-alert :: a -> Fay ()
-alert = ffi "alert(JSON.stringify(%1))"
+alert :: JQuery -> Fay ()
+alert = ffi "(%1).alert()"
+
+popover :: String -> String -> JQuery -> Fay ()
+popover = ffi "(%3).popover({title:%1,content:%2}).popover('show')"
 
 -- APP
 
@@ -259,6 +262,7 @@ generator cg = do
     select "#outputText" >>= getVal >>= tweet
     return False
     )
+  select "#ret" >>= onClick (\_ev -> location selfUrl >> return False)
   return ()
 
 gengen = do
@@ -271,16 +275,28 @@ gengen = do
   updateCount "#template" $ filter f
 
   select "#gen-gen" >>= onClick (\_ev -> do
-    select "#gen-gen" >>= buttonLoading
-
     title <- select "#cpp-title" >>= getValOrPh
     auth  <- select "#author" >>= getVal
     tmpl  <- select "#template"  >>= getValOrPh
 
-    obj <- newObject
-    save obj (CopipeGenerator title auth tmpl) $ \obj -> do
-      objId <- get obj "id"
-      location $ selfUrl ++ "?id=" ++ objId
+    let invTitle = length title >= 50
+        invAuth  = length auth  >= 30
+        invTmpl  = length tmpl  >= 500
+
+    when invTitle $ select "#cpp-title"
+      >>= popover "タイトルが長すぎます" "タイトルは50文字までです"
+    when invAuth  $ select "#author"
+      >>= popover "作者名が長すぎます" "作者名は30文字までです（空欄でも可）"
+    when invTmpl  $ select "#template"
+      >>= popover "テンプレートが長すぎます" "テンプレートは500文字までです"
+
+    when (not $ invTitle || invAuth || invTmpl) $ do
+      select "#gen-gen" >>= buttonLoading
+      obj <- newObject
+      save obj (CopipeGenerator title auth tmpl) $ \obj -> do
+        objId <- get obj "id"
+        location $ selfUrl ++ "?id=" ++ objId
+
     return False
     )
 
