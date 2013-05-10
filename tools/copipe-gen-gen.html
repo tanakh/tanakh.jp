@@ -1,0 +1,70 @@
+---
+title: コピペジェネレータ・ジェネレータ
+description: コピペジェネレータ・ジェネレータ
+date: 2013-05-10
+---
+
+<div id="create-tmpl" style="display:none">
+  <form class="form-horizontal">
+    <div class="control-group">
+      <label class="control-label" for="title">タイトル</label>
+      <div class="controls">
+        <input class="span6" type="text" id="cpp-title" placeholder="何の成果も得られませんでしたぁぁ！！">
+      </div>
+    </div>
+
+    <div class="control-group">
+      <label class="control-label" for="template">テンプレート</label>
+      <div class="controls">
+        <textarea class="span8" id="template" rows="10" placeholder="「でも{{息子}}は役に立ったんですよね。何か直接の{{手柄}}はなくても{{息子の死}}は{{人類の反撃の糧}}になったんですよね」
+「もちろん…いや…今回の{{調査}}で我々は、何の{{成果}}も得られませんでしたぁぁ！！私が無能なばかりにただいたずらに{{兵を死なせ}}、{{奴らの正体を突き止めることが}}、できませんでしたぁぁ！！」"></textarea>
+      </div>
+    </div>
+
+    <div class="control-group">
+      <label class="control-label" for="charCount">文字数</label>
+      <div class="controls">
+        <strong><div name="charCount"></div></strong>
+      </div>
+    </div>
+
+    <div class="control-group">
+      <div class="controls">
+        <a class="btn btn-primary" id="gen-gen">ジェネレータ生成</a>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div id="use-tmpl" style="display:none">
+  <form class="form-horizontal">
+    <div class="control-group">
+      <label class="control-label" for="template-ctrls">テンプレート</label>
+      <div class="controls">
+        <div id="template-ctrls"></div>
+      </div>
+    </div>
+
+    <div class="control-group">
+      <label class="control-label" for="outputText">生成文</label>
+      <div class="controls">
+        <textarea class="span8" id="outputText" rows="7"></textarea>
+      </div>
+    </div>
+
+    <div class="control-group">
+      <label class="control-label" for="charCount">文字数</label>
+      <div class="controls">
+        <strong><div name="charCount"></div></strong>
+      </div>
+    </div>
+
+    <div class="control-group">
+      <div class="controls">
+        <a class="btn btn-primary" id="tweet">ツイート</a>
+      </div>
+    </div>
+  </form>
+</div>
+
+<script type="text/javascript" src="copipe-gen-gen.js"></script>
