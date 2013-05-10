@@ -7,7 +7,7 @@ import           Prelude
 -- FFIs
 
 selfUrl :: String
-selfUrl = ffi "location.href"
+selfUrl = ffi "location.origin+location.pathname"
 
 param :: String
 param = ffi "location.search"
@@ -16,6 +16,9 @@ getParams :: [(String, String)]
 getParams = concatMap (f . split "=") $ split "&" $ drop 1 param where
   f [k, v] = [(k, v)]
   f _ = []
+
+location :: String -> Fay ()
+location = ffi "document.location=%1"
 
 split :: String -> String -> [String]
 split = ffi "%2.split(%1)"
@@ -61,13 +64,52 @@ getValOrPh jq = do
     then return ret
     else getAttr "placeholder" jq
 
+buttonLoading :: JQuery -> Fay JQuery
+buttonLoading = ffi "(%1).button('loading')"
+
+-- Parse.com
+
+initParse :: Fay ()
+initParse = ffi "Parse.initialize('MgF3lCxSQnmSdpyGRyAJdAYq8VSAvQw0diWiX9Yl','RROYSWTenBgSCL9LJZavM6AIk8MVhoaibizr1PWz')"
+
+data CopipeObject
+
+newObject :: Fay CopipeObject
+newObject = ffi "(function(){var o=Parse.Object.extend('CopipeObject');var r=new o();return r;})()"
+
+save :: CopipeObject -> Automatic a -> (CopipeObject -> Fay ()) -> Fay ()
+save = ffi "%1.save(%2, {success: (%3)})"
+
+data CopipeQuery
+
+newQuery :: Fay CopipeQuery
+newQuery = ffi "new Parse.Query(Parse.Object.extend('CopipeObject'))"
+
+getQuery :: CopipeQuery -> String -> (CopipeGenerator -> Fay ()) -> Fay () -> Fay ()
+getQuery = ffi "(%1).get(%2, {success: function(object){(%3)(object.toJSON())}, error: function(object, err){(%4)()}})"
+
+-- aux
+
+get :: a -> String -> Fay String
+get = ffi "(%1)[%2]"
+
+alert :: a -> Fay ()
+alert = ffi "alert(JSON.stringify(%1))"
+
 -- APP
+
+data CopipeGenerator
+  = CopipeGenerator
+    { title    :: String
+    , author   :: String
+    , template :: String
+    }
+    deriving (Show)
 
 data Template
   = Literal !String
   | Variable !String
   | Br
-  deriving (Show)
 
 parse :: String -> [Template]
 parse = intercalate [Br] . map parse' . lines
@@ -152,38 +194,66 @@ crToBr c = [c]
 
 main :: Fay ()
 main = do
-  case (lookup "title" getParams, lookup "tmpl" getParams) of
-    (Just title, Just tmpl) -> do
-      let genName = uriDecode title ++ "ジェネレータ"
-          ptmpl   = parse $ uriDecode tmpl
-      select "#tool-title" >>= setText genName
-      getElementById "template-ctrls" >>= genTemplate ptmpl
-      select "#use-tmpl" >>= setAttr "style" "display:block"
-      setTitle genName
-      select "#outputText"
-        >>= onChange (updateCount "#outputText" id)
-        >>= keyup (const $ updateCount "#outputText" id)
-      update ptmpl
+  case lookup "id" getParams of
+    Nothing -> gengen
+    Just gid -> do
+      initParse
+      q <- newQuery
+      getQuery q gid generator (location selfUrl)
 
-    _ -> do
-      let f c = not $ c == '{' || c == '}'
-      select "#template"
-        >>= onChange (updateCount "#template" $ filter f)
-        >>= keyup (const $ updateCount "#template" $ filter f)
-      updateCount "#template" $ filter f
-      select "#create-tmpl" >>= setAttr "style" "display:block"
-      return ()
+generator cg = do
+  let genName = uriDecode (title cg) ++ "ジェネレータ"
+      ptmpl   = parse $ uriDecode $ template cg
+  select "#tool-title" >>= setText genName >>= setAttr "style" "display:block"
+  getElementById "template-ctrls" >>= genTemplate ptmpl
 
-  select "#gen-gen" >>= onClick (\_ev -> do
-    title <- select "#cpp-title" >>= getValOrPh
-    tmpl  <- select "#template"  >>= getValOrPh
-    windowOpen $ selfUrl ++ "?title=" ++ uriEncode title ++ "&tmpl=" ++ uriEncode tmpl
-    return False
-    )
+  when (author cg /= "") $ do
+    getElementById "presented-by" >>= \pby -> do
+      pre <- createTextNode "by @"
+      appendChild pre pby
+      a <- createElement "a"
+      setId a "author-id"
+      appendChild a pby
+      select "#author-id"
+        >>= setText (author cg)
+        >>= setProp "href" ("https://twitter.com/" ++ author cg)
+
+  select "#use-tmpl" >>= setAttr "style" "display:block"
+  setTitle genName
+  select "#outputText"
+    >>= onChange (updateCount "#outputText" id)
+    >>= keyup (const $ updateCount "#outputText" id)
+  update ptmpl
 
   select "#tweet" >>= onClick (\_ev -> do
     select "#outputText" >>= getVal >>= tweet
     return False
     )
+  return ()
 
+gengen = do
+  select "#tool-title" >>= setAttr "style" "display:block"
+
+  let f c = not $ c == '{' || c == '}'
+  select "#template"
+    >>= onChange (updateCount "#template" $ filter f)
+    >>= keyup (const $ updateCount "#template" $ filter f)
+  updateCount "#template" $ filter f
+
+  select "#gen-gen" >>= onClick (\_ev -> do
+    select "#gen-gen" >>= buttonLoading
+
+    title <- select "#cpp-title" >>= getValOrPh
+    auth  <- select "#author" >>= getVal
+    tmpl  <- select "#template"  >>= getValOrPh
+
+    initParse
+    obj <- newObject
+    save obj (CopipeGenerator title auth tmpl) $ \obj -> do
+      objId <- get obj "id"
+      location $ selfUrl ++ "?id=" ++ objId
+    return False
+    )
+
+  select "#create-tmpl" >>= setAttr "style" "display:block"
   return ()

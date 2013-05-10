@@ -4,12 +4,26 @@ description: コピペジェネレータ・ジェネレータ
 date: 2013-05-10
 ---
 
+<script type="text/javascript">
+  $('#tool-title').hide();
+</script>
+
 <div id="create-tmpl" style="display:none">
   <form class="form-horizontal">
     <div class="control-group">
       <label class="control-label" for="title">タイトル</label>
       <div class="controls">
         <input class="span6" type="text" id="cpp-title" placeholder="何の成果も得られませんでしたぁぁ！！">
+      </div>
+    </div>
+
+    <div class="control-group">
+      <label class="control-label" for="title">作者</label>
+      <div class="controls">
+        <div class="input-prepend">
+          <span class="add-on">@</span>
+          <input class="span8" id="author" type="text" placeholder="Username">
+        </div>
       </div>
     </div>
 
@@ -22,7 +36,6 @@ date: 2013-05-10
     </div>
 
     <div class="control-group">
-      <label class="control-label" for="charCount">文字数</label>
       <div class="controls">
         <strong><div name="charCount"></div></strong>
       </div>
@@ -30,7 +43,7 @@ date: 2013-05-10
 
     <div class="control-group">
       <div class="controls">
-        <a class="btn btn-primary" id="gen-gen">ジェネレータ生成</a>
+        <a class="btn btn-primary" id="gen-gen" data-loading-text="生成中...">ジェネレータ生成</a>
       </div>
     </div>
   </form>
@@ -38,6 +51,12 @@ date: 2013-05-10
 
 <div id="use-tmpl" style="display:none">
   <form class="form-horizontal">
+    <div class="control-group">
+      <div class="controls">
+        <div id="presented-by"></div>
+      </div>
+    </div>
+
     <div class="control-group">
       <label class="control-label" for="template-ctrls">テンプレート</label>
       <div class="controls">
@@ -53,7 +72,6 @@ date: 2013-05-10
     </div>
 
     <div class="control-group">
-      <label class="control-label" for="charCount">文字数</label>
       <div class="controls">
         <strong><div name="charCount"></div></strong>
       </div>
@@ -67,4 +85,5 @@ date: 2013-05-10
   </form>
 </div>
 
+<script type="text/javascript" src="https://www.parse.com/downloads/javascript/parse/latest/min.js"></script>
 <script type="text/javascript" src="copipe-gen-gen.js"></script>
