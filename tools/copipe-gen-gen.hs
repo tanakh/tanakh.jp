@@ -88,6 +88,12 @@ newQuery = ffi "new Parse.Query(Parse.Object.extend('CopipeObject'))"
 getQuery :: CopipeQuery -> String -> (CopipeGenerator -> Fay ()) -> Fay () -> Fay ()
 getQuery = ffi "(%1).get(%2, {success: function(object){object.increment('pv',1);object.save();(%3)(object.toJSON())}, error: function(object, err){(%4)()}})"
 
+getPopular :: CopipeQuery -> (String -> CopipeGenerator -> Fay ()) -> Fay ()
+getPopular = ffi "(%1).greaterThan('pv',1).descending('pv').limit(10).find({success: function(results){console.log(results);for(var i=0;i<results.length;i++){(%2)(results[i].toJSON()['objectId'],results[i].toJSON())}}})"
+
+getRecent :: CopipeQuery -> (String -> CopipeGenerator -> Fay ()) -> Fay ()
+getRecent = ffi "(%1).greaterThan('pv',1).descending('updatedAt').limit(10).find({success: function(results){console.log(results);for(var i=0;i<results.length;i++){(%2)(results[i].toJSON()['objectId'],results[i].toJSON())}}})"
+
 -- aux
 
 get :: a -> String -> Fay String
@@ -194,12 +200,36 @@ crToBr c = [c]
 
 main :: Fay ()
 main = do
+  initParse
   case lookup "id" getParams of
     Nothing -> gengen
     Just gid -> do
-      initParse
       q <- newQuery
       getQuery q gid generator (location selfUrl)
+
+  q <- newQuery
+  getPopular q $ \id cg -> do
+    elm <- getElementById "popular"
+    let pid = "pop-" ++ id
+    li <- createElement "li"
+    c <- createElement "a"
+    setId c pid
+    appendChild c li
+    appendChild li elm
+    select ('#':pid) >>= setText (title cg) >>= setAttr "href" (selfUrl ++ "?id=" ++ id)
+    return ()
+
+  w <- newQuery
+  getRecent w $ \id cg -> do
+    elm <- getElementById "recent"
+    let pid = "rec-" ++ id
+    li <- createElement "li"
+    c <- createElement "a"
+    setId c pid
+    appendChild c li
+    appendChild li elm
+    select ('#':pid) >>= setText (title cg) >>= setAttr "href" (selfUrl ++ "?id=" ++ id)
+    return ()
 
 generator cg = do
   let genName = uriDecode (title cg) ++ "ジェネレータ"
@@ -247,7 +277,6 @@ gengen = do
     auth  <- select "#author" >>= getVal
     tmpl  <- select "#template"  >>= getValOrPh
 
-    initParse
     obj <- newObject
     save obj (CopipeGenerator title auth tmpl) $ \obj -> do
       objId <- get obj "id"
