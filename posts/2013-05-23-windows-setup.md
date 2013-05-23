@@ -239,7 +239,7 @@ powershellとcmdはそのまま適当にコマンドを貼ればOK。
 ちなみに、bashはHOME環境変数を参照するので、
 これも設定しておきましょう。
 HOMEは、Windowsの個人アカウントのホームと共有するのがおそらく便利です。
-Rapod Environment Editorで、`HOME=C:\Users\<ユーザ名>`を追加します。
+Rapid Environment Editorで、`HOME=C:\Users\<ユーザ名>`を追加します。
 
 ついでに、`LANG=C`を入れておくと、GNU系ツールが死ぬ確率がちょっと下がります。
 
