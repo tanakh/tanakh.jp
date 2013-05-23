@@ -9,6 +9,9 @@ import           Prelude
 selfUrl :: String
 selfUrl = ffi "location.origin+location.pathname"
 
+href :: String
+href = ffi "location.href"
+
 param :: String
 param = ffi "location.search"
 
@@ -38,7 +41,7 @@ setTitle = ffi "document.title=%1"
 tweet :: String -> Fay ()
 tweet msg = windowOpen $
   "https://twitter.com/intent/tweet?text=" ++ uriEncode (msg ++ "\n") ++
-  "&url=" ++ selfUrl
+  "&url=" ++ href
 
 -- DOM
 
