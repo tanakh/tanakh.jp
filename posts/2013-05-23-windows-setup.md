@@ -86,7 +86,7 @@ Windows8.1で何とかなればいいのですが。
     インストール不要でさくっと入れ替え。
     名前に反してVista以降でも問題なく使える。
 
-- Rapod Environment Editor <http://www.rapidee.com/en/about>
+- Rapid Environment Editor <http://www.rapidee.com/en/about>
 
     環境変数をいじるソフト。
     最近Twitterで「Windowsの環境変数設定ダイアログいつまでたってもしょぼいままだなあ」
