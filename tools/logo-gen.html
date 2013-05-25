@@ -1,0 +1,57 @@
+---
+title: 適当ロゴジェネレータ
+description: パッと見ロゴっぽいものを作る
+date: 2013-05-25
+---
+
+<style type="text/css">
+  @font-face {
+    font-family: Takao;
+    src: url(/img/TakaoMincho.ttf) format("truetype");
+  }
+</style>
+
+<div>
+  <font style="font-family: Takao">Inspired by </font>
+  <a href="https://twitter.com/uminosu/status/333822058133868544">https://twitter.com/uminosu/status/333822058133868544</a>
+</div>
+
+<form class="form-horizontal">
+  <div class="control-group">
+    <label class="control-label" for="title-logo">テキトーな文章</label>
+    <div class="controls">
+      <input type="text" id="title-logo" placeholder="唐揚げが好物">
+    </div>
+  </div>
+
+  <div class="control-group">
+    <label class="control-label" for="subtitle">とりあえずローマ字</label>
+    <div class="controls">
+      <input type="text" id="subtitle" placeholder="karaage umasugiru">
+    </div>
+  </div>
+
+  <div class="control-group">
+    <label class="control-label" for="bg-image">背景のイメージ</label>
+    <div class="controls">
+      <input type="text" id="bg-image" placeholder="sky">
+    </div>
+  </div>
+
+  <div class="control-group">
+    <label class="control-label" for="outputText">パッと見ロゴっぽいもの</label>
+    <div class="controls">
+      <canvas id ="cvs" width="320" height="240"></canvas>
+    </div>
+  </div>
+
+  <div class="control-group">
+    <div class="controls">
+      <a class="btn btn-primary" id="generate">生成</a>
+      <a class="btn btn-success" id="save">保存</a>
+      <!-- <a class="btn btn" id="tweet">ツイート</a> -->
+    </div>
+  </div>
+</form>
+
+<script type="text/javascript" src="logo-gen.js"></script>
