@@ -284,14 +284,14 @@ gengen = do
 
     let invTitle = length title >= 50
         invAuth  = length auth  >= 30
-        invTmpl  = length tmpl  >= 500
+        invTmpl  = length tmpl  >= 999
 
     when invTitle $ select "#cpp-title"
       >>= popover "タイトルが長すぎます" "タイトルは50文字までです"
     when invAuth  $ select "#author"
       >>= popover "作者名が長すぎます" "作者名は30文字までです（空欄でも可）"
     when invTmpl  $ select "#template"
-      >>= popover "テンプレートが長すぎます" "テンプレートは500文字までです"
+      >>= popover "テンプレートが長すぎます" "テンプレートは999文字までです"
 
     when (not $ invTitle || invAuth || invTmpl) $ do
       select "#gen-gen" >>= buttonLoading
