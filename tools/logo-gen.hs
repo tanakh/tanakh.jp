@@ -27,7 +27,7 @@ getContext :: String -> Fay Context
 getContext = ffi "(function(){var c=document.getElementById(%1);var ctx=c.getContext('2d');return ctx;})()"
 
 line :: Double -> Double -> Double -> Double -> Context -> Fay ()
-line = ffi "(function(){%5.beginPath();%5.moveTo(%1,%2);%5.lineTo(%3,%4);%5.stroke();})()"
+line = ffi "(function(){%5.shadowColor='rgb(255,255,255)';%5.shadowBlur=6;%5.lineWidth=Math.max(1,(%3-%2)/170);%5.beginPath();%5.moveTo(%1,%2);%5.lineTo(%3,%4);%5.stroke();})()"
 
 text :: Double -> Double -> String -> Double -> Context -> Fay ()
 text = ffi "(function(){%5.font='bold '+(%4)+'pt Takao';%5.shadowColor='rgb(255,255,255)';%5.shadowBlur=Math.min(15,%4/8);%5.fillText(%3,%1,%2);})()"
