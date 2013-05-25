@@ -39,6 +39,23 @@ date: 2013-05-25
   </div>
 
   <div class="control-group">
+    <label class="control-label" for="bg-image">サイズ</label>
+    <div class="controls">
+      <select id="size">
+        <option id="s1">320×240</option>
+        <option id="s2">640×480</option>
+        <option id="s3">800×600</option>
+        <option id="s4">1024×768</option>
+        <option id="s5">1366×768</option>
+        <option id="s6">1280×800</option>
+        <option id="s7">1600×1200</option>
+        <option id="s8">1920×1080</option>
+        <option id="s9">1920×1200</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="control-group">
     <label class="control-label" for="outputText">パッと見ロゴっぽいもの</label>
     <div class="controls">
       <canvas id ="cvs" width="320" height="240"></canvas>
@@ -47,7 +64,7 @@ date: 2013-05-25
 
   <div class="control-group">
     <div class="controls">
-      <a class="btn btn-primary" id="generate">生成</a>
+      <a class="btn btn-primary" data-loading-text="生成中..." id="generate">生成</a>
       <a class="btn btn-success" id="save">保存</a>
       <!-- <a class="btn btn" id="tweet">ツイート</a> -->
     </div>

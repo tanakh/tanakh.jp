@@ -15,13 +15,13 @@ endpoint = "http://api.flickr.com/services"
 data Photo
 
 photoUrl :: Photo -> String
-photoUrl = ffi "'http://www.corsproxy.com/farm'+%1.farm+'.staticflickr.com/'+%1.server+'/'+%1.id+'_'+%1.secret+'_z.jpg'"
+photoUrl = ffi "'http://www.corsproxy.com/farm'+%1.farm+'.staticflickr.com/'+%1.server+'/'+%1.id+'_'+%1.secret+'_b.jpg'"
 
 data Canvas
 data Context
 
-getElementById :: String -> Fay Canvas
-getElementById = ffi "document.getElementById(%1)"
+getCanvas :: String -> Fay Canvas
+getCanvas = ffi "document.getElementById(%1)"
 
 getContext :: String -> Fay Context
 getContext = ffi "(function(){var c=document.getElementById(%1);var ctx=c.getContext('2d');return ctx;})()"
@@ -30,7 +30,7 @@ line :: Double -> Double -> Double -> Double -> Context -> Fay ()
 line = ffi "(function(){%5.beginPath();%5.moveTo(%1,%2);%5.lineTo(%3,%4);%5.stroke();})()"
 
 text :: Double -> Double -> String -> Double -> Context -> Fay ()
-text = ffi "(function(){%5.font='bold '+(%4)+'pt Takao';%5.shadowColor='white';%5.shadowBlur=6;%5.fillText(%3,%1,%2);})()"
+text = ffi "(function(){%5.font='bold '+(%4)+'pt Takao';%5.shadowColor='rgb(255,255,255)';%5.shadowBlur=Math.min(15,%4/8);%5.fillText(%3,%1,%2);})()"
 
 measureWidth :: String -> Double -> Context -> Fay Double
 measureWidth = ffi "(function(){%3.font=(%2)+'pt Takao';var m=%3.measureText(%1);return m.width})()"
@@ -38,7 +38,7 @@ measureWidth = ffi "(function(){%3.font=(%2)+'pt Takao';var m=%3.measureText(%1)
 measureHeight :: String -> Double -> Context -> Fay Double
 measureHeight = ffi "(function(){%3.font=(%2)+'pt Takao';var m=%3.measureText(%1);return m.height})()"
 
-image :: Int -> Int -> String -> Context -> Fay () -> Fay ()
+image :: Double -> Double -> String -> Context -> Fay () -> Fay ()
 image = ffi "(function(){var img=new Image();img.crossOrigin='Anonymous';img.onload=function(){var scl=Math.min(img.width/%1,img.height/%2),ww=img.width/scl,hh=img.height/scl,dx=(ww-%1)/2,dy=(hh-%2)/2;console.log(img.width, img.height,%1, %2,ww,hh,scl,dx,dy);%4.drawImage(img,0,0,img.width,img.height,-dx,-dy,%1+dx,%2+dy);(%5)();};img.src=%3;})()"
 
 rnd :: Double -> Double -> Fay Double
@@ -68,6 +68,24 @@ twitterUploadUrl = "https://upload.twitter.com/1/statuses/update_with_media.json
 createReq :: String -> String -> Fay Object
 createReq = ffi "{'status':%1, 'media[]': (%2).split(',')[1]}"
 
+fillRect :: String -> Double -> Double -> Context -> Fay ()
+fillRect = ffi "(function(){%4.save();%4.fillStyle=%1;%4.fillRect(0,0,%2,%3);%4.restore()})()"
+
+toDouble :: String -> Double
+toDouble = ffi "parseFloat(%1)"
+
+btnLoading :: JQuery -> Fay ()
+btnLoading = ffi "%1.button('loading')"
+
+btnReset :: JQuery -> Fay ()
+btnReset = ffi "%1.button('reset')"
+
+clearCanvas :: String -> Fay ()
+clearCanvas cid = do
+  w <- select ("#" ++ cid) >>= getAttr "width"
+  h <- select ("#" ++ cid) >>= getAttr "height"
+  getContext cid >>= fillRect "rgb(127,127,127)" (toDouble w) (toDouble h)
+
 mapM :: (a -> Fay b) -> [a] -> Fay [b]
 mapM _ [] = return []
 mapM f (x:xs) = do
@@ -75,8 +93,10 @@ mapM f (x:xs) = do
   rs <- mapM f xs
   return $ r : rs
 
-drawLogo :: Double -> String -> String -> Context -> Fay ()
-drawLogo rwidth ss subtitle ctx = do
+isDigit c = '0' <= c && c <= '9'
+
+drawLogo :: Double -> Double -> String -> String -> Context -> Fay ()
+drawLogo rwidth rheight ss subtitle ctx = do
   let def = 40
   let hscs = map (\c -> if isHiragana c then 0.7 else 1.0) ss
   rsz <- mapM (\_c -> rnd 0.8 1.0) ss
@@ -84,8 +104,7 @@ drawLogo rwidth ss subtitle ctx = do
   mets <- mapM (\(c,s) -> measureWidth [c] (s * 40) ctx) $ zip ss sz
   let mwidth = sum mets + fromIntegral (length mets - 1) * 0.1
       scl = rwidth * 0.9 / mwidth
-
-      ypos = 120 -- TODO
+      ypos = rheight * 0.5
 
       go cs szs mts xpos first = case (cs, szs, mts) of
         (c:cs, sz:szs, m:mts) -> do
@@ -108,6 +127,8 @@ drawLogo rwidth ss subtitle ctx = do
 main :: Fay ()
 main = do
   select "#generate" >>= onClick (\_ev -> do
+    select "#generate" >>= btnLoading
+
     theme <- select "#bg-image" >>= getValOrPh
 
     let url = endpoint
@@ -126,22 +147,34 @@ main = do
     logo <- select "#title-logo" >>= getValOrPh
     subtitle <- select "#subtitle" >>= getValOrPh
 
-    let width = 320
-        height = 240
+    width <- select "#cvs" >>= getAttr "width"
+    height <- select "#cvs" >>= getAttr "height"
 
     let cb photos = do
           p <- rndPhoto photos
-          image width height (photoUrl p) ctx $
-            drawLogo (fromIntegral width) logo subtitle ctx
+          image (toDouble width) (toDouble height) (photoUrl p) ctx $ do
+            drawLogo (toDouble width) (toDouble height) logo subtitle ctx
+            select "#generate" >>= btnReset
 
-    ajax url cb (\fail x y -> print (fail, x, y))
+    ajax url cb (\_fail _x _y -> return ())
     return False
     )
 
   select "#save" >>= onClick (\_ev -> do
-    windowOpen =<< toDataUrl =<< getElementById "cvs"
+    windowOpen =<< toDataUrl =<< getCanvas "cvs"
     return False
     )
+
+  select "#size" >>= onChange (do
+    txt <- select "#size option:selected" >>= getText
+    case words $ map (\c -> if isDigit c then c else ' ') txt of
+      [w, h] -> do
+        select "#cvs" >>= setAttr "width" w >>= setAttr "height" h
+        clearCanvas "cvs"
+    return ()
+    )
+
+  clearCanvas "cvs"
 
 {-
   select "#tweet" >>= onClick (\_ev -> do
