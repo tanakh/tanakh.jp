@@ -242,18 +242,19 @@ main = do
         select ('#':pid) >>= setText (title cg) >>= setAttr "href" (selfUrl ++ "?id=" ++ id)
         return ()
 
-  newQuery >>= pCount (\cnt -> do
-    let pager sel pfx cur ppp = do
+  let pager sel pfx cnt query = go 0 15 where
+        go cur ppp = do
           let maxCur = max 0 $ (cnt + ppp - 1) `div` ppp * ppp - ppp
           select ("#"++sel++" *") >>= remove
-          newQuery >>= desc "pv" >>= pQuery cur ppp (addLink sel pfx)
-          onClick' ("#"++pfx++"init") $ pager sel pfx 0 ppp
-          onClick' ("#"++pfx++"prev") $ pager sel pfx (max 0 $ cur - ppp) ppp
-          onClick' ("#"++pfx++"next") $ pager sel pfx (min maxCur $ cur + ppp) ppp
-          onClick' ("#"++pfx++"last") $ pager sel pfx maxCur ppp
+          query >>= pQuery cur ppp (addLink sel pfx)
+          onClick' ("#"++pfx++"init") $ go 0 ppp
+          onClick' ("#"++pfx++"prev") $ go (max 0 $ cur - ppp) ppp
+          onClick' ("#"++pfx++"next") $ go (min maxCur $ cur + ppp) ppp
+          onClick' ("#"++pfx++"last") $ go maxCur ppp
 
-    pager "popular" "pop-" 0 15
-    pager "recent"  "rec-" 0 15
+  newQuery >>= pCount (\cnt -> do
+    pager "popular" "pop-" cnt $ newQuery >>= desc "pv"
+    pager "recent"  "rec-" cnt $ newQuery >>= desc "updateAt"
     )
 
 generator cg = do
