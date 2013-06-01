@@ -176,15 +176,4 @@ main = do
 
   clearCanvas "cvs"
 
-{-
-  select "#tweet" >>= onClick (\_ev -> do
-    logo <- select "#title-logo" >>= getValOrPh
-    subtitle <- select "#subtitle" >>= getValOrPh
-
-    req <- createReq (logo ++ " - " ++ subtitle) =<< toDataUrl =<< getElementById "cvs"
-    ajaxPost twitterUploadUrl req (\_ -> return ()) (\_ _ _ -> return ())
-    return False
-    )
--}
-
   return ()
