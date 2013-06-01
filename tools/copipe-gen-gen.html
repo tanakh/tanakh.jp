@@ -12,14 +12,22 @@ date: 2013-05-10
 <div id="create-tmpl" style="display:none">
   <form class="form-horizontal">
     <div class="control-group">
-      <label class="control-label" for="title">タイトル</label>
+      <label class="control-label" for="description">簡易説明</label>
+      <div class="controls" id="description">
+        コピペジェネレータを生成します。
+        <code>{{</code>と<code>}}</code>で囲んだ部分がプレースホルダになります。
+      </div>
+    </div>
+
+    <div class="control-group">
+      <label class="control-label" for="cpp-title">タイトル</label>
       <div class="controls">
         <input class="span6" type="text" id="cpp-title" placeholder="何の成果も得られませんでしたぁぁ！！">
       </div>
     </div>
 
     <div class="control-group">
-      <label class="control-label" for="title">作者</label>
+      <label class="control-label" for="author">作者</label>
       <div class="controls">
         <div class="input-prepend">
           <span class="add-on">@</span>
@@ -90,13 +98,48 @@ date: 2013-05-10
 <div class="container">
   <div class="span5">
     <h2>人気のジェネレータ</h2>
-    <ul id="popular">
-    </ul>
+
+    <a class="btn" id="pop-init"><i class="icon-fast-backward"></i></a>
+    <a class="btn" id="pop-prev"><i class="icon-step-backward"></i></a>
+    <a class="btn" id="pop-next"><i class="icon-step-forward" ></i></a>
+    <a class="btn" id="pop-last"><i class="icon-fast-forward" ></i></a>
+
+    <p>
+      <ul id="popular"></ul>
+    </p>
   </div>
   <div class="span5">
     <h2>最近のジェネレータ</h2>
-    <ul id="recent">
-    </ul>
+
+    <a class="btn" id="rec-init"><i class="icon-fast-backward"></i></a>
+    <a class="btn" id="rec-prev"><i class="icon-step-backward"></i></a>
+    <a class="btn" id="rec-next"><i class="icon-step-forward" ></i></a>
+    <a class="btn" id="rec-last"><i class="icon-fast-forward" ></i></a>
+
+    <p>
+      <ul id="recent"></ul>
+    </p>
+  </div>
+</div>
+
+<div class="container">
+  <div class="span10">
+    <h2>ジェネレータの検索</h2>
+    <div class="input-append">
+      <input class="span10" id="appendedDropdownButton" type="text">
+      <div class="btn-group">
+        <button class="btn dropdown-toggle" data-toggle="dropdown">
+          検索
+          <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+          <li><a href="#">適当に検索</a></li>
+          <li><a href="#">作者で検索</a></li>
+        </ul>
+      </div>
+    </div>
+    <div id="result">
+    </div>
   </div>
 </div>
 

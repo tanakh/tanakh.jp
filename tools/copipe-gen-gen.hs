@@ -91,11 +91,19 @@ newQuery = ffi "new Parse.Query(Parse.Object.extend('CopipeObject'))"
 getQuery :: CopipeQuery -> String -> (CopipeGenerator -> Fay ()) -> Fay () -> Fay ()
 getQuery = ffi "(%1).get(%2, {success: function(object){object.increment('pv',1);object.save();(%3)(object.toJSON())}, error: function(object, err){(%4)()}})"
 
-getPopular :: CopipeQuery -> (String -> CopipeGenerator -> Fay ()) -> Fay ()
-getPopular = ffi "(%1).greaterThan('pv',1).descending('pv').limit(10).find({success: function(results){console.log(results);for(var i=0;i<results.length;i++){(%2)(results[i].toJSON()['objectId'],results[i].toJSON())}}})"
+desc :: String -> CopipeQuery -> Fay CopipeQuery
+desc = ffi "(%2).descending(%1)"
 
-getRecent :: CopipeQuery -> (String -> CopipeGenerator -> Fay ()) -> Fay ()
-getRecent = ffi "(%1).greaterThan('pv',0).descending('updatedAt').limit(10).find({success: function(results){console.log(results);for(var i=0;i<results.length;i++){(%2)(results[i].toJSON()['objectId'],results[i].toJSON())}}})"
+pQuery :: Int -> Int -> (String -> CopipeGenerator -> Fay ()) -> CopipeQuery -> Fay ()
+pQuery = ffi "(%4).greaterThan('pv',0).skip(%1).limit(%2).find({success: function(results){for(var i=0;i<results.length;i++){(%3)(results[i].toJSON()['objectId'],results[i].toJSON())}}})"
+
+pCount :: (Int -> Fay ()) -> CopipeQuery -> Fay ()
+pCount = ffi "(%2).greaterThan('pv',0).count({success:function(num){(%1)(num);}})"
+
+{-
+searchOmni :: Int -> Int -> CopipeQuery -> (String -> CopipeGenerator -> Fay ()) -> Fay ()
+searchOmni = ffi "(%3).greaterThan('pv',0).contains('title', %2).skip(%1).limit(%2).find({success: function(results){console.log(results);for(var i=0;i<results.length;i++){(%4)(results[i].toJSON()['objectId'],results[i].toJSON())}}})"
+-}
 
 -- aux
 
@@ -107,6 +115,16 @@ alert = ffi "(%1).alert()"
 
 popover :: String -> String -> JQuery -> Fay ()
 popover = ffi "(%3).popover({title:%1,content:%2}).popover('show')"
+
+unless p = when (not p)
+
+unbind :: JQuery -> Fay JQuery
+unbind = ffi "(%1).unbind()"
+
+onClick' :: String -> (Fay a) -> Fay ()
+onClick' selector h = do
+  select selector >>= unbind
+  ((select selector >>=) . onClick) (\_ev -> h >> return False) >> return ()
 
 -- APP
 
@@ -213,29 +231,30 @@ main = do
       q <- newQuery
       getQuery q gid generator (location selfUrl)
 
-  q <- newQuery
-  getPopular q $ \id cg -> do
-    elm <- getElementById "popular"
-    let pid = "pop-" ++ id
-    li <- createElement "li"
-    c <- createElement "a"
-    setId c pid
-    appendChild c li
-    appendChild li elm
-    select ('#':pid) >>= setText (title cg) >>= setAttr "href" (selfUrl ++ "?id=" ++ id)
-    return ()
+  let addLink eid pfx id cg = do
+        elm <- getElementById eid
+        let pid = pfx ++ id
+        li <- createElement "li"
+        c <- createElement "a"
+        setId c pid
+        appendChild c li
+        appendChild li elm
+        select ('#':pid) >>= setText (title cg) >>= setAttr "href" (selfUrl ++ "?id=" ++ id)
+        return ()
 
-  w <- newQuery
-  getRecent w $ \id cg -> do
-    elm <- getElementById "recent"
-    let pid = "rec-" ++ id
-    li <- createElement "li"
-    c <- createElement "a"
-    setId c pid
-    appendChild c li
-    appendChild li elm
-    select ('#':pid) >>= setText (title cg) >>= setAttr "href" (selfUrl ++ "?id=" ++ id)
-    return ()
+  newQuery >>= pCount (\cnt -> do
+    let pager sel pfx cur ppp = do
+          let maxCur = max 0 $ (cnt + ppp - 1) `div` ppp * ppp - ppp
+          select ("#"++sel++" *") >>= remove
+          newQuery >>= desc "pv" >>= pQuery cur ppp (addLink sel pfx)
+          onClick' ("#"++pfx++"init") $ pager sel pfx 0 ppp
+          onClick' ("#"++pfx++"prev") $ pager sel pfx (max 0 $ cur - ppp) ppp
+          onClick' ("#"++pfx++"next") $ pager sel pfx (min maxCur $ cur + ppp) ppp
+          onClick' ("#"++pfx++"last") $ pager sel pfx maxCur ppp
+
+    pager "popular" "pop-" 0 15
+    pager "recent"  "rec-" 0 15
+    )
 
 generator cg = do
   let genName = uriDecode (title cg) ++ "ジェネレータ"
@@ -243,7 +262,7 @@ generator cg = do
   select "#tool-title" >>= setText genName >>= setAttr "style" "display:block"
   getElementById "template-ctrls" >>= genTemplate ptmpl
 
-  when (author cg /= "") $ do
+  when (author cg /= "") $
     getElementById "presented-by" >>= \pby -> do
       pre <- createTextNode "by @"
       appendChild pre pby
@@ -261,11 +280,9 @@ generator cg = do
     >>= keyup (const $ updateCount "#outputText" id)
   update ptmpl
 
-  select "#tweet" >>= onClick (\_ev -> do
-    select "#outputText" >>= getVal >>= tweet
-    return False
-    )
-  select "#ret" >>= onClick (\_ev -> location selfUrl >> return False)
+  onClick' "#tweet" $ select "#outputText" >>= getVal >>= tweet
+  onClick' "#ret"   $ location selfUrl
+
   return ()
 
 gengen = do
@@ -277,7 +294,7 @@ gengen = do
     >>= keyup (const $ updateCount "#template" $ filter f)
   updateCount "#template" $ filter f
 
-  select "#gen-gen" >>= onClick (\_ev -> do
+  onClick' "#gen-gen" $ do
     title <- select "#cpp-title" >>= getValOrPh
     auth  <- select "#author" >>= getVal
     tmpl  <- select "#template"  >>= getValOrPh
@@ -293,15 +310,12 @@ gengen = do
     when invTmpl  $ select "#template"
       >>= popover "テンプレートが長すぎます" "テンプレートは999文字までです"
 
-    when (not $ invTitle || invAuth || invTmpl) $ do
+    unless (invTitle || invAuth || invTmpl) $ do
       select "#gen-gen" >>= buttonLoading
       obj <- newObject
       save obj (CopipeGenerator title auth tmpl) $ \obj -> do
         objId <- get obj "id"
         location $ selfUrl ++ "?id=" ++ objId
-
-    return False
-    )
 
   select "#create-tmpl" >>= setAttr "style" "display:block"
   return ()
