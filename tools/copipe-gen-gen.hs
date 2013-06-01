@@ -70,6 +70,9 @@ getValOrPh jq = do
 buttonLoading :: JQuery -> Fay JQuery
 buttonLoading = ffi "(%1).button('loading')"
 
+onEnter :: Fay () -> JQuery -> Fay JQuery
+onEnter = ffi "(%2).keypress(function(e){if((e.which&&e.which==13)||(e.keyCode&&e.keyCode==13)){(%1)();}})"
+
 -- Parse.com
 
 initParse :: Fay ()
@@ -94,16 +97,17 @@ getQuery = ffi "(%1).get(%2, {success: function(object){object.increment('pv',1)
 desc :: String -> CopipeQuery -> Fay CopipeQuery
 desc = ffi "(%2).descending(%1)"
 
+contains :: String -> String -> CopipeQuery -> Fay CopipeQuery
+contains = ffi "(%3).contains(%1,%2)"
+
+orQuery :: CopipeQuery -> CopipeQuery -> Fay CopipeQuery
+orQuery = ffi "Parse.Query.or(%1,%2)"
+
 pQuery :: Int -> Int -> (String -> CopipeGenerator -> Fay ()) -> CopipeQuery -> Fay ()
 pQuery = ffi "(%4).greaterThan('pv',0).skip(%1).limit(%2).find({success: function(results){for(var i=0;i<results.length;i++){(%3)(results[i].toJSON()['objectId'],results[i].toJSON())}}})"
 
 pCount :: (Int -> Fay ()) -> CopipeQuery -> Fay ()
 pCount = ffi "(%2).greaterThan('pv',0).count({success:function(num){(%1)(num);}})"
-
-{-
-searchOmni :: Int -> Int -> CopipeQuery -> (String -> CopipeGenerator -> Fay ()) -> Fay ()
-searchOmni = ffi "(%3).greaterThan('pv',0).contains('title', %2).skip(%1).limit(%2).find({success: function(results){console.log(results);for(var i=0;i<results.length;i++){(%4)(results[i].toJSON()['objectId'],results[i].toJSON())}}})"
--}
 
 -- aux
 
@@ -124,7 +128,8 @@ unbind = ffi "(%1).unbind()"
 onClick' :: String -> (Fay a) -> Fay ()
 onClick' selector h = do
   select selector >>= unbind
-  ((select selector >>=) . onClick) (\_ev -> h >> return False) >> return ()
+  ((select selector >>=) . onClick) (\_ev -> h >> return False)
+  return ()
 
 -- APP
 
@@ -242,7 +247,7 @@ main = do
         select ('#':pid) >>= setText (title cg) >>= setAttr "href" (selfUrl ++ "?id=" ++ id)
         return ()
 
-  let pager sel pfx cnt query = go 0 15 where
+  let pager sel pfx cnt query = go 0 10 where
         go cur ppp = do
           let maxCur = max 0 $ (cnt + ppp - 1) `div` ppp * ppp - ppp
           select ("#"++sel++" *") >>= remove
@@ -252,10 +257,26 @@ main = do
           onClick' ("#"++pfx++"next") $ go (min maxCur $ cur + ppp) ppp
           onClick' ("#"++pfx++"last") $ go maxCur ppp
 
-  newQuery >>= pCount (\cnt -> do
+  ((newQuery >>=) . pCount) $ \cnt -> do
     pager "popular" "pop-" cnt $ newQuery >>= desc "pv"
     pager "recent"  "rec-" cnt $ newQuery >>= desc "updateAt"
-    )
+
+  let txtSearch = do
+        q <- select "#query-text" >>= getVal
+        when (q /= "") $
+          pager "search-result" "src-" 99999 $ do
+            a <- newQuery >>= contains "title" q
+            b <- newQuery >>= contains "template" q
+            orQuery a b
+
+  onClick' "#txt-search" txtSearch
+  select "#query-text" >>= onEnter txtSearch
+
+  onClick' "#author-search" $ do
+    q <- select "#query-text" >>= getVal
+    when (q /= "") $
+      pager "search-result" "src-" (-1) $
+        newQuery >>= contains "author" q
 
 generator cg = do
   let genName = uriDecode (title cg) ++ "ジェネレータ"

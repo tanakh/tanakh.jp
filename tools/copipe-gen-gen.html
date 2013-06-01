@@ -96,7 +96,7 @@ date: 2013-05-10
 </div>
 
 <div class="container">
-  <div class="span5">
+  <div class="span3">
     <h2>人気のジェネレータ</h2>
 
     <a class="btn" id="pop-init"><i class="icon-fast-backward"></i></a>
@@ -108,7 +108,8 @@ date: 2013-05-10
       <ul id="popular"></ul>
     </p>
   </div>
-  <div class="span5">
+
+  <div class="span3">
     <h2>最近のジェネレータ</h2>
 
     <a class="btn" id="rec-init"><i class="icon-fast-backward"></i></a>
@@ -120,25 +121,33 @@ date: 2013-05-10
       <ul id="recent"></ul>
     </p>
   </div>
-</div>
 
-<div class="container">
-  <div class="span10">
+  <div class="span4">
     <h2>ジェネレータの検索</h2>
-    <div class="input-append">
-      <input class="span10" id="appendedDropdownButton" type="text">
-      <div class="btn-group">
-        <button class="btn dropdown-toggle" data-toggle="dropdown">
-          検索
-          <span class="caret"></span>
-        </button>
-        <ul class="dropdown-menu">
-          <li><a href="#">適当に検索</a></li>
-          <li><a href="#">作者で検索</a></li>
-        </ul>
+    <p>
+      <a class="btn" id="src-init"><i class="icon-fast-backward"></i></a>
+      <a class="btn" id="src-prev"><i class="icon-step-backward"></i></a>
+      <a class="btn" id="src-next"><i class="icon-step-forward" ></i></a>
+      <a class="btn" id="src-last" style="visibility:hidden"><i class="icon-fast-forward" ></i></a>
+    </p>
+
+    <p>
+      <div class="input-append">
+        <input class="input-large" id="query-text" type="text">
+        <div class="btn-group">
+          <button class="btn dropdown-toggle" data-toggle="dropdown">
+            検索
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu">
+            <li><a id="txt-search">適当に検索</a></li>
+            <li><a id="author-search">作者で検索</a></li>
+          </ul>
+        </div>
       </div>
-    </div>
-    <div id="result">
+    </p>
+
+    <div id="search-result">
     </div>
   </div>
 </div>
