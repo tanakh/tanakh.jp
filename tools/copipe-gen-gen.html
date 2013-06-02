@@ -95,8 +95,10 @@ date: 2013-05-10
   </form>
 </div>
 
+<br>
+
 <div class="container">
-  <div class="span3">
+  <div class="span5">
     <h2>人気のジェネレータ</h2>
 
     <a class="btn" id="pop-init"><i class="icon-fast-backward"></i></a>
@@ -109,7 +111,7 @@ date: 2013-05-10
     </p>
   </div>
 
-  <div class="span3">
+  <div class="span5">
     <h2>最近のジェネレータ</h2>
 
     <a class="btn" id="rec-init"><i class="icon-fast-backward"></i></a>
@@ -121,16 +123,13 @@ date: 2013-05-10
       <ul id="recent"></ul>
     </p>
   </div>
+</div>
 
-  <div class="span4">
+<br>
+
+<div class="container">
+  <div class="span5">
     <h2>ジェネレータの検索</h2>
-    <p>
-      <a class="btn" id="src-init"><i class="icon-fast-backward"></i></a>
-      <a class="btn" id="src-prev"><i class="icon-step-backward"></i></a>
-      <a class="btn" id="src-next"><i class="icon-step-forward" ></i></a>
-      <a class="btn" id="src-last" style="visibility:hidden"><i class="icon-fast-forward" ></i></a>
-    </p>
-
     <p>
       <div class="input-append">
         <input class="input-large" id="query-text" type="text">
@@ -147,10 +146,37 @@ date: 2013-05-10
       </div>
     </p>
 
+    <p>
+      <a class="btn" id="src-init"><i class="icon-fast-backward"></i></a>
+      <a class="btn" id="src-prev"><i class="icon-step-backward"></i></a>
+      <a class="btn" id="src-next"><i class="icon-step-forward" ></i></a>
+      <a class="btn" id="src-last" style="visibility:hidden"><i class="icon-fast-forward" ></i></a>
+    </p>
+
     <div id="search-result">
     </div>
   </div>
+
+  <div class="span5">
+    <a class="twitter-timeline" href="https://twitter.com/search?q=copipe-gen-gen+exclude%3Aretweets" data-widget-id="341023947493617667">copipe-gen-gen exclude:retweets に関するツイート</a>
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+    <script>
+      $(window).load(function() {
+        function changeWidget() {
+          var twFrame = $('iframe.twitter-timeline');
+          if (twFrame.length > 0) {
+            twFrame.contents()
+              .find('h1').text('みんなのツイート');
+          } else {
+            setTimeout(changeWidget, 500);
+          }
+        }
+        changeWidget();
+      });
+    </script>
+  </div>
 </div>
+
 
 <hr>
 
