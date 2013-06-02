@@ -259,7 +259,7 @@ main = do
 
   ((newQuery >>=) . pCount) $ \cnt -> do
     pager "popular" "pop-" cnt $ newQuery >>= desc "pv"
-    pager "recent"  "rec-" cnt $ newQuery >>= desc "updateAt"
+    pager "recent"  "rec-" cnt $ newQuery >>= desc "updatedAt"
 
   let txtSearch = do
         q <- select "#query-text" >>= getVal
