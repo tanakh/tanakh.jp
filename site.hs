@@ -152,10 +152,9 @@ instance Binary FayFile where
 instance Writable FayFile where
     write dst item = do
         ec <- system $
-            "fay --package fay-jquery "
+            "fay --package fay-jquery,fay-text"
+            ++ " -o " ++ dst ++ " "
             ++ toFilePath (itemIdentifier item)
-            ++ " -O -o "
-            ++ dst
         when (ec /= ExitSuccess) $ fail $ show ec
 
 

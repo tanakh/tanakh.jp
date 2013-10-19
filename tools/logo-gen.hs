@@ -1,8 +1,12 @@
 {-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE OverloadedStrings #-}
 
+import qualified Fay.Text as T
 import           FFI
 import           JQuery
 import           Prelude
+
+(<>) = T.append
 
 -- flickr Photo search api
 -- http://www.flickr.com/services/api/flickr.photos.search.html
@@ -14,31 +18,31 @@ endpoint = "http://api.flickr.com/services"
 
 data Photo
 
-photoUrl :: Photo -> String
+photoUrl :: Photo -> T.Text
 photoUrl = ffi "'http://www.corsproxy.com/farm'+%1.farm+'.staticflickr.com/'+%1.server+'/'+%1.id+'_'+%1.secret+'_b.jpg'"
 
 data Canvas
 data Context
 
-getCanvas :: String -> Fay Canvas
+getCanvas :: T.Text -> Fay Canvas
 getCanvas = ffi "document.getElementById(%1)"
 
-getContext :: String -> Fay Context
+getContext :: T.Text -> Fay Context
 getContext = ffi "(function(){var c=document.getElementById(%1);var ctx=c.getContext('2d');return ctx;})()"
 
 line :: Double -> Double -> Double -> Double -> Context -> Fay ()
 line = ffi "(function(){%5.shadowColor='rgb(255,255,255)';%5.shadowBlur=6;%5.lineWidth=Math.max(1,(%3-%2)/170);%5.beginPath();%5.moveTo(%1,%2);%5.lineTo(%3,%4);%5.stroke();})()"
 
-text :: Double -> Double -> String -> Double -> Context -> Fay ()
+text :: Double -> Double -> T.Text -> Double -> Context -> Fay ()
 text = ffi "(function(){%5.font='bold '+(%4)+'pt Takao';%5.shadowColor='rgb(255,255,255)';%5.shadowBlur=Math.min(15,%4/8);%5.fillText(%3,%1,%2);})()"
 
-measureWidth :: String -> Double -> Context -> Fay Double
+measureWidth :: T.Text -> Double -> Context -> Fay Double
 measureWidth = ffi "(function(){%3.font=(%2)+'pt Takao';var m=%3.measureText(%1);return m.width})()"
 
-measureHeight :: String -> Double -> Context -> Fay Double
+measureHeight :: T.Text -> Double -> Context -> Fay Double
 measureHeight = ffi "(function(){%3.font=(%2)+'pt Takao';var m=%3.measureText(%1);return m.height})()"
 
-image :: Double -> Double -> String -> Context -> Fay () -> Fay ()
+image :: Double -> Double -> T.Text -> Context -> Fay () -> Fay ()
 image = ffi "(function(){var img=new Image();img.crossOrigin='Anonymous';img.onload=function(){var scl=Math.min(img.width/%1,img.height/%2),ww=img.width/scl,hh=img.height/scl,dx=(ww-%1)/2,dy=(hh-%2)/2;console.log(img.width, img.height,%1, %2,ww,hh,scl,dx,dy);%4.drawImage(img,0,0,img.width,img.height,-dx,-dy,%1+dx,%2+dy);(%5)();};img.src=%3;})()"
 
 rnd :: Double -> Double -> Fay Double
@@ -50,28 +54,28 @@ rndPhoto = ffi "%1.photos.photo[Math.floor(Math.random()*%1.photos.photo.length)
 isHiragana :: Char -> Bool
 isHiragana = ffi "%1.match(/^[\\u3040-\\u309F]+$/)"
 
-getValOrPh :: JQuery -> Fay String
+getValOrPh :: JQuery -> Fay T.Text
 getValOrPh jq = do
   ret <- getVal jq
   if ret /= ""
     then return ret
     else getAttr "placeholder" jq
 
-windowOpen :: String -> Fay ()
+windowOpen :: T.Text -> Fay ()
 windowOpen = ffi "window.open(%1)"
 
-toDataUrl :: Canvas -> Fay String
+toDataUrl :: Canvas -> Fay T.Text
 toDataUrl = ffi "%1.toDataURL()"
 
 twitterUploadUrl = "https://upload.twitter.com/1/statuses/update_with_media.json"
 
-createReq :: String -> String -> Fay Object
+createReq :: T.Text -> T.Text -> Fay Object
 createReq = ffi "{'status':%1, 'media[]': (%2).split(',')[1]}"
 
-fillRect :: String -> Double -> Double -> Context -> Fay ()
+fillRect :: T.Text -> Double -> Double -> Context -> Fay ()
 fillRect = ffi "(function(){%4.save();%4.fillStyle=%1;%4.fillRect(0,0,%2,%3);%4.restore()})()"
 
-toDouble :: String -> Double
+toDouble :: T.Text -> Double
 toDouble = ffi "parseFloat(%1)"
 
 btnLoading :: JQuery -> Fay ()
@@ -80,10 +84,10 @@ btnLoading = ffi "%1.button('loading')"
 btnReset :: JQuery -> Fay ()
 btnReset = ffi "%1.button('reset')"
 
-clearCanvas :: String -> Fay ()
+clearCanvas :: T.Text -> Fay ()
 clearCanvas cid = do
-  w <- select ("#" ++ cid) >>= getAttr "width"
-  h <- select ("#" ++ cid) >>= getAttr "height"
+  w <- select ("#" <> cid) >>= getAttr "width"
+  h <- select ("#" <> cid) >>= getAttr "height"
   getContext cid >>= fillRect "rgb(127,127,127)" (toDouble w) (toDouble h)
 
 mapM :: (a -> Fay b) -> [a] -> Fay [b]
@@ -95,13 +99,13 @@ mapM f (x:xs) = do
 
 isDigit c = '0' <= c && c <= '9'
 
-drawLogo :: Double -> Double -> String -> String -> Context -> Fay ()
+drawLogo :: Double -> Double -> T.Text -> T.Text -> Context -> Fay ()
 drawLogo rwidth rheight ss subtitle ctx = do
   let def = 40
-  let hscs = map (\c -> if isHiragana c then 0.7 else 1.0) ss
-  rsz <- mapM (\_c -> rnd 0.8 1.0) ss
+  let hscs = map (\c -> if isHiragana c then 0.7 else 1.0) (T.unpack ss)
+  rsz <- mapM (\_c -> rnd 0.8 1.0) (T.unpack ss)
   let sz = zipWith (*) (1 : repeat 0.8) $ zipWith (*) rsz hscs
-  mets <- mapM (\(c,s) -> measureWidth [c] (s * 40) ctx) $ zip ss sz
+  mets <- mapM (\(c,s) -> measureWidth (T.pack [c]) (s * 40) ctx) $ zip (T.unpack ss) sz
   let mwidth = sum mets + fromIntegral (length mets - 1) * 0.1
       scl = rwidth * 0.9 / mwidth
       ypos = rheight * 0.5
@@ -110,13 +114,13 @@ drawLogo rwidth rheight ss subtitle ctx = do
         (c:cs, sz:szs, m:mts) -> do
           dy <- rnd 0.2 0.5
           dy <- if first then return 0 else return dy
-          text xpos (ypos - dy * scl * def) [c] (sz*scl*40) ctx
+          text xpos (ypos - dy * scl * def) (T.pack [c]) (sz*scl*40) ctx
           when first $ do
             line (xpos + m *scl + 0.2 * def * scl) ypos (rwidth * 0.92) ypos ctx
           go cs szs mts (xpos + m * scl) False
         _ -> return ()
 
-  go ss sz mets (rwidth * 0.05) True
+  go (T.unpack ss) sz mets (rwidth * 0.05) True
 
   let ssize = def * scl * 0.2
   swidth <- measureWidth subtitle ssize ctx
@@ -132,16 +136,16 @@ main = do
     theme <- select "#bg-image" >>= getValOrPh
 
     let url = endpoint
-              ++ "/rest"
-              ++ "?method=flickr.photos.search"
-              ++ "&api_key=" ++ appkey
-              ++ "&text=" ++ theme
-              ++ "&sort=interestingness-desc"
-              -- ++ "&license=1"
-              ++ "&safe_search=1"
-              ++ "&content_type=1"
-              ++ "&media=photos"
-              ++ "&format=json&nojsoncallback=1"
+              <> "/rest"
+              <> "?method=flickr.photos.search"
+              <> "&api_key=" <> appkey
+              <> "&text=" <> theme
+              <> "&sort=interestingness-desc"
+              -- <> "&license=1"
+              <> "&safe_search=1"
+              <> "&content_type=1"
+              <> "&media=photos"
+              <> "&format=json&nojsoncallback=1"
     ctx <- getContext "cvs"
 
     logo <- select "#title-logo" >>= getValOrPh
@@ -167,9 +171,9 @@ main = do
 
   select "#size" >>= onChange (do
     txt <- select "#size option:selected" >>= getText
-    case words $ map (\c -> if isDigit c then c else ' ') txt of
+    case words $ map (\c -> if isDigit c then c else ' ') (T.unpack txt) of
       [w, h] -> do
-        select "#cvs" >>= setAttr "width" w >>= setAttr "height" h
+        select "#cvs" >>= setAttr "width" (T.pack w) >>= setAttr "height" (T.pack h)
         clearCanvas "cvs"
     return ()
     )

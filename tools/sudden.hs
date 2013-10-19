@@ -1,8 +1,12 @@
 {-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE OverloadedStrings #-}
 
+import qualified Fay.Text as T
 import           FFI
 import           JQuery
 import           Prelude
+
+(<>) = T.append
 
 totsuzenize :: String -> String
 totsuzenize str = unlines $ [hdr] ++ ctr ++ [ftr]
@@ -28,19 +32,19 @@ totsuzenize str = unlines $ [hdr] ++ ctr ++ [ftr]
       | c <= '\x7f' = 1
       | otherwise = 2
 
-selfUrl :: String
+selfUrl :: T.Text
 selfUrl = ffi "location.href"
 
-windowOpen :: String -> Fay ()
+windowOpen :: T.Text -> Fay ()
 windowOpen = ffi "window.open(%1)"
 
-uriEncode :: String -> String
+uriEncode :: T.Text -> T.Text
 uriEncode = ffi "encodeURIComponent(%1)"
 
-tweet :: String -> Fay ()
+tweet :: T.Text -> Fay ()
 tweet msg = windowOpen $
-  "https://twitter.com/intent/tweet?text=" ++ uriEncode (msg ++ "\n") ++
-  "&url=" ++ selfUrl
+  "https://twitter.com/intent/tweet?text=" <> uriEncode (msg <> "\n") <>
+  "&url=" <> selfUrl
 
 main :: Fay ()
 main = do
@@ -49,7 +53,7 @@ main = do
 
   let gen = do
         str <- getVal input
-        setVal (totsuzenize str) output
+        setVal (T.pack $ totsuzenize $ T.unpack str) output
         return ()
 
   keyup (const gen) input
