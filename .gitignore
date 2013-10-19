@@ -5,3 +5,4 @@ _site/
 css/bootstrap.min.css_
 *.sublime-project
 *.sublime-workspace
+dist/
