@@ -18,7 +18,7 @@ main = shelly $ do
 
   files <- lsT "_site"
   forM_ files $ \file -> do
-    run_ "cp" ["-r", "_site/" <> file, "."]
+    run_ "cp" ["-r", file, "."]
 
   files <- findWhen test_f "_site"
   forM_ files $ \file -> do
