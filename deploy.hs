@@ -4,6 +4,7 @@
 import Shelly
 import qualified Data.Text as T
 import Control.Monad
+import Data.Monoid
 
 default (T.Text)
 
@@ -14,7 +15,10 @@ main :: IO ()
 main = shelly $ do
   run_ "cabal" ["run", "tanakh-jp", "rebuild"]
   git_ "checkout" ["gh-pages"]
-  run_ "cp" ["-r", "_site/*", "."]
+
+  files <- lsT "_site"
+  forM_ files $ \file -> do
+    run_ "cp" ["-r", "_site/" <> file, "."]
 
   files <- findWhen test_f "_site"
   forM_ files $ \file -> do
