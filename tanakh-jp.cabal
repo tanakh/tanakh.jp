@@ -1,24 +1,27 @@
 name:                tanakh-jp
 version:             0.1.0.0
--- synopsis:            
--- description:         
+synopsis:            http://tanakh.jp/
+description:         http://tanakh.jp/
 license:             BSD3
 license-file:        LICENSE
 author:              Hideyuki Tanaka
 maintainer:          tanaka.hideyuki@gmail.com
--- copyright:           
+copyright:           (c) Hideyuki Tanaka
 category:            Web
 build-type:          Simple
--- extra-source-files:  
 cabal-version:       >=1.10
 
 executable tanakh-jp
   main-is:             site.hs
-  -- other-modules:       
-  -- other-extensions:    
-  build-depends:       base >=4.6 && <4.7
+  build-depends:       base >=4.6
                      , process
                      , hakyll >=4.4
                      , binary
-  -- hs-source-dirs:      
+  default-language:    Haskell2010
+
+executable deploy
+  main-is:             deploy.hs
+  build-depends:       base >=4.6
+                     , shelly >=1.3
+                     , text >=0.11
   default-language:    Haskell2010
