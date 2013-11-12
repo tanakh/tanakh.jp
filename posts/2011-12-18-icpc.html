@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <title>私と競技プログラミング。あるいは普通のプログラマがICPC世界大会に出場するまでとその後 - 純粋関数空間</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="../css/bootstrap-responsive.min.css" rel="stylesheet" media="screen">
+    <link href="../css/syntax.css" rel="stylesheet" media="screen">
+    <link href="../css/docs.css" rel="stylesheet" media="screen">
+
+    <script type="text/javascript" src="http://s.hatena.ne.jp/js/HatenaStar.js"></script>
+    <script type="text/javascript">
+        Hatena.Star.Token = '448676af7a3fe5b6511e9789fbaed5a26da61054';
+        Hatena.Star.SiteConfig = {
+            entryNodes: {
+                '.post-title': {
+                    uri: 'document.location',
+                    title: 'document.title',
+                    container: 'parent'
+                }
+            }
+        };
+    </script>
+  </head>
+  <body>
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+
+    <div class="container-fluid">
+        <div class="navbar">
+            <div class="navbar-inner">
+                <a class="brand" href="../">tanakh.jp</a>
+
+                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+
+                <div class="nav-collapse">
+                    <ul class="nav">
+                        <li><a href="../">Home</a></li>
+                        <li><a href="../about.html">About</a></li>
+                        <li><a href="../contact.html">Contact</a></li>
+                        <li><a href="../pub.html">Publications</a></li>
+                        <li><a href="../tools.html">Tools</a></li>
+                        <li><a href="../archive.html">Archive</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="row-fluid">
+            <div class="span1"></div>
+            <div class="span10">
+                <div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+<h2 class="post-title">私と競技プログラミング。あるいは普通のプログラマがICPC世界大会に出場するまでとその後</h2>
+
+<div class="info">Posted on December 18, 2011, Tags: <a href="../tags/icpc.html">ICPC</a></div>
+
+<!-- Social Buttons -->
+<div class="social">
+    <div class="hatena">
+        <a href="http://b.hatena.ne.jp/entry/tanakh.jp/posts/2011-12-18-icpc.html" class="hatena-bookmark-button" data-hatena-bookmark-title="私と競技プログラミング。あるいは普通のプログラマがICPC世界大会に出場するまでとその後 - tanakh.jp" data-hatena-bookmark-layout="standard-balloon" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+    </div>
+    <div class="facebook">
+        <div class="fb-like" data-href="http://tanakh.jp/posts/2011-12-18-icpc.html" data-send="false" data-layout="button_count" data-width="450" data-show-faces="false" data-font="arial"></div>
+    </div>
+    <div class="gplus">
+        <!-- +1 ボタン を表示したい位置に次のタグを貼り付けてください。 -->
+        <div class="g-plusone" data-size="medium" data-href="http://tanakh.jp/posts/2011-12-18-icpc.html"></div>
+        <!-- 最後の +1 ボタン タグの後に次のタグを貼り付けてください。 -->
+        <script type="text/javascript">
+          (function() {
+            var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+            po.src = 'https://apis.google.com/js/plusone.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+          })();
+        </script>
+    </div>
+    <div class="twitter">
+        <a href="https://twitter.com/share" class="twitter-share-button" data-via="tanakh" data-lang="ja">ツイート</a>
+        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+    </div>
+</div>
+
+<hr>
+
+<p>この記事は <a href="http://partake.in/events/ee35b200-e151-44c1-b123-482d0a7447b5">Competitive Programming Advent Calendar</a> の18日目の記事です。</p>
+<h2 id="はじめに">はじめに</h2>
+<p>アルゴリズムやその他の何らかのダイレクトに役に立つコンテンツは、 おそらく他の多くの方によって充実していることであろうかと思いますので、 私は大して役に立たないことを取り留めもなく書き綴ることにします。</p>
+<p>なぜ私のような普通のプログラマが、 当時競技プログラミングの世界のトップに立つことになったのか。</p>
+<h2 id="競技プログラミングを考える">競技プログラミングを考える</h2>
+<p>「競技プログラミング」という単語がにわかにWeb界隈を賑わせはじめたのは 私が知るかぎりではそんなに歴史のあるものではないと思います。 おそらく「競技プログラマ」という単語及びそれが指し示す人たちの出現と同時期に 適切な語を探す形で生まれたのでしょう。</p>
+<p>しかし、プログラミングの技能を競うという試みは新しいものではありません。 それはICPCが30年以上の歴史を誇るということ、 そして7年ほど前に私もそこに名を連ねているということが示しています。 いわゆるProblem Solving以外にも、 プログラマたちはプログラミング技能というものを様々な尺度で 競い合ってきたのです。</p>
+<ul>
+<li>ICPC / TopCoder / CodeJam / Codeforces - コーディングの速さと正確さ</li>
+<li>Sort Benchmark - コードの速さ</li>
+<li>CodeGolf - コードの短さ</li>
+<li>ICCC - コードの読みにくさ</li>
+<li>ICFP Contest - プログラミング言語の優位性・プログラマのアレゲさ</li>
+</ul>
+<p>しかし近年で日本語の単語としての「競技プログラミング」では、 狭義的には一つ目だけを指すことが多いようです。 さしずめ狭義競技プログラミングとでもいいましょうか。 これに関して、日本ではここ数年である潮流がありました。 その出現はTopCoderに遡るかと思います。 まずはインターネットの普及、 それからTopCoderによるインターネット上での定期的コンペが 開始されたのがTopCoderの始まった2005年頃。 この頃に中学生以下だった人たちが事実上の英才教育を受ける形で、 これに関する技能を底上げしていきました。 このあたりは最近の事情に詳しい人なら説明は不要かと思います。</p>
+<p>さて、「競技プログラマ」と呼ばれる人たちは幾つかの世代に分けられるかと思います。 日本の（狭義）競技プログラミングの源流は1990年後半にさかのぼります。 もともとプログラミングスキルの高い人達が、 その能力をたまたまICPCという形式で世界に問うていたのが 最初の世代の人達でしょうか。 コンテストの知名度の向上、それに伴い 世界への切符を争うようになった第2世代。 OBの人達によりOB会が結成され、 合宿などが開催されるようになり、 そのあたりの訓練を受けるようになった第3世代。 私はこのあたりに入るかと思います。 そして、TopCoder後の新世代。 彼らはまだ現役世代でしょうか。</p>
+<p>いずれにせよ、いわゆる競技プログラマとしての スキルは今のところ年代を経るごとに 単調増加しているように見えます。</p>
+<h2 id="私とプログラミング">私とプログラミング</h2>
+<p>私がプログラミングを始めたのは、 遊び道具としてのコンピュータを作るためでした。 ゲームが好きだけど、お金が無いのでゲームは買えない。 コンピュータ（当時はマイコンと言った）を貰ったはいいが、 BASICでプログラムを書かなければ何も出来ない。 そうなると選択肢はひとつ、ゲームプログラマになるしかありません。</p>
+<p>小学生の時からゲームプログラミングを始めて、 中学生の時は毎月1本ぐらいのペースで しょうもないゲームを量産していました。</p>
+<p>高校に入ると、Windowsマシンを手に入れてC++を始めて、 市販ゲームと同等のゲームが作れるようになって、 それと同時にプログラムの複雑さと戦う必要に迫られるようになり、 それから興味がプログラムに関するプログラムに 傾倒してゆくのですが、それはまた別の機会に。</p>
+<h2 id="私と競技プログラミング">私と競技プログラミング</h2>
+<p>初めて私が競技プログラミングに出会ったのはSuperCon’99でした。 部の先輩がチラシを持ってきたのが知ったきっかけだと思います。 当時、競技プログラミングなんて言葉はおろか、 インターネット回線すらありませんでしたから、 図書館に通いつめてなんとか解法を考えて、 フロッピーにソースコードを詰め込んで封筒に突っ込んで郵送をした記憶があります。 それはともかく、私は当時高校2年生でしたがまさに井の中の蛙で、 プログラミングの腕に関しては高校生最強を吹聴して回っておりましたので、 まあ通らないわけがないだろうとタカをくくっていたのですが、 SuperConからは待てど暮らせど返事は来ず、 それが結局私の最初の競技プログラミングへの参加ということになりました。</p>
+<p>それでそのまま翌年になりますが、再度のSuperConです。 私は高3になり能力も前年からかなり向上し、 念願のインターネット回線も手に入れ、 万全の体制でオンライン申込みをしました。 はたしてその甲斐はあり無事予選通過、 さらに本戦優勝という結果を残すことが出来ました。 これが私のプログラミングコンテスト最初の勝利であり、 勘違いの始まりでもありました。</p>
+<h2 id="icpcとの出会い">ICPCとの出会い</h2>
+<p>さて、私は大学に入りました。 それで夏前に、ICPCのチラシが授業で配られたのですが、 その年は華麗にスルーしていました。 3人1組というのになにか引っかかるものを感じたといえば聞こえが良いです。 自分は強いけど、3人1組だと勝てないかもしれない。 でも本当のところは、一緒に出る人がいないでござる状態というわけで。</p>
+<p>それで大学1年生の時は、フリーウェアの開発に精を出したり、 某商用ゲームの開発に携わったりしておりまして、 そんなことはすっかり忘れていたのです。</p>
+<p>大学2年生になり、高校の後輩が同じ大学に入ってきて、 私は当時から目をつけていた彼をICPC誘うことにします。 それが今も交流の深い <span class="citation">[@nushio]</span>(https://twitter.com/nushio) さんなのですが、 彼と、後もう一人同じ学科の人に出てもらって参加したわけです。 しかし、結果は残念ながら予選敗退。 大学内順位が3位だった気がします。 その時は酷く落ち込みました。 終わったあとに3人で食べた牛丼が未だに忘れられません。 それなりに自信もあったわけで。</p>
+<p>敗因としては、</p>
+<ul>
+<li>予選環境がLinuxなのに、Linuxをほとんど触ったことがなかった</li>
+<li>エディタがEmacsだったのに、Emacsをほとんど触ったことがなかった</li>
+<li>予選環境が英語キーボードなのに、英語キーボードを触ったことがなかった</li>
+<li>STLを使っていなかった</li>
+</ul>
+<p>問題自体は大して難しくはなかったと記憶しています。 それなのに5問中2問しか解けなくてもどかしくて悔しかった。 その記憶をかき消すために、Linuxを入れ、Emacsを使い、英語キーボードを買い、 練習サイトで練習するようになりました。</p>
+<p>そして次の年、新たに入学してきた後輩を誘い、 盤石の態勢で予選を突破します。 しかしアジア地区予選でこっぴどく敗北します。 最初の1時間30分で3問を解いて、 残りの時間ほとんど何も出来ずに終ってしまい、 何か壁のようなものを感じました。</p>
+<p>考えたらわかるもの。</p>
+<p>自明な問題。</p>
+<p>考えてもわからないもの。</p>
+<p>有名な問題。</p>
+<p>考えなければならないもの。</p>
+<p>有名問題の応用。</p>
+<p>ICPCに限らず、短時間のコンペで出題される問題には傾向があります。 C/C++、Java（、Pascal）の標準ライブラリのみを用いて、 1時間もかからずに1から記述できなければいけないという制限がある為です。 自ずから利用できるアルゴリズムには制約がかかり、 TopCoderでは、使いやすさからDPが非常に好んで採用されているように思います。</p>
+<p>オンラインジャッジサイトでの解答数を50→200まで上積みし、 翌年の国内予選は5位で通過します。 それでも当時のトップチームとの実力差は歴然としたものを感じていました。</p>
+<h2 id="合宿への参加">合宿への参加</h2>
+<p>その頃日本チームの成績の底上げを目的として、 予選上位通過者を対象に強化合宿が行われるようになりました。 たしか私が大学4年の時に第一回が行われたと記憶しています。 それまではチーム名と、その恐ろしい実力しか知らなかった人達と実際に 顔を付き合わせて3日3晩戦い続けたのです。 衝撃でした。 これが私の人生に与えた影響は計り知れません。 当時の最強チームGokuriの面々は今でも最も尊敬する人達ですし、 この時出会って、その後2年間にわたりライバルであったGNCの西川さんとは 会社を立ち上げることにもなりました。</p>
+<p>合宿自体は特に振るったわけでもなかったのですが、 上位のチームの人達が当然やっていることを 自分たちが全くやっていなかったことに気付かされました。</p>
+<p><strong>アルゴリズムの網羅的勉強を一回もしたことがなかった！</strong></p>
+<p>私は当時お金が無かったので、本もほとんど買わず、 知識は作るプログラムに応じてオンデマンドで勉強してきたものでした。 投機的に学習するという発想がそもそもなかったのでしょうか。</p>
+<p>でも強くなりたかった私は、 ロバートセジウィックの「アルゴリズムC++」 を泣く泣く大枚をはたいて購入し、通して読んで勉強しました。</p>
+<p>その甲斐もあって、その年のアジア地区予選で上海交通大学に次ぐ2位になります。 それから世界大会に出場して、挫折を経験し、 再度の世界への挑戦、そして挫折。</p>
+<p>と続いてゆくのですが、 転機は合宿への参加だと思います。 実際に会って相まみえると、 負けて悔しいという感情が恐ろしいほどに増幅されます。 もともと負けず嫌いというのもあって、 とてもよい方向の刺激を受けることができました。</p>
+<h2 id="競技プログラミングをやって得られたもの">競技プログラミングをやって得られたもの</h2>
+<p>思い出話はこのあたりにして、 競技プログラミングが私にもたらしたものでも語りましょうか。</p>
+<ul>
+<li>正確なコーディング</li>
+</ul>
+<p>自分で言うのも何ですが、普通の人より正確にコードが書けると思います。 というのも、ICPCではコードの正確さがスコアに直結するからです。 正確なコードを速く書くために、正確に書きやすいコーディングスタイルを自然に追い求めるようになります。 同時期にHaskellを勉強していたこともあり、 どうプログラムを書けばバグが出にくいかということにとても敏感になりました。 加えて、コーナーケースにも敏感になります。 コーナーケースで間違えるという経験を何度もすることになるので、 コードを書くときに自然と頭の片隅に常にコーナーケースが意識されるようになります。</p>
+<ul>
+<li>思ったことをすぐにコードに落とせるようになる</li>
+</ul>
+<p>やりたいことを思い描けば、 次の瞬間には、ほぼオプティマルな形でコードが完成しています。 慣れてない人は割りとそれができない印象です。</p>
+<ul>
+<li>計算量のオーダが瞬時に見積もれるようになる・どれぐらいまで現実的な時間で動作するかなど</li>
+</ul>
+<p>アルゴリズムやコードがどれぐらいの時間で動作するのか だいたい分かるようになりました。 その直感に反するほど遅いケースなど、 ボトルネックの存在が見抜けるように。</p>
+<ul>
+<li>それ、○○でできるよ！というのが見抜けるように</li>
+</ul>
+<p>解くべき問題が与えられたときに、それがどれぐらい難しいのか分かるようになりました。 それには既知の問題を広範囲にわたって知る必要があって、 問題集としてICPCなどは優秀かと。</p>
+<h2 id="競技プログラミングへ思うところ">競技プログラミングへ思うところ</h2>
+<p>競技プログラミングが云々という話は、いろいろな所でされていますが、</p>
+<ul>
+<li>競技プログラミングをしていた人のコードは汚い</li>
+</ul>
+<p>人それぞれでしょう。私は自分のコードは綺麗だと思います。 競技プログラミングをしていた人は、同じアルゴリズムを何度も実装しているので、 経験がない人よりも一発で簡潔なコードを書けるという良い傾向はあると思います。</p>
+<p>競技プログラミングの後遺症として変なマクロを使い出す人もいたりしますが、 これは言語の表現力を補うためのものですし、手の運動をしているだけで お金がもらえるというのは社会人にとっては願ったり叶ったりなので、 それがわかれば矯正すればすぐに治るでしょう。</p>
+<ul>
+<li>大きなプログラムが書けない</li>
+</ul>
+<p>人それぞれでしょう。私はICPCやっている時もそれなりに規模の大きなプログラムを書いていましたし、 もともとプログラムが得意な人がそれを生かして競技プログラミングに出ているケースが多いと思います。 最近は競技プログラミングからプログラミングに入った人も多そうですけど、 それは少し危惧しています。 あるいは、そもそもプログラミングをプログラムを作る手段としては 興味が持てない人が出てくるんじゃないかとか。</p>
+<ul>
+<li>こんなのができてもなんにもならない・できないけどすごい人はいくらでもいる</li>
+</ul>
+<p>迷路の探索とかが意外と書ける人が少なくて、その反論で言われているのを見ましたが、 「掛け算ができないけどすごい数学者なんだ」のようにしか見えません。 できてもなんにもならないけども、できないと言うことは プログラマとして何か劣っているということです。</p>
+<h2 id="おわりに">おわりに</h2>
+<p>思った通り取り留めのない話になってしまいました。 旧世代の競技プログラマの戯言だと思ってもらえば。</p>
+<p>まあ、なによりプログラミングの能力を他人と競いあうのはとても楽しい！ お金もかからないし、勉強にもなるし一石二鳥じゃないか。</p>
+<p>何事も頂点を極めるのは大変です。 僕以外の歴代覇者はみんな化物揃いだと思います。 勝てなくても、そういう人のコーディングを間近で見れるだけでも それは貴重な機会だったりします。</p>
+<p>最後になりますが、 競技プログラミング、特に私としては、ICPCに参加して 本当に良かったと思っています。 人脈にしても、スキルにしても。青春を賭するのに十分値するものだと思います。 私もまだ引退したわけではないので、 TopCoderなどにリハビリとして定期的に参加したいものです。</p>
+<h2 id="告知">告知！</h2>
+<p>宣伝で恐縮ですが、来るコミックマーケットC81にて、</p>
+<p><a href="http://www.paraiso-lang.org/ikmsm/books/c81.html">簡約!? λカ娘(二期)</a></p>
+<p>という本が頒布されます。 私も幾つか寄稿しております。 Haskellの話＋ ICPC的な話も書きまして、 これは純娯楽小説みたいな形になっておりますので、 お気軽に楽しめるかと思います。 お立ち寄りの際はぜひ手にお取りください。</p>
+
+<br>
+
+<script type="text/javascript"><!--
+google_ad_client = "ca-pub-2554934724722249";
+/* normal */
+google_ad_slot = "6131209617";
+google_ad_width = 728;
+google_ad_height = 90;
+//-->
+</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+
+<br>
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'tanakh-jp'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+var disqus_shortname = 'tanakh-jp'; // required: replace example with your forum shortname
+
+/* * * DON'T EDIT BELOW THIS LINE * * */
+(function () {
+    var s = document.createElement('script'); s.async = true;
+    s.type = 'text/javascript';
+    s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+
+            </div>
+            <div class="span1"></div>
+        </div>
+
+        <hr>
+
+        <footer class="footer">
+            <center>
+            <p>
+                Copyright (c) 2011-2013, Hideyuki Tanaka (@<a href="https://twitter.com/tanakh">tanakh</a>)
+            </p>
+            <p>
+                Site proudly generated by <a href="http://jaspervdj.be/hakyll">Hakyll</a>.<br>
+                Served by <a href="http://mew.org/~kazu/proj/mighttpd/en/">Mighttpd2</a>.<br>
+                Tools are made with <a href="http://fay-lang.org/">Fay</a>.<br>
+                This site uses <a href="http://twitter.github.io/bootstrap/">Twitter Bootstrap</a>, and theme from <a href="http://bootswatch.com/">Bootswatch</a>.<br>
+            <p>
+            </center>
+        </footer>
+    </div>
+
+    <script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-26679036-1']);
+      _gaq.push(['_setDomainName', 'tanakh.jp']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>
+
+  </body>
+</html>

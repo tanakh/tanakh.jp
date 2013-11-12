@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <title>java-ja の例外とロギング勉強会で発表してきました - 純粋関数空間</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="../css/bootstrap-responsive.min.css" rel="stylesheet" media="screen">
+    <link href="../css/syntax.css" rel="stylesheet" media="screen">
+    <link href="../css/docs.css" rel="stylesheet" media="screen">
+
+    <script type="text/javascript" src="http://s.hatena.ne.jp/js/HatenaStar.js"></script>
+    <script type="text/javascript">
+        Hatena.Star.Token = '448676af7a3fe5b6511e9789fbaed5a26da61054';
+        Hatena.Star.SiteConfig = {
+            entryNodes: {
+                '.post-title': {
+                    uri: 'document.location',
+                    title: 'document.title',
+                    container: 'parent'
+                }
+            }
+        };
+    </script>
+  </head>
+  <body>
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+
+    <div class="container-fluid">
+        <div class="navbar">
+            <div class="navbar-inner">
+                <a class="brand" href="../">tanakh.jp</a>
+
+                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+
+                <div class="nav-collapse">
+                    <ul class="nav">
+                        <li><a href="../">Home</a></li>
+                        <li><a href="../about.html">About</a></li>
+                        <li><a href="../contact.html">Contact</a></li>
+                        <li><a href="../pub.html">Publications</a></li>
+                        <li><a href="../tools.html">Tools</a></li>
+                        <li><a href="../archive.html">Archive</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="row-fluid">
+            <div class="span1"></div>
+            <div class="span10">
+                <div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+<h2 class="post-title">java-ja の例外とロギング勉強会で発表してきました</h2>
+
+<div class="info">Posted on June 28, 2012, Tags: <a href="../tags/programming.html">programming</a>, <a href="../tags/haskell.html">Haskell</a>, <a href="../tags/presen.html">presen</a></div>
+
+<!-- Social Buttons -->
+<div class="social">
+    <div class="hatena">
+        <a href="http://b.hatena.ne.jp/entry/tanakh.jp/posts/2012-06-28-java-ja.html" class="hatena-bookmark-button" data-hatena-bookmark-title="java-ja の例外とロギング勉強会で発表してきました - tanakh.jp" data-hatena-bookmark-layout="standard-balloon" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+    </div>
+    <div class="facebook">
+        <div class="fb-like" data-href="http://tanakh.jp/posts/2012-06-28-java-ja.html" data-send="false" data-layout="button_count" data-width="450" data-show-faces="false" data-font="arial"></div>
+    </div>
+    <div class="gplus">
+        <!-- +1 ボタン を表示したい位置に次のタグを貼り付けてください。 -->
+        <div class="g-plusone" data-size="medium" data-href="http://tanakh.jp/posts/2012-06-28-java-ja.html"></div>
+        <!-- 最後の +1 ボタン タグの後に次のタグを貼り付けてください。 -->
+        <script type="text/javascript">
+          (function() {
+            var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+            po.src = 'https://apis.google.com/js/plusone.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+          })();
+        </script>
+    </div>
+    <div class="twitter">
+        <a href="https://twitter.com/share" class="twitter-share-button" data-via="tanakh" data-lang="ja">ツイート</a>
+        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+    </div>
+</div>
+
+<hr>
+
+<p>例外の勉強会をやるので、是非にというお話を頂いて、 <a href="http://connpass.com/event/607/">LOG.debug(“nice catch!”)</a> というイベントで発表させていただきました。 当日の資料はこちらでご覧になれます。</p>
+<blockquote>
+<p><a href="../pub/exception-logging-study-2012-06-28/exception.html">エラー処理の抽象化</a></p>
+</blockquote>
+<p>昨年末頃に社内セミナーで発表した <a href="../pub/pfi-seminar-2011-12-08.html">エラー処理を書いてはいけない</a> をもうちょっと抽象的に、あるいは具体的な話を入れて焼き直したような内容です。</p>
+<p>今回は <a href="http://java-ja.yoshiori.org/">java-ja</a> さんの勉強会という事で、 なにやらモヒカンとかマサカリとかが飛んでくるらしい、 とんでもないところに来てしまったとビクビクしていましたが、 この難局も何とか乗り切りました。はい。</p>
+<p>皆さんとても真面目にソフトウェアエンジニアリングについて議論していて、楽しかったです。 僕は普段Javaでコードは書かないのですが、 Javaだと普通こうする的なのが垣間見えて、 いろいろJavaのバッドノウハウ（あるいはグッドプラクティス）が学べました。 Javaは大変だと思いました。</p>
+<hr />
+<p>発表後、幾つかご意見・質問・フィードバックをいただきましたので、 ここで回答させていただこうと思います。</p>
+<ul>
+<li>エラーフレームワーク、どれがデファクトなのか？</li>
+</ul>
+<p><a href="http://hackage.haskell.org/package/mtl">mtl</a>の<code>MonadError</code>は事実上の標準で、 サポートも割りと手厚いですが、機能が貧弱かもしれません。 でもこれで十分なことも多いです。</p>
+<p><a href="http://hackage.haskell.org/packages/archive/monad-control/0.3.1.3/doc/html/Control-Monad-Trans-Control.html">monad-control</a>/ <a href="http://hackage.haskell.org/package/lifted-base">lifted-base</a>はモナド変換子に対してきちんとしたサポートがある、新しめのライブラリです。 Webフレームワーク<a href="http://www.yesodweb.com/">Yesod</a>でも使われています。</p>
+<ul>
+<li>n回再試行するやつ、失敗するごとにログに出したいような場合は？純粋なHaskellでは難しいのではないか。</li>
+</ul>
+<p>元のコードはこれです。たしかにこのままではIOができないのでログは出せません。</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">tryN ::</span> (<span class="dt">MonadError</span> e m) <span class="ot">=&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> m a <span class="ot">-&gt;</span> m a
+tryN n m <span class="fu">=</span> go n <span class="kw">where</span>
+  go <span class="dv">1</span> <span class="fu">=</span> m
+  go i <span class="fu">=</span> m <span class="ot">`catchError`</span> (\e <span class="ot">-&gt;</span> go (i<span class="fu">-</span><span class="dv">1</span>))</code></pre>
+<p>そういう時は私なら、コンテクスト (上のコードでは、<code>(MonadError e m) =&gt;</code>）に このモナドはIOできますよという <code>MonadIO</code> を追加して解決します。</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">tryN ::</span> (<span class="dt">MonadError</span> e m, <span class="dt">MonadIO</span> m) <span class="ot">=&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> m a <span class="ot">-&gt;</span> m a
+tryN n m <span class="fu">=</span> go n <span class="kw">where</span>
+  go <span class="dv">1</span> <span class="fu">=</span> m
+  go i <span class="fu">=</span> m <span class="ot">`catchError`</span> (\e <span class="ot">-&gt;</span> liftIO (outputLog <span class="fu">$</span> show e) <span class="fu">&gt;&gt;</span> go (i<span class="fu">-</span><span class="dv">1</span>))</code></pre>
+<p>m が MonadIO のインスタンスになることにより、このモナドは中にIOを含むことができるようになります。</p>
+<ul>
+<li>（46ページ～49ページのくだり）このあと組み合わせたコードが来るんですよね？ → 来ない！</li>
+</ul>
+<p>すいません、一番美味しいところを忘れていました！ 当日は宿題とか言いましたが、追記しておきました。</p>
+<ul>
+<li>全人類が読むべき本第2位は？</li>
+</ul>
+<blockquote class="twitter-tweet" lang="ja"><p>
+とりあえず @<a href="https://twitter.com/niha28">niha28</a> さんに、全人類が読むべき書籍第２位である “Purely Functional Data Structures” <a href="http://bit.ly/4rdXiX">http://bit.ly/4rdXiX</a> を読まねばならぬという事実を伝道した
+</p>
+— kinabaさん (<span class="citation">@kinaba</span>) <a href="https://twitter.com/kinaba/status/7062808769" data-datetime="2009-12-26T15:21:03+00:00">12月 26, 2009</a>
+</blockquote>
+<script src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+<ul>
+<li>他のやり方を知らないと、そういうものだと思ってしまう。 そういうものだと思ってしまっていると、 頑張って漏れ無く手でエラー処理コードを書くことは素晴らしいことだ、 あまつさえ優れたプログラマである、そんな風に思われているフシもある</li>
+</ul>
+<p>はい、残念なことです。 正規表現を使って置換すれば1分で終わる仕事を、 何時間もかけてコツコツ手で編集してるのと同じ構図の話です。 手でやれば時間もかかるし、間違いも起こります。 正規表現を使うとズルだと言われるとか、そういう話を笑えません。 プログラマは怠惰でありたいものです。</p>
+
+<br>
+
+<script type="text/javascript"><!--
+google_ad_client = "ca-pub-2554934724722249";
+/* normal */
+google_ad_slot = "6131209617";
+google_ad_width = 728;
+google_ad_height = 90;
+//-->
+</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+
+<br>
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'tanakh-jp'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+var disqus_shortname = 'tanakh-jp'; // required: replace example with your forum shortname
+
+/* * * DON'T EDIT BELOW THIS LINE * * */
+(function () {
+    var s = document.createElement('script'); s.async = true;
+    s.type = 'text/javascript';
+    s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+
+            </div>
+            <div class="span1"></div>
+        </div>
+
+        <hr>
+
+        <footer class="footer">
+            <center>
+            <p>
+                Copyright (c) 2011-2013, Hideyuki Tanaka (@<a href="https://twitter.com/tanakh">tanakh</a>)
+            </p>
+            <p>
+                Site proudly generated by <a href="http://jaspervdj.be/hakyll">Hakyll</a>.<br>
+                Served by <a href="http://mew.org/~kazu/proj/mighttpd/en/">Mighttpd2</a>.<br>
+                Tools are made with <a href="http://fay-lang.org/">Fay</a>.<br>
+                This site uses <a href="http://twitter.github.io/bootstrap/">Twitter Bootstrap</a>, and theme from <a href="http://bootswatch.com/">Bootswatch</a>.<br>
+            <p>
+            </center>
+        </footer>
+    </div>
+
+    <script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-26679036-1']);
+      _gaq.push(['_setDomainName', 'tanakh.jp']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>
+
+  </body>
+</html>

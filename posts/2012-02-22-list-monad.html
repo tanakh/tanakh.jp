@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <title>非決定計算としてのリストモナド - 純粋関数空間</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="../css/bootstrap-responsive.min.css" rel="stylesheet" media="screen">
+    <link href="../css/syntax.css" rel="stylesheet" media="screen">
+    <link href="../css/docs.css" rel="stylesheet" media="screen">
+
+    <script type="text/javascript" src="http://s.hatena.ne.jp/js/HatenaStar.js"></script>
+    <script type="text/javascript">
+        Hatena.Star.Token = '448676af7a3fe5b6511e9789fbaed5a26da61054';
+        Hatena.Star.SiteConfig = {
+            entryNodes: {
+                '.post-title': {
+                    uri: 'document.location',
+                    title: 'document.title',
+                    container: 'parent'
+                }
+            }
+        };
+    </script>
+  </head>
+  <body>
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+
+    <div class="container-fluid">
+        <div class="navbar">
+            <div class="navbar-inner">
+                <a class="brand" href="../">tanakh.jp</a>
+
+                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+
+                <div class="nav-collapse">
+                    <ul class="nav">
+                        <li><a href="../">Home</a></li>
+                        <li><a href="../about.html">About</a></li>
+                        <li><a href="../contact.html">Contact</a></li>
+                        <li><a href="../pub.html">Publications</a></li>
+                        <li><a href="../tools.html">Tools</a></li>
+                        <li><a href="../archive.html">Archive</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="row-fluid">
+            <div class="span1"></div>
+            <div class="span10">
+                <div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+<h2 class="post-title">非決定計算としてのリストモナド</h2>
+
+<div class="info">Posted on February 22, 2012, Tags: <a href="../tags/haskell.html">Haskell</a></div>
+
+<!-- Social Buttons -->
+<div class="social">
+    <div class="hatena">
+        <a href="http://b.hatena.ne.jp/entry/tanakh.jp/posts/2012-02-22-list-monad.html" class="hatena-bookmark-button" data-hatena-bookmark-title="非決定計算としてのリストモナド - tanakh.jp" data-hatena-bookmark-layout="standard-balloon" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+    </div>
+    <div class="facebook">
+        <div class="fb-like" data-href="http://tanakh.jp/posts/2012-02-22-list-monad.html" data-send="false" data-layout="button_count" data-width="450" data-show-faces="false" data-font="arial"></div>
+    </div>
+    <div class="gplus">
+        <!-- +1 ボタン を表示したい位置に次のタグを貼り付けてください。 -->
+        <div class="g-plusone" data-size="medium" data-href="http://tanakh.jp/posts/2012-02-22-list-monad.html"></div>
+        <!-- 最後の +1 ボタン タグの後に次のタグを貼り付けてください。 -->
+        <script type="text/javascript">
+          (function() {
+            var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+            po.src = 'https://apis.google.com/js/plusone.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+          })();
+        </script>
+    </div>
+    <div class="twitter">
+        <a href="https://twitter.com/share" class="twitter-share-button" data-via="tanakh" data-lang="ja">ツイート</a>
+        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+    </div>
+</div>
+
+<hr>
+
+<h2 id="最近のhaskell">最近のHaskell</h2>
+<p>最近はHaskellに関するブログ記事をちらほら見かけるようになって来ました。 日々のスクリプトに使おうとしようという人もいるようで、</p>
+<p><a href="http://d.hatena.ne.jp/aya_eiya/20120221/1329836207">http://d.hatena.ne.jp/aya_eiya/20120221/1329836207</a></p>
+<p>このようなブログ記事を見かけました。 Haskellで書いたらそんなに汚いコードにはならないというのはたしかにあります。 やってはならないということがHaskellには比較的少ないのだと思います。 というのも、Haskellでは、やってはいけないことがそもそもできないようになっているか、 やることが極めて難しくなっている（unsafeプリフィックスを持つ関数を駆使したりなど） ことが多いのです。</p>
+<p>しかし、そんなHaskellのプログラムも、少し工夫すればもっと良くなることもあります。</p>
+<h2 id="列挙問題">列挙問題</h2>
+<p>先ほどのブログの記事の1つ目のプログラムを見てみましょう。</p>
+<script src="https://gist.github.com/1875172.js?file=getAllUpperLowerPattern.hs"></script>
+
+<p>このプログラムは、与えられた文字列の書く文字を大文字、小文字にした各パターンを全て返すものです。</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&gt;</span> getAllUpperLowerPattern <span class="st">&quot;ABCD&quot;</span>
+[<span class="st">&quot;ABCD&quot;</span>,<span class="st">&quot;ABCd&quot;</span>,<span class="st">&quot;ABcD&quot;</span>,<span class="st">&quot;ABcd&quot;</span>,<span class="st">&quot;AbCD&quot;</span>,<span class="st">&quot;AbCd&quot;</span>,<span class="st">&quot;AbcD&quot;</span>,<span class="st">&quot;Abcd&quot;</span>,<span class="st">&quot;aBCD&quot;</span>,<span class="st">&quot;aBCd&quot;</span>,<span class="st">&quot;aBcD&quot;</span>,<span class="st">&quot;aBcd&quot;</span>,<span class="st">&quot;abCD&quot;</span>,<span class="st">&quot;abCd&quot;</span>,<span class="st">&quot;abcD&quot;</span>,<span class="st">&quot;abcd&quot;</span>]</code></pre>
+<p>このプログラムはこのままでも特に問題は無いのですが、 難点があるとすれば少しややこしいということでしょうか。 コードを読んでみると次のようになっています。</p>
+<ul>
+<li><p>一行目、01のパターンを生成 <code>[&quot;0000&quot;,&quot;0001&quot;,&quot;0010&quot;,&quot;0011&quot;,&quot;0100&quot;,&quot;0101&quot;,&quot;0110&quot;,&quot;0111&quot;,&quot;1000&quot;,&quot;1001&quot;,&quot;1010&quot;,&quot;1011&quot;,&quot;1100&quot;,&quot;1101&quot;,&quot;1110&quot;,&quot;1111&quot;]</code></p></li>
+<li><p>二行目、各01と文字をペアに <code>[[('0','A'),('0','B'),('0','C'),('0','D')],[('0','A'),('0','B'),('0','C'),('1','D')],[('0','A'),('0','B'),('1','C'),('0','D')],[('0','A'),('0','B'),('1','C'),('1','D')],[('0','A'),('1','B'),('0','C'),('0','D')], ...</code></p></li>
+<li><p>三行目、0とペアになった文字をtoLower、1とペアになった文字をtoUpperする <code>[&quot;ABCD&quot;,&quot;ABCd&quot;,&quot;ABcD&quot;,&quot;ABcd&quot;,&quot;AbCD&quot;,&quot;AbCd&quot;,&quot;AbcD&quot;,&quot;Abcd&quot;,&quot;aBCD&quot;,&quot;aBCd&quot;,&quot;aBcD&quot;,&quot;aBcd&quot;,&quot;abCD&quot;,&quot;abCd&quot;,&quot;abcD&quot;,&quot;abcd&quot;]</code></p></li>
+</ul>
+<h2 id="関数をそのまま使う">関数をそのまま使う</h2>
+<p>このような三段階を踏んでいます。文字 <code>'0'</code>, <code>'1'</code> をそれぞれtoUpper, toLowerに関連付けていますが、 関数型言語なので、toUpper、toLowerをそのまま使えます。</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">getAllUpperLowerPattern str <span class="fu">=</span> f3
+  <span class="kw">where</span>
+    f1 <span class="fu">=</span> sequence <span class="fu">$</span> replicate (length str) [toUpper, toLower]
+    f2 <span class="fu">=</span> map (\(fs,str)<span class="ot">-&gt;</span>zip fs str) <span class="fu">$</span> zip f1 (replicate (length f1) str)
+    f3 <span class="fu">=</span> nub [a<span class="fu">|</span>cs<span class="ot">&lt;-</span>f2,a<span class="ot">&lt;-</span>[[f c<span class="fu">|</span>(f,c)<span class="ot">&lt;-</span>cs]]]</code></pre>
+<h2 id="リストの生成の仕方">リストの生成の仕方</h2>
+<p>コードの添削が目的では無いので、本題に入ります。 これは何かたくさんの候補を生成するタイプの問題です。 このような問題ではリストモナドが使えます。 実際に、このプログラムの一行目で <code>sequence</code> によってリストがモナドとして用いられています。 でもちょっと遠回りをしているようです。 生成の仕方を変えてみましょう。</p>
+<p>この問題の趣旨はこうです。</p>
+<ul>
+<li>文字のリストが与えられる</li>
+<li>各文字に対して大文字か小文字かを選択する</li>
+</ul>
+<p>これをなるべく直接的にプログラムに落としてみましょう （次のコードは概念を示したもので、実際のHaskellプログラムとしては正しくありません）。</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">getAllUpperLowerPattern [c1, c2, c3, <span class="fu">...</span>] <span class="fu">=</span> <span class="kw">do</span>
+  d1 <span class="ot">&lt;-</span> [toUpper c1, toLower c1]
+  d2 <span class="ot">&lt;-</span> [toUpper c2, toLower c2]
+  d3 <span class="ot">&lt;-</span> [toUpper c3, toLower c3]
+  <span class="fu">...</span>
+  return [d1, d2, d3, <span class="fu">...</span>]</code></pre>
+<p>非決定計算としてのリストモナドの動作から、 各文字が大文字か小文字か、あり得るすべてのパターンが網羅されたリストが返るはずです。</p>
+<p>ところで、</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">\[m1, m2, m3, <span class="fu">...</span>] <span class="ot">-&gt;</span> <span class="kw">do</span>
+  v1 <span class="ot">&lt;-</span> m1
+  v2 <span class="ot">&lt;-</span> m2
+  v3 <span class="ot">&lt;-</span> m3
+  <span class="fu">...</span>
+  return [v1, v2, v3]</code></pre>
+<p>という関数はまさしく <a href="http://hackage.haskell.org/packages/archive/base/4.5.0.0/doc/html/Prelude.html#v:sequence"><code>sequence</code></a> です。これを踏まえると <code>getAllUpperLowerPattern</code> は</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">getAllUpperLowerPattern str <span class="fu">=</span>
+  sequence [ [toUpper c, toLower c] <span class="fu">|</span> c <span class="ot">&lt;-</span> str]</code></pre>
+<p>このようなコードになります（ちなみにこれはすべて違う文字列になるので最後の <code>nub</code> は必要ありません）。</p>
+<p>ゴルフでもトリッキーなコードでもなく、 計算の仕方を変えるだけでより直接的に、シンプルに、コードが短くなりました。 必要なのはやりたいことが実際にはどのような計算なのかということを認識することです。 難しく考えないようにしましょう。</p>
+<h2 id="filesystem-conduit">‘filesystem-conduit’</h2>
+<p>おまけで、2つ目の例なのですが、<a href="http://hackage.haskell.org/package/filesystem-conduit">filesystem-conduit</a> というパッケージに、 ディレクトリのファイル名の <code>Source</code> を生成する関数があります。</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">traverse
+<span class="ot">  ::</span> <span class="dt">ResourceIO</span> m 
+  <span class="ot">=&gt;</span> <span class="dt">Bool</span>         <span class="co">-- Follow directory symlinks (only used on POSIX platforms)</span>
+  <span class="ot">-&gt;</span> FilePath     <span class="co">-- Root directory</span>
+  <span class="ot">-&gt;</span> <span class="dt">Source</span> m FilePath</code></pre>
+<p>これを使えば <code>getTerminals</code> はこうなります。</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">getTerminals root <span class="fu">=</span> runResourceT <span class="fu">$</span> traverse <span class="dt">True</span> root <span class="fu">$$$$</span> consume</code></pre>
+<p><code>conduit</code> は現在続々とサポートするライブラリが増えていますので、 ぜひ <a href="http://hackage.haskell.org/packages/archive/pkg-list.html">Hackage</a> を <code>conduit</code> で検索してみてください。</p>
+
+<br>
+
+<script type="text/javascript"><!--
+google_ad_client = "ca-pub-2554934724722249";
+/* normal */
+google_ad_slot = "6131209617";
+google_ad_width = 728;
+google_ad_height = 90;
+//-->
+</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+
+<br>
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'tanakh-jp'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+var disqus_shortname = 'tanakh-jp'; // required: replace example with your forum shortname
+
+/* * * DON'T EDIT BELOW THIS LINE * * */
+(function () {
+    var s = document.createElement('script'); s.async = true;
+    s.type = 'text/javascript';
+    s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+
+            </div>
+            <div class="span1"></div>
+        </div>
+
+        <hr>
+
+        <footer class="footer">
+            <center>
+            <p>
+                Copyright (c) 2011-2013, Hideyuki Tanaka (@<a href="https://twitter.com/tanakh">tanakh</a>)
+            </p>
+            <p>
+                Site proudly generated by <a href="http://jaspervdj.be/hakyll">Hakyll</a>.<br>
+                Served by <a href="http://mew.org/~kazu/proj/mighttpd/en/">Mighttpd2</a>.<br>
+                Tools are made with <a href="http://fay-lang.org/">Fay</a>.<br>
+                This site uses <a href="http://twitter.github.io/bootstrap/">Twitter Bootstrap</a>, and theme from <a href="http://bootswatch.com/">Bootswatch</a>.<br>
+            <p>
+            </center>
+        </footer>
+    </div>
+
+    <script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-26679036-1']);
+      _gaq.push(['_setDomainName', 'tanakh.jp']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>
+
+  </body>
+</html>

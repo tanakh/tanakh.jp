@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <title>HakyllとpandocとMighttpdでサイトを作った話 - 純粋関数空間</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="../css/bootstrap-responsive.min.css" rel="stylesheet" media="screen">
+    <link href="../css/syntax.css" rel="stylesheet" media="screen">
+    <link href="../css/docs.css" rel="stylesheet" media="screen">
+
+    <script type="text/javascript" src="http://s.hatena.ne.jp/js/HatenaStar.js"></script>
+    <script type="text/javascript">
+        Hatena.Star.Token = '448676af7a3fe5b6511e9789fbaed5a26da61054';
+        Hatena.Star.SiteConfig = {
+            entryNodes: {
+                '.post-title': {
+                    uri: 'document.location',
+                    title: 'document.title',
+                    container: 'parent'
+                }
+            }
+        };
+    </script>
+  </head>
+  <body>
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+
+    <div class="container-fluid">
+        <div class="navbar">
+            <div class="navbar-inner">
+                <a class="brand" href="../">tanakh.jp</a>
+
+                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+
+                <div class="nav-collapse">
+                    <ul class="nav">
+                        <li><a href="../">Home</a></li>
+                        <li><a href="../about.html">About</a></li>
+                        <li><a href="../contact.html">Contact</a></li>
+                        <li><a href="../pub.html">Publications</a></li>
+                        <li><a href="../tools.html">Tools</a></li>
+                        <li><a href="../archive.html">Archive</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="row-fluid">
+            <div class="span1"></div>
+            <div class="span10">
+                <div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+<h2 class="post-title">HakyllとpandocとMighttpdでサイトを作った話</h2>
+
+<div class="info">Posted on November  5, 2011, Tags: <a href="../tags/haskell.html">Haskell</a>, <a href="../tags/hakyll.html">Hakyll</a></div>
+
+<!-- Social Buttons -->
+<div class="social">
+    <div class="hatena">
+        <a href="http://b.hatena.ne.jp/entry/tanakh.jp/posts/2011-11-05-haskell-infra.html" class="hatena-bookmark-button" data-hatena-bookmark-title="HakyllとpandocとMighttpdでサイトを作った話 - tanakh.jp" data-hatena-bookmark-layout="standard-balloon" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+    </div>
+    <div class="facebook">
+        <div class="fb-like" data-href="http://tanakh.jp/posts/2011-11-05-haskell-infra.html" data-send="false" data-layout="button_count" data-width="450" data-show-faces="false" data-font="arial"></div>
+    </div>
+    <div class="gplus">
+        <!-- +1 ボタン を表示したい位置に次のタグを貼り付けてください。 -->
+        <div class="g-plusone" data-size="medium" data-href="http://tanakh.jp/posts/2011-11-05-haskell-infra.html"></div>
+        <!-- 最後の +1 ボタン タグの後に次のタグを貼り付けてください。 -->
+        <script type="text/javascript">
+          (function() {
+            var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+            po.src = 'https://apis.google.com/js/plusone.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+          })();
+        </script>
+    </div>
+    <div class="twitter">
+        <a href="https://twitter.com/share" class="twitter-share-button" data-via="tanakh" data-lang="ja">ツイート</a>
+        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+    </div>
+</div>
+
+<hr>
+
+<h2 id="このページについて">このページについて</h2>
+<p>ページのフッタに書いてあるので、お気付きの方もいらっしゃるかと思いますが、 このページは <a href="http://jaspervdj.be/hakyll/">Hakyll</a>と <a href="http://johnmacfarlane.net/pandoc/">Pandoc</a>と <a href="http://www.mew.org/~kazu/proj/mighttpd/en/">Mighttpd</a>にて運用されています。</p>
+<p>完全なソースコードを <a href="https://github.com/tanakh/tanakh.jp">https://github.com/tanakh/tanakh.jp</a> から参照できます。</p>
+<p>HakyllとはHaskellによる静的ページ生成ツールで、 <a href="http://jekyllrb.com/">Jekyll</a>にインスパイアされて作られたものだそうです。 JekyllがRubyによって書かれ、Rubyによってページの構造を記述するのに対して、 HakyllはHaskellによって書かれ、Haskellによってページの構造を記述します。</p>
+<p>Pandocとはいろいろなドキュメントフォーマットのコンバータです。 Haskellで書かれています。さすがにもうHTMLを手で書きたくはない、 かついろいろなブログの独自のフォーマットなんて覚えていられないので、 汎用的なフォーマットから自分の好みのものを利用できるpandocは非常に便利です。</p>
+<p>MighttpdとはHaskellで書かれたHTTPサーバです。 軽量シンプル高性能で、<a href="http://nginx.org/">nginx</a>をも越えるパフォーマンスを叩き出します<sup><a href="#fn1" class="footnoteRef" id="fnref1">1</a></sup>。</p>
+<p>見ての通りHaskellづくしです。 これはHaskellによって作られたインフラによって 十分実用に耐えうるサイトを運用できることを示し、 Haskellが現場で利用するに足る堅牢さと速度を兼ね備えたアプリケーションを 構築できる言語であるということを示すための 実証実験でもあります。 その顛末をここに記しておこうと思います。</p>
+<h2 id="事の経緯">事の経緯</h2>
+<p>実のところ最初はこの様な構成にする予定ではなくて、 <a href="http://pages.github.com/">github pages</a>でサイトを作ろうと思っていました。</p>
+<p>このドメイン(<a href="http://tanakh.jp">http://tanakh.jp</a>)をかなり昔に取ってはいたものの、 なかなかまともなコンテンツを作る余裕がなく放置する日々が続きました。 しかし、以前利用していた<a href="http://isweb.www.infoseek.co.jp/">isweb</a>の無料サービスが終了し、 それに伴い<a href="http://fxp.infoseek.ne.jp/">私のホームページ</a>も消滅(ついでにデータも消滅)したので、 新しいページを立ち上げようと重い腰をあげたのでした。</p>
+<p>github pagesを利用するなら、Jekyllというサイトジェネレータが利用できるということなので、 最初はそれを利用しようと考えました。 ところが、Jekyllを使うのは私にはとても難しかったのです。 Rubyを普段書いていないというのは瑣末なことですが、 とにかく思ったとおりに動作しなかったときに何が原因なのか特定するのがとても困難でした。 オプションの指定もよく分からないし、typoしても何も分からないし、 何ができるかもよく分からない。 普段私がドキュメントとしての型にどれだけ頼りきっているのかと言うことがよく分かりました。</p>
+<p>さらに困ったのが環境による動作の違いで、 github pagesにjekyllのファイルを置くと、 github側で実行してサイトを生成して公開してくれるのですが、 これが手元の結果と違ったりして、 そもそも処理系のバージョンもjekyllのバージョンも違うところでリモートで動かして、 しかもRubyとかあまりにも困難なのではないのかと ようやく私の鈍い頭も理解し始めたわけです。</p>
+<p>それで<a href="http://jaspervdj.be/hakyll/">Hakyll</a>です。なんかHaskellに似た様なのがあったなあといううっすらとした 記憶はあったので、どうせならそれを使おうということになりました。 HakyllならバックエンドがpandocなのでさらにHaskell感upです。 せっかくそこまでやるなら、HTTPサーバもHaskell製のMighttpdにして、 Pure Haskellを目指そうかと相成りました。</p>
+<p>果たしてこのページの運営がうまくいくのか。 サーバが負荷で死んだりしたらHaskellはまだその域に達していなかったということで。</p>
+<h2 id="hakyllでサイトを構築する">Hakyllでサイトを構築する</h2>
+<p>さて、前置きが長くなりましたが、ようやく本文です。 Hakyllでのサイト構築はとても簡単です。</p>
+<h3 id="hakyllのインストール">Hakyllのインストール</h3>
+<p>次のコマンドを実行するだけでインストールは完了です。 <em>cabal</em> というのはHaskellのパッケージ管理コマンドで、 <a href="http://hackage.haskell.org/platform/">Haskell Platform</a> をインストールすれば 同時にインストールされます。</p>
+<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">cabal</span> update
+$ <span class="kw">cabal</span> install hakyll</code></pre>
+<p>Pandocによるシンタックスハイライティングを利用したい場合は</p>
+<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">cabal</span> install --reinstall -fhighlighting pandoc</code></pre>
+<p>これを実行してから改めてhakyllをインストールし直します。</p>
+<h3 id="サイトの構築">サイトの構築</h3>
+<p><a href="http://jaspervdj.be/hakyll/tutorials.html">チュートリアル</a>と <a href="http://jaspervdj.be/hakyll/examples.html">サイト例</a>を見れば 大体どうすればいいのか分かると思います。 <a href="https://github.com/jaspervdj/jaspervdj">作者自身のサイトのソース</a>が かなり参考になりました。</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> Hakyll
+
+<span class="ot">main ::</span> <span class="dt">IO</span> ()
+main <span class="fu">=</span> <span class="kw">do</span>
+  match <span class="st">&quot;images/*&quot;</span> <span class="fu">$</span> <span class="kw">do</span>
+    route idRoute
+    compile copyFileCompiler
+
+  match <span class="st">&quot;css/*&quot;</span> <span class="fu">$</span> <span class="kw">do</span>
+    route idRoute
+    compile compressCssCompiler
+
+  <span class="fu">...</span></code></pre>
+<p>基本的にはどのパスにどういうファイルがあって、 どういうコンパイラで処理するのかを書いていけばよくて、 間違っていたら大体型エラーが教えてくれます。</p>
+<h3 id="ページの記述">ページの記述</h3>
+<p>hakyllはpandoc組み込みサポートがあり、 Pandocのサポートする任意のフォーマットでページを記述することができます。 現在のところPandocがサポートするのは以下のフォーマットです。</p>
+<ul>
+<li><a href="http://daringfireball.net/projects/markdown/">markdown</a></li>
+<li><a href="http://docutils.sourceforge.net/docs/ref/rst/introduction.html">reStructuredText</a></li>
+<li><a href="http://redcloth.org/textile">textile</a></li>
+<li><a href="http://www.w3.org/TR/html40/">HTML</a></li>
+<li><a href="http://www.latex-project.org/">LaTeX</a></li>
+</ul>
+<p>私はmarkdownが好きなのでこのページはmarkdownで書いています。 これらに加えて<a href="http://www.haskell.org/haskellwiki/Literate_programming">Literate Haskell</a> のソースもサポートされていますので、lhs+markdownのように そのままHaskellのコードとして実行できるページなども書くことができます。</p>
+<p>また今回は使っていませんが、pandocの出力は、pdfやepubなど もっとたくさんのフォーマットをサポートしているので、 書籍やドキュメントの作成にも便利です。 <a href="http://www.paraiso-lang.org/ikmsm/books/c80.html">夏に出した同人誌</a> はPandocによって各人が好みのフォーマットで原稿を書くことができました。</p>
+<h3 id="hakyll感想">hakyll感想</h3>
+<p>hakyllのスクリプトはroutingはモナドで書き、 ページコンパイラはArrowで処理をつないでいくのが大まかなところです。 型が合えば、大体は変なことにならない安心感が素敵です。 <a href="http://jaspervdj.be/hakyll/reference/index.html">ドキュメント</a>もしっかりしています。 おかげでライブラリの使い方で迷うところはほとんどありませんでした。</p>
+<h2 id="ページのデザイン">ページのデザイン</h2>
+<p>これがとても大変でした。 私の前のページをご存知の方なら分かると思いますが、 デザインセンスは0で、テーブルレイアウトしか書いたことがなかったのでした。</p>
+<p>せっかくなのでHTML5+CSS3でモダンなサイトデザインをしようと、 Twitterの<a href="http://twitter.github.com/bootstrap/">Bootstrap</a>を試したりしましたが、 なんだか全体的にTwitterになってしまったので止めました。</p>
+<p>かと言って一から作るのもバッドノウハウ多そうで厳しそうなので <a href="http://html5boilerplate.com/">HTML5 Boilerplate</a>を利用することにしました。 ブラウザの互換性などにまつわるいろいろめんどい部分が省略できるようです。</p>
+<h3 id="cssを書く">CSSを書く</h3>
+<p>テンプレートができたらいよいよデザインなのですが、 <a href="http://tanakh.jp">ご覧のとおり</a>こんなにしょぼいサイトでも とても苦労しました。</p>
+<p>CSSのデザインは箱を敷き詰めるように行うのだそうですが、 これが全然思ったとおりの位置に収まってくれなくて大変でした。 これもtypoしても全然何も教えてくれないので困りました。 marginを何回もmerginに間違えてその度に脱力感に襲われました。</p>
+<p>JavaScriptをどげんかせんといかん、ということでGoogleが <a href="http://www.dartlang.org/">Dart</a>というプログラミング言語を発表しましたが、 個人的にはCSSの方を何とかしてほしいと思いました。</p>
+<h2 id="mighttpdによる公開">Mighttpdによる公開</h2>
+<p>さて、コンテンツができたらあとはこれをHTTPサーバで公開するだけですが、 今回は<a href="http://www.mew.org/~kazu/proj/mighttpd/en/">Mighttpd</a>を使ってみることにしました。</p>
+<p>HTTPサーバだとApacheやnginxが有名ですが、 Mighttpdはそれと遜色のない信頼の置ける 動作をしてくれるんじゃないかという期待を込めての選定です。</p>
+<h3 id="mighttpd紹介">Mighttpd紹介</h3>
+<p>MighttpdはHaskellによって書かれたHTTPサーバです。 ベンチマークによると大変良好なパフォーマンスを示しているようで、 CGIも扱えるようです。 シンプルな分設定も簡単です。</p>
+<h3 id="インストール実行">インストール＆実行</h3>
+<p>これもcabalからインストールできます。</p>
+<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">cabal</span> update
+$ <span class="kw">cabal</span> install mighttpd2</code></pre>
+<p>実行にはconfファイルとrouteファイルを指定してやります。 ~/.cabal/share/mighttpd2-x.y.z/ あたりに設定のサンプルがあるはずなので、それを参考にすれば簡単だと思います。</p>
+<h3 id="haskellとネットワークプログラミング">Haskellとネットワークプログラミング</h3>
+<p>Mighttpdは最近のHaskellでのトレンド、 Iteratee<sup><a href="#fn2" class="footnoteRef" id="fnref2">2</a></sup> <sup><a href="#fn3" class="footnoteRef" id="fnref3">3</a></sup> <sup><a href="#fn4" class="footnoteRef" id="fnref4">4</a></sup> およびそれに基づいたWebアプリケーションインターフェース、WAI<sup><a href="#fn5" class="footnoteRef" id="fnref5">5</a></sup> の上に実装されています。 WAIはWebアプリケーションのフロントエンドとバックエンドを 切り離す働きをしており、Mighttpdの場合はバックエンドに Warp<sup><a href="#fn6" class="footnoteRef" id="fnref6">6</a></sup>という軽量・高速なHTTPサーバが用いられています。</p>
+<p>Iterateeとそれに基づく抽象化がなぜ高速性を達成するのかの説明は 他に譲ることにしまして、 ここではWarpについて少し紹介したいと思います。</p>
+<h3 id="軽量高速httpサーバwarp">軽量・高速HTTPサーバWarp</h3>
+<p>HTTPサーバ（ないしはその他のWebサーバ）は並行に動作する必要があります。 なぜならば、サーバはクライアントと通信をして、 そのクライアントとの通信には時間がかかる可能性があるためです。</p>
+<p>並行に動作させるために、旧来のHTTPサーバは リクエストごとにプロセスを起動させていました。 確かにこれは並行に動作しますが、 プロセスを立てるのはかなりのオーバーヘッドです。</p>
+<p>当然の改良として、リクエストごとにプロセスではなく、 スレッドを立てるというものがあります。 これはプロセスよりはよいものの、 それでもスレッドを立てるのはまだオーバーヘッドが 小さいとは言えません。 同時に多数のクライアントとのやりとりを行うのも難しいです。 と言うのも、スレッドを一つ立てるごとにある一定のメモリ空間を占有するからです。</p>
+<p>そこで、最近は1つのプロセス（スレッド）で多数のリクエストを処理するために イベント駆動というものがもてはやされています。 これは入出力を非同期で行い、通信の準備が完了したソケットに対して 処理を行うというものです。 実際のアプリケーションでは、 <a href="http://nginx.org/">nginx</a>や <a href="http://nodejs.org/">node.js</a>といった最近流行りのサーバで利用されているようです。 ソケットを複数監視するために、select()ではなく、epoll()などを用いる のも特徴で、これにより高速にソケットの監視が行えます。 入出力処理はインターリーブできるものの、 このままでは複数CPUのリソースを活用することはできないため、 実際にはこれをさらにマルチスレッド化するなどされています。</p>
+<h3 id="イベント駆動の問題点">イベント駆動の問題点</h3>
+<p>イベント駆動はよいパフォーマンスをもたらしましたが、 プログラミングモデルとしては後退したとも言えます。 問題点は大きく次の二つです。</p>
+<ul>
+<li>すべての処理がブロックしないようにしなければならない</li>
+</ul>
+<p>気をつけなければならないというのは、 必ずそれに悩まされるということでもあります。 node.jsがJavaScriptを選択したのも、 JavaScriptにはもともとブロッキングI/Oが存在せず、 この問題も発生しなかったからともいわれます。</p>
+<ul>
+<li>コードがスパゲッティになる</li>
+</ul>
+<p>I/O完了後の処理を分けて書く必要があり、 コードの見通しが悪くなります。 どちらかというとこちらが深刻な問題です。</p>
+<h3 id="軽量スレッドと高性能ioスケジューラ">軽量スレッドと高性能I/Oスケジューラ</h3>
+<p>マルチスレッドの利便性を保ったまま、 ハイパフォーマンスを達成できないものでしょうか？</p>
+<p>できるんです。Haskellなら。</p>
+<p>Haskellのスレッドはネイティブスレッドではなく、 処理系の作るスレッドです。 Haskellのスレッドは非常に軽量で、1つあたり数百バイトしか消費しません<sup><a href="#fn7" class="footnoteRef" id="fnref7">7</a></sup>。 コンテクストスイッチのオーバーヘッドもカーネルに入らないので非常に軽微です。 スレッドの実行は適切にスケジュールされてネイティブのスレッドに割り振られ、 CPUリソースを有効に利用することができます。</p>
+<p>HaskellのI/Oはすべて非同期で行われます。 時間のかかる可能性のあるI/Oを行ったスレッドは自動的に I/Oスケジューラで管理されるようになり、 入出力の準備が完了したものから再度実行キューに投入されます。</p>
+<p>ここでGHC6.12以前ではselect()が用いられていて、 パフォーマンスが出なかったり、 select()の制約から、1024個以上のソケットを 扱えなかったりしていたのですが、 GHC7.0以降で実装されたスケーラブルI/Oマネージャ<sup><a href="#fn8" class="footnoteRef" id="fnref8">8</a></sup>で epoll()を用いた実装に代わり、 その問題は解決されました。</p>
+<h3 id="そしてwarpへ">そして、Warpへ</h3>
+<p>Warpはこれらのインフラの上に構築された、 簡潔で高速なHTTPサーバというわけです。 Iteratee、さらに最近の高速テキストライブラリ、 パージングライブラリ、その他諸々の 最新コンセプトがてんこ盛りで、 これらが研究対象だけでなく、 実際に高速で信頼性の高いアプリケーションを構築するのに役立つということを 実証するショーケースとしての役割も果たしていると言えます。</p>
+<h3 id="最後にmighttpd">最後に、Mighttpd</h3>
+<p>この頑強なバックエンドの上に構築されているのが まさしく今このブログが動作しているMighttpdと言うわけなのです。 どうでしょうか。Mighttpdに興味を持ってもらえましたか？</p>
+<h2 id="まとめ">まとめ</h2>
+<p>Haskellによるインフラを用いて、上から下までサイトを構築してみて、 Haskellは何にでも使えるという感触が確かなものになりました。</p>
+<p>Scalaは小さい書き捨てプログラムから大規模プログラムにまで すべてに適しているとして自らをScalableプログラミング言語と称しました。</p>
+<p>Haskellもまさにそれであると思います。 テキスト処理からハイパフォーマンスサーバまで、 なんでもこなせる可能性を秘めています。 そして、最近のライブラリの充実により、 その可能性が実際に発露してきているといえるでしょう。</p>
+<p>Haskellはpurelyだとかlazyだとか、そういったところが殊更に取り上げられて、 これはマーケティングの失敗何じゃないかと思います。 purelyだからI/Oが苦手というのはまったくの誤解で、 実際には最も美しい命令型言語<sup><a href="#fn9" class="footnoteRef" id="fnref9">9</a></sup>という評もあるぐらいなのです。</p>
+<p>さて長くなりましたが、Haskellが実際に使える言語なのだということを 示す1つの証拠として当ブログが存在していければよいなあと 思いつつ、ここらで今回は終わりにしたいと思います。</p>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p><a href="http://www.mew.org/~kazu/material/2011-mighttpd2.pdf">http://www.mew.org/~kazu/material/2011-mighttpd2.pdf</a><a href="#fnref1">↩</a></p></li>
+<li id="fn2"><p><a href="http://www.haskell.org/haskellwiki/Iteratee_I/O">http://www.haskell.org/haskellwiki/Iteratee_I/O</a><a href="#fnref2">↩</a></p></li>
+<li id="fn3"><p><a href="http://www.haskell.org/haskellwiki/Enumerator_and_iteratee">http://www.haskell.org/haskellwiki/Enumerator_and_iteratee</a><a href="#fnref3">↩</a></p></li>
+<li id="fn4"><p><a href="http://research.preferred.jp/2011/02/enumerator-package-yet-another-iteratee-tutorial/">http://research.preferred.jp/2011/02/enumerator-package-yet-another-iteratee-tutorial/</a><a href="#fnref4">↩</a></p></li>
+<li id="fn5"><p><a href="http://hackage.haskell.org/package/wai-0.4.2">http://hackage.haskell.org/package/wai-0.4.2</a><a href="#fnref5">↩</a></p></li>
+<li id="fn6"><p><a href="http://steve.vinoski.net/pdf/IC-Warp_a_Haskell_Web_Server.pdf">http://steve.vinoski.net/pdf/IC-Warp_a_Haskell_Web_Server.pdf</a><a href="#fnref6">↩</a></p></li>
+<li id="fn7"><p><a href="http://www.slideshare.net/nushio/peyton-jones2011parallel-haskellthefuture">http://www.slideshare.net/nushio/peyton-jones2011parallel-haskellthefuture</a><a href="#fnref7">↩</a></p></li>
+<li id="fn8"><p><a href="http://static.googleusercontent.com/external_content/untrusted_dlcp/research.google.com/ja//pubs/archive/36841.pdf">http://static.googleusercontent.com/external_content/untrusted_dlcp/research.google.com/ja//pubs/archive/36841.pdf</a><a href="#fnref8">↩</a></p></li>
+<li id="fn9"><p><a href="http://research.microsoft.com/pubs/74063/beautiful.pdf">http://research.microsoft.com/pubs/74063/beautiful.pdf</a><a href="#fnref9">↩</a></p></li>
+</ol>
+</div>
+
+<br>
+
+<script type="text/javascript"><!--
+google_ad_client = "ca-pub-2554934724722249";
+/* normal */
+google_ad_slot = "6131209617";
+google_ad_width = 728;
+google_ad_height = 90;
+//-->
+</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+
+<br>
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'tanakh-jp'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+var disqus_shortname = 'tanakh-jp'; // required: replace example with your forum shortname
+
+/* * * DON'T EDIT BELOW THIS LINE * * */
+(function () {
+    var s = document.createElement('script'); s.async = true;
+    s.type = 'text/javascript';
+    s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+
+            </div>
+            <div class="span1"></div>
+        </div>
+
+        <hr>
+
+        <footer class="footer">
+            <center>
+            <p>
+                Copyright (c) 2011-2013, Hideyuki Tanaka (@<a href="https://twitter.com/tanakh">tanakh</a>)
+            </p>
+            <p>
+                Site proudly generated by <a href="http://jaspervdj.be/hakyll">Hakyll</a>.<br>
+                Served by <a href="http://mew.org/~kazu/proj/mighttpd/en/">Mighttpd2</a>.<br>
+                Tools are made with <a href="http://fay-lang.org/">Fay</a>.<br>
+                This site uses <a href="http://twitter.github.io/bootstrap/">Twitter Bootstrap</a>, and theme from <a href="http://bootswatch.com/">Bootswatch</a>.<br>
+            <p>
+            </center>
+        </footer>
+    </div>
+
+    <script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-26679036-1']);
+      _gaq.push(['_setDomainName', 'tanakh.jp']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>
+
+  </body>
+</html>

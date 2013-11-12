@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <title>Windowsで最高のターミナルを構築する方法 - 純粋関数空間</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="../css/bootstrap-responsive.min.css" rel="stylesheet" media="screen">
+    <link href="../css/syntax.css" rel="stylesheet" media="screen">
+    <link href="../css/docs.css" rel="stylesheet" media="screen">
+
+    <script type="text/javascript" src="http://s.hatena.ne.jp/js/HatenaStar.js"></script>
+    <script type="text/javascript">
+        Hatena.Star.Token = '448676af7a3fe5b6511e9789fbaed5a26da61054';
+        Hatena.Star.SiteConfig = {
+            entryNodes: {
+                '.post-title': {
+                    uri: 'document.location',
+                    title: 'document.title',
+                    container: 'parent'
+                }
+            }
+        };
+    </script>
+  </head>
+  <body>
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+
+    <div class="container-fluid">
+        <div class="navbar">
+            <div class="navbar-inner">
+                <a class="brand" href="../">tanakh.jp</a>
+
+                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+
+                <div class="nav-collapse">
+                    <ul class="nav">
+                        <li><a href="../">Home</a></li>
+                        <li><a href="../about.html">About</a></li>
+                        <li><a href="../contact.html">Contact</a></li>
+                        <li><a href="../pub.html">Publications</a></li>
+                        <li><a href="../tools.html">Tools</a></li>
+                        <li><a href="../archive.html">Archive</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="row-fluid">
+            <div class="span1"></div>
+            <div class="span10">
+                <div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+<h2 class="post-title">Windowsで最高のターミナルを構築する方法</h2>
+
+<div class="info">Posted on November 15, 2011, Tags: <a href="../tags/windows.html">windows</a>, <a href="../tags/devenv.html">devenv</a></div>
+
+<!-- Social Buttons -->
+<div class="social">
+    <div class="hatena">
+        <a href="http://b.hatena.ne.jp/entry/tanakh.jp/posts/2011-11-15-windows-terminal.html" class="hatena-bookmark-button" data-hatena-bookmark-title="Windowsで最高のターミナルを構築する方法 - tanakh.jp" data-hatena-bookmark-layout="standard-balloon" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+    </div>
+    <div class="facebook">
+        <div class="fb-like" data-href="http://tanakh.jp/posts/2011-11-15-windows-terminal.html" data-send="false" data-layout="button_count" data-width="450" data-show-faces="false" data-font="arial"></div>
+    </div>
+    <div class="gplus">
+        <!-- +1 ボタン を表示したい位置に次のタグを貼り付けてください。 -->
+        <div class="g-plusone" data-size="medium" data-href="http://tanakh.jp/posts/2011-11-15-windows-terminal.html"></div>
+        <!-- 最後の +1 ボタン タグの後に次のタグを貼り付けてください。 -->
+        <script type="text/javascript">
+          (function() {
+            var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+            po.src = 'https://apis.google.com/js/plusone.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+          })();
+        </script>
+    </div>
+    <div class="twitter">
+        <a href="https://twitter.com/share" class="twitter-share-button" data-via="tanakh" data-lang="ja">ツイート</a>
+        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+    </div>
+</div>
+
+<hr>
+
+<p>皆さん、Windowsでコマンドライン使ってますか？ まともなターミナルエミュレータすらないと思っている方もいらっしゃるかもしれませんが、案外何とかなるものです。</p>
+<p><a href="../img/posts/mintty.png"><img src="../img/posts/mintty.png" alt="MINTTY" /></a></p>
+<p>これが完成図です。1週間ほどいろいろ試した結果、動作、見た目、フォントレンダリング、どれもおおむね満足行く結果になりました。</p>
+<h2 id="terminal-emulator選び">Terminal Emulator選び</h2>
+<p>Windowsをお使いの皆様ならご存じかとは思いますが、デフォルトのTerminal Emulatorである cmd.exe が良くないです。 <del>挙動、フォント云々の話をするまでもなく、横幅が80文字固定なのがどうしようもありません。</del> プロパティのレイアウトのところから幅の変更ができるようでした。ご指摘ありがとうございます。</p>
+<p><a href="http://en.wikipedia.org/wiki/List_of_terminal_emulators">この辺</a>を見てWindowsで動作するものを一通り試してみたのですが、動作がおかしいか、フォントが気に入らないか、プロプライエタリかで、どれもよくないなあという結論を一度は下しました。</p>
+<p>それでVMWare PlayerでLinuxを入れてgnome-terminalをUnityモードで使っていたのですが、Gnome3になったりVMWarePlayerが新しくなってVMWareToolsがうまく動かなくなったりして、どうしたものかなあというときに、ふと起動してみた <a href="http://code.google.com/p/mintty/">mintty</a> が案外良かったので、そのまま移行してしまいました。</p>
+<h2 id="mintty-とは">mintty とは</h2>
+<p><a href="http://code.google.com/p/mintty/">mintty</a> はCygwinのターミナルエミュレータです。あるバージョンからCygwinに同梱されるようになっていて、当時はなんじゃこりゃ、と思った記憶があります。それがバージョンアップを繰り返して最近1.0.0になっていたようなのですが、非常に使い勝手が良くなっていました。動作にもおかしなところはなく、それもそのはず、minttyは <a href="http://www.chiark.greenend.org.uk/~sgtatham/putty/">putty</a> のターミナル部分をベースに開発されているそうなのでした。しかし、puttyはずいぶん昔に更新が止まっており（最近約4年ぶりに新しいバージョンが出ましたが）、WindowsVista/7での高品位なフォントレンダリングに対応していなかったり、いろいろ不満がありました。</p>
+<p>また、minttyは最近では <a href="http://www.mingw.org/wiki/MSYS">MSYS</a> にも対応したようで、Cygwinをインストールせずに利用することもできます。MSYSのパッケージマネージャでインストールすることも可能で、Windowsのターミナルエミュレータとしてかなり使い勝手の良いものになっています。</p>
+<h2 id="環境最速構築手順">環境最速構築手順</h2>
+<p>ここではMSYSのminttyをインストールすることにします。</p>
+<h3 id="mingwmsysのインストール">MinGW/MSYSのインストール</h3>
+<p><a href="http://www.mingw.org/wiki/MSYS">MSYS</a> のインストールは、インストーラを使うのが便利です。以下のURLから新しいものをダウンロードしてください。</p>
+<p><a href="http://sourceforge.net/projects/mingw/files/Installer/mingw-get-inst/">http://sourceforge.net/projects/mingw/files/Installer/mingw-get-inst/</a></p>
+<p>インストーラを実行すればMinGW/MSYSのインストールは完了です。インストールの際にMSYS Basic Systemのところにチェックを入れるのを忘れずに。</p>
+<h3 id="minttyのインストール">minttyのインストール</h3>
+<p>MSYSのインストールが完了したら、MinGW Shellを起動して、以下のコマンドを実行します。</p>
+<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">mingw-get</span> update
+$ <span class="kw">mingw-get</span> install mintty</code></pre>
+<p>これで mintty のインストールは完了です。MinGWも便利になったもんですね。mintty コマンドを起動できる用になったはずです。起動した mintty をタスクバーにピン留めしておけば一発で起動できるようになって便利です。</p>
+<h3 id="home-の設定">$HOME の設定</h3>
+<p>sshやemacsなどが設定ファイルを参照できるように、<span class="math"><em>H</em><em>O</em><em>M</em><em>E</em><em>環</em><em>境</em><em>変</em><em>数</em><em>を</em><em>設</em><em>定</em><em>し</em><em>て</em><em>お</em><em>き</em><em>ま</em><em>す</em>。</span>HOMEの値は c:&lt;ユーザ名&gt; にします。そこに .ssh/ ディレクトリを作成して鍵を置いておけば mintty からSSHができるようになります。</p>
+<h3 id="フォントの設定">フォントの設定</h3>
+<p>minttyはデフォルトではあまりいい感じのフォントとウインドウ表示ではないので、お好みの見た目になるように調節します。</p>
+<p>まずはフォントですが、私のおすすめは <a href="http://www.levien.com/type/myfonts/inconsolata.html">Inconsolata</a> です。Inconsolataは <a href="http://hivelogic.com/articles/top-10-programming-fonts/">Top 10 programming fonts</a> でも1位として挙げられている非常に美しいフォントです。</p>
+<div class="figure">
+<img src="http://www.levien.com/type/myfonts/incoshow.png" alt="Inconsolata" /><p class="caption">Inconsolata</p>
+</div>
+<p>Inconsolataは本家から取得しても良いですが、<a href="http://www.google.com/webfonts">Google Web Fonts</a> にあるものはヒンティングの修正が行われており、Clear Type環境下でより高品位なレンダリングが期待できるので、こちらから取得するのがおすすめです。</p>
+<h3 id="フォントリンク">フォントリンク</h3>
+<p>Inconsolataは英文フォントなので、日本語は（WindowsXP以降では）フォントリンクされたフォント、デフォルトではMS ゴシックでレンダリングされます。これはあまりうれしくありません。というのもMS ゴシックは小さいサイズだとビットマップフォントになるのと、ヒンティングがないからです。</p>
+<p>そこで、Inconsolataにメイリオをリンクさせるのがおすすめです。フォントリンクを設定するにはレジストリにエントリを追加する必要があります（フォントリンクに関して詳しくは<a href="http://blog.livedoor.jp/mailnobu/archives/16399739.html">このあたりを</a>参照）。</p>
+<p><code>HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\FontLink\SystemLink</code> に Inconsolata という名前のキーを複数行文字列データとして作成し、meiryo.ttc,Meiryo という行を追加すればOKです。</p>
+<p>フォントリンクするのが面倒なら、プログラミング用フォント <a href="http://save.sys.t.u-tokyo.ac.jp/~yusa/fonts/ricty.html">Ricty</a>を利用するのがお手軽です。</p>
+<div class="figure">
+<img src="http://save.sys.t.u-tokyo.ac.jp/~yusa/fonts/print_ricty/print_ricty_thumbnail.png" alt="Ricty" /><p class="caption">Ricty</p>
+</div>
+<p>Rictyは、Inconsolataと <a href="http://mix-mplus-ipa.sourceforge.jp/">Migu</a> の合成フォントです。Miguも非常に視認性の高い日本語フォントですが、個人的にメイリオの字形の方が好みなのと、Inconsolataにあったヒンティングが損なわれているようで、Windowsだとフォントがあまりきれいにレンダリングされないので、私はInconsolataにメイリオをリンクする方が好きです。</p>
+<h3 id="ウインドウの設定">ウインドウの設定</h3>
+<p>フォントが設定できたら、後はウインドウの見た目をお好みにいじります。お好みでいいですが、LooksのTransparencyのところをGlassにするのが個人的お勧めです。AeroUIの磨りガラス風UIがウインドウ全体になって、なんだか無駄にかっこいいです。デフォルトでは背景が透けすぎるので、Windowsのウインドウの設定から、色を濃いめにした方がいいでしょう。</p>
+<p><a href="../img/posts/mintty2.png"> <img src="../img/posts/mintty2.png" alt="mintty-glass" /> </a></p>
+<p>特に何もなくとも適当にhtopを表示しておくとなんだか楽しいです。</p>
+<h2 id="その他">その他</h2>
+<p>minttyにはウインドウ分割機能がないので、ログイン先サーバにscreen/tmuxなどをインストールしておくと便利です。</p>
+<p>私は最近はbyobu-tmuxを利用しています。最初のスクリーンショットのようにウインドウを分割して使えます。ウインドウの移動がShift+Left/Rightでできたりして割と直感的に操作できます。</p>
+<h2 id="まとめ">まとめ</h2>
+<p>gnome-terminal on VMWare からの移行ですが、おおむね満足です。</p>
+<p>良かったところ：</p>
+<ul>
+<li>フォントがきれい</li>
+<li>無駄にかっこいい</li>
+<li>軽い</li>
+<li>WindowsのIMEが使える</li>
+</ul>
+<p>不満点：</p>
+<ul>
+<li>タブがない（tmuxがあればそんなに困らないけど）</li>
+</ul>
+<p>というわけで、mintty、おすすめです。</p>
+
+<br>
+
+<script type="text/javascript"><!--
+google_ad_client = "ca-pub-2554934724722249";
+/* normal */
+google_ad_slot = "6131209617";
+google_ad_width = 728;
+google_ad_height = 90;
+//-->
+</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+
+<br>
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'tanakh-jp'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+var disqus_shortname = 'tanakh-jp'; // required: replace example with your forum shortname
+
+/* * * DON'T EDIT BELOW THIS LINE * * */
+(function () {
+    var s = document.createElement('script'); s.async = true;
+    s.type = 'text/javascript';
+    s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+
+            </div>
+            <div class="span1"></div>
+        </div>
+
+        <hr>
+
+        <footer class="footer">
+            <center>
+            <p>
+                Copyright (c) 2011-2013, Hideyuki Tanaka (@<a href="https://twitter.com/tanakh">tanakh</a>)
+            </p>
+            <p>
+                Site proudly generated by <a href="http://jaspervdj.be/hakyll">Hakyll</a>.<br>
+                Served by <a href="http://mew.org/~kazu/proj/mighttpd/en/">Mighttpd2</a>.<br>
+                Tools are made with <a href="http://fay-lang.org/">Fay</a>.<br>
+                This site uses <a href="http://twitter.github.io/bootstrap/">Twitter Bootstrap</a>, and theme from <a href="http://bootswatch.com/">Bootswatch</a>.<br>
+            <p>
+            </center>
+        </footer>
+    </div>
+
+    <script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-26679036-1']);
+      _gaq.push(['_setDomainName', 'tanakh.jp']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>
+
+  </body>
+</html>

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <title>コピペジェネレータ・ジェネレータ - 純粋関数空間</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="../css/bootstrap-responsive.min.css" rel="stylesheet" media="screen">
+    <link href="../css/syntax.css" rel="stylesheet" media="screen">
+    <link href="../css/docs.css" rel="stylesheet" media="screen">
+
+    <script type="text/javascript" src="http://s.hatena.ne.jp/js/HatenaStar.js"></script>
+    <script type="text/javascript">
+        Hatena.Star.Token = '448676af7a3fe5b6511e9789fbaed5a26da61054';
+        Hatena.Star.SiteConfig = {
+            entryNodes: {
+                '.post-title': {
+                    uri: 'document.location',
+                    title: 'document.title',
+                    container: 'parent'
+                }
+            }
+        };
+    </script>
+  </head>
+  <body>
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+
+    <div class="container-fluid">
+        <div class="navbar">
+            <div class="navbar-inner">
+                <a class="brand" href="../">tanakh.jp</a>
+
+                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+
+                <div class="nav-collapse">
+                    <ul class="nav">
+                        <li><a href="../">Home</a></li>
+                        <li><a href="../about.html">About</a></li>
+                        <li><a href="../contact.html">Contact</a></li>
+                        <li><a href="../pub.html">Publications</a></li>
+                        <li><a href="../tools.html">Tools</a></li>
+                        <li><a href="../archive.html">Archive</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="row-fluid">
+            <div class="span1"></div>
+            <div class="span10">
+                <h2 id="tool-title">コピペジェネレータ・ジェネレータ</h2>
+
+<script type="text/javascript">
+  $('#tool-title').hide();
+  $('.alert').alert();
+</script>
+
+<div id="create-tmpl" style="display:none">
+  <form class="form-horizontal">
+    <div class="control-group">
+      <label class="control-label" for="description">簡易説明</label>
+      <div class="controls" id="description">
+        コピペジェネレータを生成します。
+        <code>{{</code>と<code>}}</code>で囲んだ部分がプレースホルダになります。
+      </div>
+    </div>
+
+    <div class="control-group">
+      <label class="control-label" for="cpp-title">タイトル</label>
+      <div class="controls">
+        <input class="span6" type="text" id="cpp-title" placeholder="何の成果も得られませんでしたぁぁ！！">
+      </div>
+    </div>
+
+    <div class="control-group">
+      <label class="control-label" for="author">作者</label>
+      <div class="controls">
+        <div class="input-prepend">
+          <span class="add-on">@</span>
+          <input class="span8" id="author" type="text" placeholder="Username">
+        </div>
+      </div>
+    </div>
+
+    <div class="control-group">
+      <label class="control-label" for="template">テンプレート</label>
+      <div class="controls">
+        <textarea class="span8" id="template" rows="10" placeholder="「でも{{息子}}は役に立ったんですよね。何か直接の{{手柄}}はなくても{{息子の死}}は{{人類の反撃の糧}}になったんですよね」
+「もちろん…いや…今回の{{調査}}で我々は、何の{{成果}}も得られませんでしたぁぁ！！私が無能なばかりにただいたずらに{{兵を死なせ}}、{{奴らの正体を突き止めることが}}、できませんでしたぁぁ！！」"></textarea>
+      </div>
+    </div>
+
+    <div class="control-group">
+      <div class="controls">
+        <strong><div name="charCount"></div></strong>
+      </div>
+    </div>
+
+    <div class="control-group">
+      <div class="controls">
+        <a class="btn btn-primary" id="gen-gen" data-loading-text="生成中...">ジェネレータ生成</a>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div id="use-tmpl" style="display:none">
+  <form class="form-horizontal">
+    <div class="control-group">
+      <div class="controls">
+        <div id="presented-by"></div>
+      </div>
+    </div>
+
+    <div class="control-group">
+      <label class="control-label" for="template-ctrls">テンプレート</label>
+      <div class="controls">
+        <div id="template-ctrls"></div>
+      </div>
+    </div>
+
+    <div class="control-group">
+      <label class="control-label" for="outputText">生成文</label>
+      <div class="controls">
+        <textarea class="span8" id="outputText" rows="7"></textarea>
+      </div>
+    </div>
+
+    <div class="control-group">
+      <div class="controls">
+        <strong><div name="charCount"></div></strong>
+      </div>
+    </div>
+
+    <div class="control-group">
+      <div class="controls">
+        <a class="btn btn-primary" id="tweet">ツイート</a>
+        <a class="btn" id="ret">ジェネレータジェネレータに戻る</a>
+      </div>
+    </div>
+  </form>
+</div>
+
+<br>
+
+<div class="container">
+  <div class="span5">
+    <h2>人気のジェネレータ</h2>
+
+    <a class="btn" id="pop-init"><i class="icon-fast-backward"></i></a>
+    <a class="btn" id="pop-prev"><i class="icon-step-backward"></i></a>
+    <a class="btn" id="pop-next"><i class="icon-step-forward"></i></a>
+    <a class="btn" id="pop-last"><i class="icon-fast-forward"></i></a>
+
+    <p>
+      <ul id="popular"></ul>
+    </p>
+  </div>
+
+  <div class="span5">
+    <h2>最近のジェネレータ</h2>
+
+    <a class="btn" id="rec-init"><i class="icon-fast-backward"></i></a>
+    <a class="btn" id="rec-prev"><i class="icon-step-backward"></i></a>
+    <a class="btn" id="rec-next"><i class="icon-step-forward"></i></a>
+    <a class="btn" id="rec-last"><i class="icon-fast-forward"></i></a>
+
+    <p>
+      <ul id="recent"></ul>
+    </p>
+  </div>
+</div>
+
+<br>
+
+<div class="container">
+  <div class="span5">
+    <h2>ジェネレータの検索</h2>
+    <p>
+      <div class="input-append">
+        <input class="input-large" id="query-text" type="text">
+        <div class="btn-group">
+          <button class="btn dropdown-toggle" data-toggle="dropdown">
+            検索
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu">
+            <li><a id="txt-search">適当に検索</a></li>
+            <li><a id="author-search">作者で検索</a></li>
+          </ul>
+        </div>
+      </div>
+    </p>
+
+    <p>
+      <a class="btn" id="src-init"><i class="icon-fast-backward"></i></a>
+      <a class="btn" id="src-prev"><i class="icon-step-backward"></i></a>
+      <a class="btn" id="src-next"><i class="icon-step-forward"></i></a>
+      <a class="btn" id="src-last" style="visibility:hidden"><i class="icon-fast-forward"></i></a>
+    </p>
+
+    <div id="search-result">
+    </div>
+  </div>
+
+  <div class="span5">
+    <a class="twitter-timeline" href="https://twitter.com/search?q=copipe-gen-gen+exclude%3Aretweets" data-widget-id="341030901712580610">copipe-gen-gen exclude:retweets に関するツイート</a>
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+
+    <script>
+      $(window).load(function() {
+        function changeWidget() {
+          var twFrame = $('iframe.twitter-timeline');
+          if (twFrame.length > 0) {
+            twFrame.contents()
+              .find('h1').text('みんなのツイート');
+          } else {
+            setTimeout(changeWidget, 500);
+          }
+        }
+        changeWidget();
+      });
+    </script>
+  </div>
+</div>
+
+<script type="text/javascript" src="//www.parsecdn.com/js/parse-1.1.15.min.js"></script>
+<script type="text/javascript" src="copipe-gen-gen.js"></script>
+
+
+<hr>
+
+<div class="container"><center>
+<script type="text/javascript"><!--
+google_ad_client = "ca-pub-2554934724722249";
+/* ブログ */
+google_ad_slot = "6131209617";
+google_ad_width = 728;
+google_ad_height = 90;
+//-->
+</script>
+<script type="text/javascript" src="//pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+</center></div>
+
+            </div>
+            <div class="span1"></div>
+        </div>
+
+        <hr>
+
+        <footer class="footer">
+            <center>
+            <p>
+                Copyright (c) 2011-2013, Hideyuki Tanaka (@<a href="https://twitter.com/tanakh">tanakh</a>)
+            </p>
+            <p>
+                Site proudly generated by <a href="http://jaspervdj.be/hakyll">Hakyll</a>.<br>
+                Served by <a href="http://mew.org/~kazu/proj/mighttpd/en/">Mighttpd2</a>.<br>
+                Tools are made with <a href="http://fay-lang.org/">Fay</a>.<br>
+                This site uses <a href="http://twitter.github.io/bootstrap/">Twitter Bootstrap</a>, and theme from <a href="http://bootswatch.com/">Bootswatch</a>.<br>
+            <p>
+            </center>
+        </footer>
+    </div>
+
+    <script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-26679036-1']);
+      _gaq.push(['_setDomainName', 'tanakh.jp']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>
+
+  </body>
+</html>

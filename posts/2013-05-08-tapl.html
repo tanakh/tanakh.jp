@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <title>書評「型システム入門」 - 純粋関数空間</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="../css/bootstrap-responsive.min.css" rel="stylesheet" media="screen">
+    <link href="../css/syntax.css" rel="stylesheet" media="screen">
+    <link href="../css/docs.css" rel="stylesheet" media="screen">
+
+    <script type="text/javascript" src="http://s.hatena.ne.jp/js/HatenaStar.js"></script>
+    <script type="text/javascript">
+        Hatena.Star.Token = '448676af7a3fe5b6511e9789fbaed5a26da61054';
+        Hatena.Star.SiteConfig = {
+            entryNodes: {
+                '.post-title': {
+                    uri: 'document.location',
+                    title: 'document.title',
+                    container: 'parent'
+                }
+            }
+        };
+    </script>
+  </head>
+  <body>
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+
+    <div class="container-fluid">
+        <div class="navbar">
+            <div class="navbar-inner">
+                <a class="brand" href="../">tanakh.jp</a>
+
+                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+
+                <div class="nav-collapse">
+                    <ul class="nav">
+                        <li><a href="../">Home</a></li>
+                        <li><a href="../about.html">About</a></li>
+                        <li><a href="../contact.html">Contact</a></li>
+                        <li><a href="../pub.html">Publications</a></li>
+                        <li><a href="../tools.html">Tools</a></li>
+                        <li><a href="../archive.html">Archive</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="row-fluid">
+            <div class="span1"></div>
+            <div class="span10">
+                <div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+<h2 class="post-title">書評「型システム入門」</h2>
+
+<div class="info">Posted on May  8, 2013, Tags: <a href="../tags/programming.html">Programming</a>, <a href="../tags/type%20theory.html">Type Theory</a>, <a href="../tags/review.html">Review</a></div>
+
+<!-- Social Buttons -->
+<div class="social">
+    <div class="hatena">
+        <a href="http://b.hatena.ne.jp/entry/tanakh.jp/posts/2013-05-08-tapl.html" class="hatena-bookmark-button" data-hatena-bookmark-title="書評「型システム入門」 - tanakh.jp" data-hatena-bookmark-layout="standard-balloon" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+    </div>
+    <div class="facebook">
+        <div class="fb-like" data-href="http://tanakh.jp/posts/2013-05-08-tapl.html" data-send="false" data-layout="button_count" data-width="450" data-show-faces="false" data-font="arial"></div>
+    </div>
+    <div class="gplus">
+        <!-- +1 ボタン を表示したい位置に次のタグを貼り付けてください。 -->
+        <div class="g-plusone" data-size="medium" data-href="http://tanakh.jp/posts/2013-05-08-tapl.html"></div>
+        <!-- 最後の +1 ボタン タグの後に次のタグを貼り付けてください。 -->
+        <script type="text/javascript">
+          (function() {
+            var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+            po.src = 'https://apis.google.com/js/plusone.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+          })();
+        </script>
+    </div>
+    <div class="twitter">
+        <a href="https://twitter.com/share" class="twitter-share-button" data-via="tanakh" data-lang="ja">ツイート</a>
+        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+    </div>
+</div>
+
+<hr>
+
+<div class="amazlet-box" style="margin-bottom:0px;">
+<div class="amazlet-image" style="float:left;margin:0px 12px 1px 0px;">
+<a href="http://www.amazon.co.jp/exec/obidos/ASIN/4274069117/peropero0b-22/ref=nosim/" name="amazletlink" target="_blank"><img src="http://ecx.images-amazon.com/images/I/41QDKuBy2sL._SL160_.jpg" alt="型システム入門 −プログラミング言語と型の理論−" style="border: none;" /></a>
+</div>
+<div class="amazlet-info" style="line-height:120%; margin-bottom: 10px">
+<div class="amazlet-name" style="margin-bottom:10px;line-height:120%">
+<a href="http://www.amazon.co.jp/exec/obidos/ASIN/4274069117/peropero0b-22/ref=nosim/" name="amazletlink" target="_blank">型システム入門 −プログラミング言語と型の理論−</a>
+<div class="amazlet-powered-date" style="font-size:80%;margin-top:5px;line-height:120%">
+posted with <a href="http://www.amazlet.com/" title="amazlet" target="_blank">amazlet</a> at 13.05.07
+</div>
+</div>
+<div class="amazlet-detail">
+Benjamin C. Pierce <br />オーム社 <br />売り上げランキング: 26,545<br />
+</div>
+<div class="amazlet-sub-info" style="float: left;">
+<div class="amazlet-link" style="margin-top: 5px">
+<a href="http://www.amazon.co.jp/exec/obidos/ASIN/4274069117/peropero0b-22/ref=nosim/" name="amazletlink" target="_blank">Amazon.co.jpで詳細を見る</a>
+</div>
+</div>
+</div>
+<div class="amazlet-footer" style="clear: left">
+
+</div>
+</div>
+<hr>
+
+<p><strong>追記</strong>：Amazonのリンクを張っていますが、オーム社のサイト <a href="http://estore.ohmsha.co.jp/titles/978427406911P">http://estore.ohmsha.co.jp/titles/978427406911P</a> からも購入できます。 AmazonのKindle版はまだ出ていないようですが、 こちらからは今現在でDRMなしのPDFも購入できます。 Kindle版リリースの際にも、 フローレイアウトになる予定はないそうですので、 Amazonにこだわりがあるのでなければ、 電子版で読みたいという方は、こちらから購入されるのが良いかと思います。</p>
+<p>あらかじめお断りしておきますと、 この記事は書評ではなく、<strong>宣伝</strong>です。</p>
+<p>数年前に原著を読んだ時から、 本書は私の中では間違いなく良書ということになっておりますので、 私がいまさら内容の善し悪しを語ることには、 はじめから意味がないと思っております。 なのでここでは、この本の魅力、読んで欲しい人、どういう風に読めば良いのか、 などを私見を交えて、なるべく上手く伝えたいと思います。</p>
+<h2 id="はじめに">はじめに</h2>
+<p>本書は、型の入門書の名著として名高い <a href="http://www.cis.upenn.edu/~bcpierce/tapl/">Types and Programming Languages</a>、 通称 <strong>“TAPL”</strong> の訳書です。</p>
+<p>二年ほど前に、本書の和訳プロジェクトがスタートしたとお聞きしたときから、 発売されるのを楽しみにしておりました。 ついに、この日が来たのですね。 ……といいつつ、なかなか筆が進まず、 もう発売から一月以上経ってしまっているのですが。</p>
+<h2 id="読んで欲しい人">読んで欲しい人</h2>
+<p>型に関する誤解が、この世の中には多く渦巻いています。 もちろん、私がその中の一人ではないと言うつもりはありませんし、 おそらくいくつも誤解を抱えて生きているのだと思いますが、 いかんせん、型に関するWeb上の記事や言論には、 非常に初歩的な誤解に基づくものが散見されますように思います。 例えば、</p>
+<ul>
+<li>動的言語の最適化が進めば、静的型付けには意味がなくなる</li>
+<li>静的型付けは記述が冗長になる</li>
+<li>静的型付けは変更に弱い</li>
+<li>型は大してエラーを検出しない</li>
+<li>どうせテストを書くのだから、型は要らない</li>
+<li>etc, …</li>
+</ul>
+<p>そう言った記事や主張が書かれてしまうのは、 何も型に関して特有の現象というわけではないのでしょうけれど、 ことさらそれが目に付くように感じるのは、 型というものが、プログラミング言語とは もはや不可分な存在だからなのでしょう。 型理論を学ぶ、学ばざるにかかわらず、 すべてのプログラマは否応にも型と対峙することになるのです。</p>
+<p>型理論というのは、れっきとした、数学、論理学の研究分野の一つであり、 そもそもプログラミングや計算機の登場以前から存在したものです。 にもかかわらず、それを全く利用せずにプログラムを書くことは 現代においてはおおよそ不可能です。 あまりにも型とプログラミング言語との関わりが密接になってしまったからです。 仮に、圏論、あるいはモナドがプログラミングに応用されるという事例が、 どこかにあったとします。 それに関わり合いになるプログラマもいるでしょう。 もしかしたら、解説記事や批判記事をしたためる人も出てくるかもしれません。 しかし、そういう人たちは、プログラマ全体からすると、 （少なくとも現状のところは）ごく一部であり、 そのようなことをしようとする人は、 おそらく多少はそれを勉強した人であるはずです。</p>
+<p>一方で型です。なぜだかは、もうおわかりかもしれませんが、 型については、型を勉強していない人もよく語りたがります。 <em>カタ</em>だけに。ではなくて。 もちろん理由は、型がプログラミングに携わる、 殆ど全ての人に関わる物だからであり、 その裏に、プログラミングやコンピュータよりも長い歴史を持つ、 型理論というものが存在していることを、 プログラマは必ずしも意識したり学習したりしているとは限らないからです。</p>
+<p>そして、個人的にはもう一つ理由があると思っていて、 それは、日本語で書かれた、<strong>型</strong>の、<strong>基本的</strong>で、<strong>包括的</strong>な教科書が、 存在してこなかったからだと思います。 監訳の住井先生がおっしゃるには、 「（思ったよりも反響が大きくて、）最初は、 この本の日本語の需要がそんなにあるとは思っていなかった。 なぜなら、この本を読みたいと思うような層は、 原著で読んでしまうだろうと思っていたから。」 と、懐疑的だったそうですが、 これは私は逆だと思っていて、 英語で600ページを超える（質量も、装丁も、文字通り）レンガのような原著をみて、 「オェーッ」となってしまう人にこそ この本を必要とする人が多いのではないかと思っています。</p>
+<p>それはおそらく、私がなぜだか、（あるいは半ば好きこのんで） 無知から来るおおよそ不毛な型論争に巻き込まれることが多かったからだと思います。 この本が日本語で読めれば、日本の技術者のレベルが底上げされるはずだ、 そしてそれはこの社会全体に少なからぬプラスの作用を与えるだろうと、 そう考えていたわけです。</p>
+<p>みんな英語が読めるようになりゃあいい。 それはごもっともではありますが、 少なくとも私は、自分自身が、 英語を読むことに非常に苦痛を感じるタイプの人間ですので、 英語が読めたとしても、日本語があれば非常にありがたいという 種類の日本人が少なからずいると言うことを知っています。 そしてそれは他ならぬ、かつて私が <a href="../posts/2012-05-02-learn-you-a-haskell.html">“Learn You a Haskell for Great Good!”を翻訳した</a> 際の動機でもあります。 英語を翻訳するのは英語に堪能な人だけど、 翻訳を必要とするのは、英語を疎ましく感じている人だというジレンマは、 それ自体は興味深いですけど、なかなか根深い問題なのです。</p>
+<p>本書は、一般的な技術書よりも幾分高めの価格設定になっています。 しかし、それは内容の充実度をご覧頂くと納得されるでしょう。 たいていのプログラマならば、本書に値段以上の価値を見いだすことが出来ると思います。 型理論は極めて応用範囲の広いものです。 流行り廃りのあるたぐいのものではないので、 読後のプログラマ人生に対して、 恒久的にプラスになり続ける、 極めて費用対効果・労力対効果の高いものだと思っております。</p>
+<p>知らない人に知らないものをどういうものかと教えるには、 私はメタファー（隠喩）ぐらいしか思いつかないので、 無理を承知で表現してみますと、 「オブジェクト指向を勉強して良かった、と思う人がいるぐらいには、 型を勉強して良かった、と思う人はいるだろう。」 とまあ、こんな感じになるでしょうか。</p>
+<p>翻訳についてですが、これも良い仕事がなされています。 訳語の選択から、細かい表現の修正まで、 訳者陣とレビュー陣により、オーム社史上最大級の激しい議論が交わされたそうで、 なるべく誤解を生まないような文章になるように、 細心の注意が払われています。</p>
+<p>しかも、例によって例のごとく、 翻訳の段階で<strong>原著にあったバグが多数修正</strong>されていて、 かつ<strong>原著よりも安い</strong>。 となれば、もうお買い得としか言いようがありませんね！</p>
+<h2 id="どんな本なのか">どんな本なのか？</h2>
+<p>前置きが長くなりましたが、この本はどんな本なのか。 題名通り、プログラミング言語に対する型理論の教科書です。</p>
+<p>前書きから抜粋しますと、 原著は12年前の出版より、説明のわかりやすさから、 型の教科書の定番として広く親しまれ、 日本の多くの大学、研究室でも頻繁に輪講に用いられてきた本です。</p>
+<p>型システムを勉強するためには、それを載せるためのプログラミング言語が必要になるので、 単純に、良く定義できるラムダ計算が登場します。 本書ではもちろんラムダ計算の知識は前提としていませんので、 型の教科書なのに、最初の7章までは型が出てきません。 最初は型無しのラムダ計算からから始まります。 それから、単純型付きラムダ計算の解説に入ります。 そこを拠点として、</p>
+<ul>
+<li>部分型 (Subtyping)</li>
+<li>再帰型 (Recursive Types)</li>
+<li>多相性 (Polymorphism)</li>
+<li>高階型 (Kindなど)</li>
+</ul>
+<p>など、昨今のプログラミング言語で良く用いられる概念が展開されていきます。 たぶん、この中の幾つかは、聞いたことがある人も多いと思います。 聞いたことのあるだけでなく、 もしかしたらよく分からずに使っているという人もいるかもしれません。</p>
+<p>この本には、きちんとした定義が載っています。 型とは何か。型の持つべき性質とは何か。 ほげほげ型とはどういうものなのか。 ほげほげ型システムは、どういう性質を満たしているのか。 そしてその証明（証明の部分は難しかったので、私は読み飛ばしてしまいましたが）まで。</p>
+<p>基本的にベースの言語としてラムダ計算が用いられますので、 どちらかと言えば関数型言語よりの本のようにも見えますが、 それは便宜的なもので、 オブジェクト指向プログラミングに対する型付けや、 現実の言語“Java”に形式的な型付けを試みた “Featherweight Java”などの実例も解説されています。</p>
+<p>基礎の基礎から、これぐらいは最低知っていれば、 というところまで包括的な内容になっていますので、 「最近の型の研究を追いかけるための知識を最短で身につける」 などの目的にも最適だと思います。</p>
+<h2 id="読み方など">読み方など</h2>
+<p>本書は、かなり分量のある本で、実に32の章から構成されていますが、 相互に依存性のない章も多いです。 序文に、章の間の依存関係のグラフが掲載されているので （スクリプトから自動生成されているらしい）、 まずは、全てのベースとなる単純型付きラムダ計算まで読んで、 そこから先は、興味のあるトピックに対してグラフを逆にたどり、 必要な章を読んでいくという読み方が、効率的でしょう。 型無しのラムダ計算をすでに知っている場合は、 最初の方の章も飛ばせるので、かなり端折れるかと思います。</p>
+<p>もちろん前から順番に読んでも特に問題はありません。 私は全部読みたかったので、前から順番に読みましたが、 （当然ながら）きちんと理解できました。</p>
+<p>全32章のそれなりに分量のある本ですが、 実は理論的な話の全くない第1章を読むだけでも、 初学者にとってはかなりの勉強になります。 型についてよく知らないけど、 型について語りたい（<em>カタ</em>だけに）！ というときは、 せめて本書の第1章だけでも読むことをお薦めしておきます。</p>
+<ul>
+<li>型システムとは何か</li>
+<li>型システムの歴史</li>
+<li>型システムで何が出来るのか</li>
+<li>型と言語設計との関わり</li>
+</ul>
+<p>などが端的に書かれており、 とある炎上記事なども、 外野がなんやかんや言うまでもなく、 全てここに書いてあるようなことです。</p>
+<p>ちなみに第1章はサンプルとして、 オーム社のページから、丸々ダウンロードできるようになっています！ 太っ腹です。</p>
+<ul>
+<li><a href="http://estore.ohmsha.co.jp/titles/978427406911P">http://estore.ohmsha.co.jp/titles/978427406911P</a></li>
+</ul>
+<h2 id="まとめ">まとめ</h2>
+<p>長々と書いてきましたが、 少しでも本書の魅力が伝われば幸いです。 そして、教養として、型について学ぶ人が少しでも増えたならば、 こんなに嬉しいことはありません。</p>
+<p>おまけ：サイン貰いました ￥(´･_･`)￥</p>
+<iframe src="https://skydrive.live.com/embed?cid=4E77147A7E5C73B7&amp;resid=4E77147A7E5C73B7%21130048&amp;authkey=AGMUqpu2X6NiP3A" width="319" height="216" frameborder="0" scrolling="no"></iframe>
+
+
+
+<br>
+
+<script type="text/javascript"><!--
+google_ad_client = "ca-pub-2554934724722249";
+/* normal */
+google_ad_slot = "6131209617";
+google_ad_width = 728;
+google_ad_height = 90;
+//-->
+</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+
+<br>
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'tanakh-jp'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+var disqus_shortname = 'tanakh-jp'; // required: replace example with your forum shortname
+
+/* * * DON'T EDIT BELOW THIS LINE * * */
+(function () {
+    var s = document.createElement('script'); s.async = true;
+    s.type = 'text/javascript';
+    s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+
+            </div>
+            <div class="span1"></div>
+        </div>
+
+        <hr>
+
+        <footer class="footer">
+            <center>
+            <p>
+                Copyright (c) 2011-2013, Hideyuki Tanaka (@<a href="https://twitter.com/tanakh">tanakh</a>)
+            </p>
+            <p>
+                Site proudly generated by <a href="http://jaspervdj.be/hakyll">Hakyll</a>.<br>
+                Served by <a href="http://mew.org/~kazu/proj/mighttpd/en/">Mighttpd2</a>.<br>
+                Tools are made with <a href="http://fay-lang.org/">Fay</a>.<br>
+                This site uses <a href="http://twitter.github.io/bootstrap/">Twitter Bootstrap</a>, and theme from <a href="http://bootswatch.com/">Bootswatch</a>.<br>
+            <p>
+            </center>
+        </footer>
+    </div>
+
+    <script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-26679036-1']);
+      _gaq.push(['_setDomainName', 'tanakh.jp']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>
+
+  </body>
+</html>
