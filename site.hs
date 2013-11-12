@@ -99,7 +99,7 @@ main = hakyllWith config $ do
         route idRoute
         compile $ do
             let indexCtx = field "posts" $ \_ ->
-                                postList tags "posts/*.md" $ fmap (take 3) . recentFirst
+                                postList tags "posts/*.md" $ fmap (take 5) . recentFirst
 
             getResourceBody
                 >>= applyAsTemplate indexCtx
