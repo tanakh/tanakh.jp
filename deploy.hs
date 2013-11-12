@@ -23,8 +23,10 @@ main = shelly $ do
   files <- findWhen test_f "_site"
   forM_ files $ \file -> do
     t <- toTextWarn file
-    git_ "add" [t]
+    git_ "add" [T.drop 6 t]
 
   git_ "commit" ["-m", "update"]
   git_ "push" []
   git_ "checkout" ["master"]
+
+  `finally_sh` git_ "checkout" ["master"]
