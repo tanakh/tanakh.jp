@@ -155,7 +155,8 @@ instance Writable FayFile where
             "fay --package fay-jquery,fay-text"
             ++ " -o " ++ dst ++ " "
             ++ toFilePath (itemIdentifier item)
-        when (ec /= ExitSuccess) $ fail $ show ec
+        when (ec /= ExitSuccess) $ do
+          print ec
 
 
 --------------------------------------------------------------------------------
