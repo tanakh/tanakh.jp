@@ -9,7 +9,7 @@ programming, type-theory and compiler implementation.
 
 ## Links
 
--   [Twitter (@tanakh)](http://twitter.com/tanakh)
+-   [Twitter (\@tanakh)](http://twitter.com/tanakh)
 -   [github (tanakh)](http://github.com/tanakh)
 -   [TopCoder (haskell-master)](http://www.topcoder.com/tc?module=MemberProfile&cr=22627322)
 -   [codeforces (tanakh)](http://codeforces.com/profile/tanakh)
@@ -96,4 +96,3 @@ Team "Combat" from Kyoto University.
     University)](http://www.kyoto-u.ac.jp/GAD/topic/data05/tpc060320_1/tpc060320_1.htm)
 -   Google Code Jam 2008: [43th
     Place](http://code.google.com/codejam/archive.html)
-
