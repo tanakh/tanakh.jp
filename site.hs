@@ -19,7 +19,7 @@ main = hakyllWith config $ do
         compile compressCssCompiler
 
     match ("img/**" .||. "js/**" .||. "pub/**" .||. "robots.txt" .||. "favicon.ico" .||. "404.html") $ do
-        route idRoute
+        route   idRoute
         compile copyFileCompiler
 
 
@@ -58,9 +58,13 @@ main = hakyllWith config $ do
             >>= loadAndApplyTemplate "templates/default.html" defaultContext
             >>= relativizeUrls
 
-    match "tools/*.hs" $ do
-        route $ setExtension "js"
-        compile fayCompiler
+    -- match "tools/*.hs" $ do
+    --     route $ setExtension "js"
+    --     compile fayCompiler
+
+    match "tools/*.js" $ do
+        route   idRoute
+        compile copyFileCompiler
 
     create ["tools.html"] $ do
         route idRoute
