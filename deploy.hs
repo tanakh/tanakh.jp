@@ -27,6 +27,5 @@ main = shelly $ do
 
   git_ "commit" ["-m", "update"]
   git_ "push" []
-  git_ "checkout" ["master"]
 
   `finally_sh` git_ "checkout" ["master"]
