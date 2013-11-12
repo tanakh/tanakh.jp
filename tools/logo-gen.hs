@@ -130,10 +130,10 @@ drawLogo rwidth rheight ss subtitle ctx = do
 
 main :: Fay ()
 main = do
-  select "#generate" >>= onClick (\_ev -> do
-    select "#generate" >>= btnLoading
+  select (T.pack "#generate") >>= onClick (\_ev -> do
+    select (T.pack "#generate") >>= btnLoading
 
-    theme <- select "#bg-image" >>= getValOrPh
+    theme <- select (T.pack "#bg-image") >>= getValOrPh
 
     let url = endpoint
               <> "/rest"
@@ -148,32 +148,32 @@ main = do
               <> "&format=json&nojsoncallback=1"
     ctx <- getContext "cvs"
 
-    logo <- select "#title-logo" >>= getValOrPh
-    subtitle <- select "#subtitle" >>= getValOrPh
+    logo <- select (T.pack "#title-logo") >>= getValOrPh
+    subtitle <- select (T.pack "#subtitle") >>= getValOrPh
 
-    width <- select "#cvs" >>= getAttr "width"
-    height <- select "#cvs" >>= getAttr "height"
+    width <- select (T.pack "#cvs") >>= getAttr "width"
+    height <- select (T.pack "#cvs") >>= getAttr "height"
 
     let cb photos = do
           p <- rndPhoto photos
           image (toDouble width) (toDouble height) (photoUrl p) ctx $ do
             drawLogo (toDouble width) (toDouble height) logo subtitle ctx
-            select "#generate" >>= btnReset
+            select (T.pack "#generate") >>= btnReset
 
     ajax url cb (\_fail _x _y -> return ())
     return False
     )
 
-  select "#save" >>= onClick (\_ev -> do
+  select (T.pack "#save") >>= onClick (\_ev -> do
     windowOpen =<< toDataUrl =<< getCanvas "cvs"
     return False
     )
 
-  select "#size" >>= onChange (do
-    txt <- select "#size option:selected" >>= getText
+  select (T.pack "#size") >>= onChange (do
+    txt <- select (T.pack "#size option:selected") >>= getText
     case words $ map (\c -> if isDigit c then c else ' ') (T.unpack txt) of
       [w, h] -> do
-        select "#cvs" >>= setAttr "width" (T.pack w) >>= setAttr "height" (T.pack h)
+        select (T.pack "#cvs") >>= setAttr "width" (T.pack w) >>= setAttr "height" (T.pack h)
         clearCanvas "cvs"
     return ()
     )

@@ -48,8 +48,8 @@ tweet msg = windowOpen $
 
 main :: Fay ()
 main = do
-  input  <- select "#inputText"
-  output <- select "#outputText"
+  input  <- select $ T.pack "#inputText"
+  output <- select $ T.pack "#outputText"
 
   let gen = do
         str <- getVal input
@@ -59,7 +59,7 @@ main = do
   keyup (const gen) input
   onChange gen input
 
-  select "#tweet" >>= onClick (\_ev -> do
+  select (T.pack "#tweet") >>= onClick (\_ev -> do
     tweet =<< getVal output
     return False
     )

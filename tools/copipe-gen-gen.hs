@@ -204,7 +204,7 @@ update ts = do
   strs <- go 0 ts
   let str = T.concat strs
       len = T.length str
-  select "#outputText" >>= setVal str
+  select (T.pack "#outputText") >>= setVal str
   updateCount "#outputText" id
   return ()
   where
@@ -226,7 +226,7 @@ updateCount :: T.Text -> (T.Text -> T.Text) -> Fay ()
 updateCount txtId f = do
   str <- select txtId >>= getValOrPh
   let len = T.length $ f str
-  select "[name=charCount]"
+  select (T.pack "[name=charCount]")
     >>= setText (T.pack $ show len)
     >>= setAttr "class" (if len <= 140 then "text-success" else "text-error")
   return ()
@@ -269,7 +269,7 @@ main = do
     pager "recent"  "rec-" cnt $ newQuery >>= desc "updatedAt"
 
   let txtSearch = do
-        q <- select "#query-text" >>= getVal
+        q <- select (T.pack "#query-text") >>= getVal
         when (q /= "") $
           pager "search-result" "src-" 99999 $ do
             a <- newQuery >>= contains "title" q
@@ -277,10 +277,10 @@ main = do
             orQuery a b
 
   onClick' "#txt-search" txtSearch
-  select "#query-text" >>= onEnter txtSearch
+  select (T.pack "#query-text") >>= onEnter txtSearch
 
   onClick' "#author-search" $ do
-    q <- select "#query-text" >>= getVal
+    q <- select (T.pack "#query-text") >>= getVal
     when (q /= "") $
       pager "search-result" "src-" (-1) $
         newQuery >>= contains "author" q
@@ -288,7 +288,7 @@ main = do
 generator cg = do
   let genName = uriDecode (title cg) <> "ジェネレータ"
       ptmpl   = parse $ uriDecode $ template cg
-  select "#tool-title" >>= setText genName >>= setAttr "style" "display:block"
+  select (T.pack "#tool-title") >>= setText genName >>= setAttr "style" "display:block"
   getElementById "template-ctrls" >>= genTemplate ptmpl
 
   when (author cg /= "") $
@@ -298,53 +298,53 @@ generator cg = do
       a <- createElement "a"
       setId a "author-id"
       appendChild a pby
-      select "#author-id"
+      select (T.pack "#author-id")
         >>= setText (author cg)
         >>= setProp "href" ("https://twitter.com/" <> author cg)
 
-  select "#use-tmpl" >>= setAttr "style" "display:block"
+  select (T.pack "#use-tmpl") >>= setAttr "style" "display:block"
   setTitle genName
-  select "#outputText"
+  select (T.pack "#outputText")
     >>= onChange (updateCount "#outputText" id)
     >>= keyup (const $ updateCount "#outputText" id)
   update ptmpl
 
-  onClick' "#tweet" $ select "#outputText" >>= getVal >>= tweet
+  onClick' "#tweet" $ select (T.pack "#outputText") >>= getVal >>= tweet
   onClick' "#ret"   $ location selfUrl
 
   return ()
 
 gengen = do
-  select "#tool-title" >>= setAttr "style" "display:block"
+  select (T.pack "#tool-title") >>= setAttr "style" "display:block"
 
   let f c = not $ c == '{' || c == '}'
-  select "#template"
+  select (T.pack "#template")
     >>= onChange (updateCount "#template" $ filter' f)
     >>= keyup (const $ updateCount "#template" $ filter' f)
   updateCount "#template" $ filter' f
 
   onClick' "#gen-gen" $ do
-    title <- select "#cpp-title" >>= getValOrPh
-    auth  <- select "#author" >>= getVal
-    tmpl  <- select "#template"  >>= getValOrPh
+    title <- select (T.pack "#cpp-title") >>= getValOrPh
+    auth  <- select (T.pack "#author")    >>= getVal
+    tmpl  <- select (T.pack "#template")  >>= getValOrPh
 
     let invTitle = T.length title >= 50
         invAuth  = T.length auth  >= 30
         invTmpl  = T.length tmpl  >= 999
 
-    when invTitle $ select "#cpp-title"
+    when invTitle $ select (T.pack "#cpp-title")
       >>= popover "タイトルが長すぎます" "タイトルは50文字までです"
-    when invAuth  $ select "#author"
+    when invAuth  $ select (T.pack "#author")
       >>= popover "作者名が長すぎます" "作者名は30文字までです（空欄でも可）"
-    when invTmpl  $ select "#template"
+    when invTmpl  $ select (T.pack "#template")
       >>= popover "テンプレートが長すぎます" "テンプレートは999文字までです"
 
     unless (invTitle || invAuth || invTmpl) $ do
-      select "#gen-gen" >>= buttonLoading
+      select (T.pack "#gen-gen") >>= buttonLoading
       obj <- newObject
       save obj (CopipeGenerator title auth tmpl) $ \obj -> do
         objId <- get obj "id"
         location $ selfUrl <> "?id=" <> objId
 
-  select "#create-tmpl" >>= setAttr "style" "display:block"
+  select (T.pack "#create-tmpl") >>= setAttr "style" "display:block"
   return ()
