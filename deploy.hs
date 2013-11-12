@@ -4,7 +4,6 @@
 import Shelly
 import qualified Data.Text as T
 import Control.Monad
-import Data.Monoid
 
 default (T.Text)
 
