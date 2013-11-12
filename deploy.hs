@@ -12,6 +12,7 @@ git_ = command1_ "git" []
 
 main :: IO ()
 main = shelly $ do
+  git_ "checkout" ["master"]
   run_ "cabal" ["run", "tanakh-jp", "rebuild"]
   git_ "checkout" ["gh-pages"]
 
