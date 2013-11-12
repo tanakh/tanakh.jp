@@ -17,7 +17,7 @@ Facebook
 
 Twitter
 
-:   [@tanakh](http://twitter.com/tanakh)
+:   [\@tanakh](http://twitter.com/tanakh)
 
 Google+
 
