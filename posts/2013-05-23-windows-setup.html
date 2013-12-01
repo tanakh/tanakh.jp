@@ -95,109 +95,7 @@
 
 <hr>
 
-<p>周囲にWindowsユーザがめっきり減ってきた昨今ですが、 Windowsユーザの皆様はいかがお過ごしでしょうか。</p>
-<p>Windows8は使えないだの、 シェルがしょぼいからあれだのと言われることも多いですが、 圧倒的にたくさんのPCで安心して動かせるOSとして、 私個人としてはとても便利に使っています。</p>
-<p>Let’snoteのCF-S10Dという2年ほど前の機種を使っているのですが、 ようやくPanasonicのWindows8サポートがこの機種までやってきたので、 Windows8に入れ替えることにしました。 実は発売当初にもWindows8を入れていたのですが、 Let’snoteを快適に使うには必須の、「くるくるホイール」が使えなかったり、 謎の認識されないデバイスがあったりだったので、 Windows7に戻していました。</p>
-<p>というわけで、セットアップついでにそのときの記録を書いておこうと思います。</p>
-<h2 id="windows8について">Windows8について</h2>
-<p>Windows8は、なんだかんだいわれてますが、 Windows7より目に見えてパフォーマンスがよくなってるので、とても快適です。 Windows9xの頃からろくに改善されてこなかった、 エクスプローラやら、タスクマネージャやら、ファイルコピーダイアログやらが改善されて、 デフォルトでISOマウント機能があったり、PDFリーダがあったり、 Windows Defenderというマルウェア対策ソフトが入っていたり、 地味なところが良くなっています。 スタートメニューは、どうなんでしょうかね。 Windowsボタンを押せばいい気がします。</p>
-<iframe src="https://skydrive.live.com/embed?cid=4E77147A7E5C73B7&amp;resid=4E77147A7E5C73B7%21130077&amp;authkey=ACvjI--JZB8wRhM" width="319" height="271" frameborder="0" scrolling="no"></iframe>
-
-<iframe src="https://skydrive.live.com/embed?cid=4E77147A7E5C73B7&amp;resid=4E77147A7E5C73B7%21130063&amp;authkey=AM_VvnGVhmJjxFU" width="320" height="240" frameborder="0" scrolling="no"></iframe>
-
-<p>入れ替え記念のスクリーンショット。 GPU以外は二年前のノートPCとは思えないスペックだなあ。</p>
-<p>あんまり関係ないけど、<a href="http://crystalmark.info/software/CrystalDiskMark/">CrystalDiskMark</a> が時代の波にのまれて萌え化してた。</p>
-<iframe src="https://skydrive.live.com/embed?cid=4E77147A7E5C73B7&amp;resid=4E77147A7E5C73B7%21130062&amp;authkey=ADED2ukIQv5InWw" width="320" height="274" frameborder="0" scrolling="no"></iframe>
-
-<p>スタート画面は、タイルは見なかったことにして、もっぱらテキストでの検索を使えば便利です。 ショートカット系の機能が充実しているので、それらを駆使すれば、 Windows7よりも検索機能が強力な分、便利に使えると思います。 それらを使わない場合、タッチパネルがあればよいのですが、 なければマウスのストロークが大変なので、 初心者向けにはちょっと不親切になっているのかもしれません。 意外だったのは、普通のノートPCでも、タッチパネルがついていると非常に便利に使えるということです。 ボタンを押すのとかも、タッチパッドでマウスを動かして押すよりも、 見えているものを指で押した方が早いというのは、 考えてみれば当然の話ではあります。</p>
-<p>メトロアプリは現状生煮え感がすごいので、 全く使えていません。 Windows8.1で何とかなればいいのですが。 そもそも、CF-S10Dでは画面の解像度が足りてなくて、 画面の横にアプリを固定する機能が使えないという、 悲しい現状があります。 マシンスペックはここ最近大して変わっていないのに、 画面の解像度だけはだいぶ変わりましたね。</p>
-<h2 id="下準備">下準備</h2>
-<p>開発環境を整える前に、下準備としていくつかツールを適当に放り込みます。</p>
-<ul>
-<li><p>Explzh <a href="http://www.ponsoftware.com/archiver/download.htm">http://www.ponsoftware.com/archiver/download.htm</a></p>
-<p>アーカイバは昔からずっとこれを使っています。 開発もコンスタントに続いていてすばらしい。 解凍時に必要なDLLを勝手に取ってきてくれます。 64ビット版は対応DLLが少ないので、64ビットOSでも32ビット版で。 なぜかこのソフトを入れると、 エクスプローラ拡張でシンボリックリンクを貼る機能を追加してくれるので、大変便利。 後の方で使います</p></li>
-<li><p>KeySwap for XP <a href="http://www.vector.co.jp/soft/winnt/util/se228667.html">http://www.vector.co.jp/soft/winnt/util/se228667.html</a></p>
-<p>CapsLockをCtrl化するのに利用。 インストール不要でさくっと入れ替え。 名前に反してVista以降でも問題なく使える。</p></li>
-<li><p>Rapid Environment Editor <a href="http://www.rapidee.com/en/about">http://www.rapidee.com/en/about</a></p>
-<p>環境変数をいじるソフト。 最近Twitterで「Windowsの環境変数設定ダイアログいつまでたってもしょぼいままだなあ」 とぼやいていたら教えていただいたソフト。 あまりにも便利で、今までの苦労は何だったのかという。</p>
-<iframe src="https://skydrive.live.com/embed?cid=4E77147A7E5C73B7&amp;resid=4E77147A7E5C73B7%21130078&amp;authkey=ALD_sH29Qslt1_Y" width="320" height="221" frameborder="0" scrolling="no"></iframe>
-
-<p>パスを配列として編集できたり、パスをダイアログから選択できたり、 存在しないパスが含まれる変数に対してwarningが出たりするので、 アンインストールしても環境変数を直さないお行儀の悪いソフトのお掃除にも便利です。</p></li>
-<li><p>Clover <a href="http://ejie.me/">http://ejie.me/</a></p>
-<p>エクスプローラをChromeそっくりにタブ化するソフト。 キーバインドもChromeと全く同じなので、非常に使い易いです。 ブックマーク機能もあって、ここによくアクセスするフォルダを突っ込んでおくと、 非常に捗ります。</p>
-<iframe src="https://skydrive.live.com/embed?cid=4E77147A7E5C73B7&amp;resid=4E77147A7E5C73B7%21130069&amp;authkey=AB-3OV8x4qAT6lA" width="320" height="224" frameborder="0" scrolling="no"></iframe>
-</li>
-</ul>
-<h2 id="chocolatey-httpchocolatey.org">Chocolatey <a href="http://chocolatey.org/">http://chocolatey.org/</a></h2>
-<p>ようやく、開発環境編です。</p>
-<p>まずはこれ。<a href="http://chocolatey.org/">Chocolatey</a>です。 <a href="http://nuget.org/">NuGet</a>のコマンドラインフロントエンドらしく、 要するに、Wndows版apt-getのようなものです。</p>
-<iframe src="https://skydrive.live.com/embed?cid=4E77147A7E5C73B7&amp;resid=4E77147A7E5C73B7%21130065&amp;authkey=ALHouBA3wdeC7xI" width="319" height="215" frameborder="0" scrolling="no"></iframe>
-
-<p>「Windowsのソフトは、インストーラ探しに行くのが面倒」 とお嘆きの皆さんも、これでだいぶ救われると思います。 前のところで紹介したソフトは登録されていなかったり、まだまだパッケージが少ないようですが、 開発環境周りはやたら充実しています。 <a href="http://chocolatey.org/packages/VisualStudio2012WDX">VisualStudio</a>やら、 <a href="http://chocolatey.org/packages/ie9">IE</a>の各バージョンやらも、 コマンドラインでインストールできるみたいで、 ちょっとびっくりしました。</p>
-<p>Chocolatey自体のインストールはとても簡単で、トップページにばばーんと書いてあるコマンドを <code>cmd.exe</code> に貼り付けるだけです。</p>
-<iframe src="https://skydrive.live.com/embed?cid=4E77147A7E5C73B7&amp;resid=4E77147A7E5C73B7%21130066&amp;authkey=AJtT3jIa3MK-cuY" width="320" height="233" frameborder="0" scrolling="no"></iframe>
-
-<p>あとは、powershellなりcmdなりから、</p>
-<pre><code>&gt; chocolatey install &lt;ほげほげ&gt;</code></pre>
-<p>もしくは</p>
-<pre><code>&gt; cinst &lt;ほげほげ&gt;</code></pre>
-<p>と打ち込めば、いろいろインストールできます。</p>
-<iframe src="https://skydrive.live.com/embed?cid=4E77147A7E5C73B7&amp;resid=4E77147A7E5C73B7%21130068&amp;authkey=AGeE-VGSneKoAMU" width="320" height="233" frameborder="0" scrolling="no"></iframe>
-
-<iframe src="https://skydrive.live.com/embed?cid=4E77147A7E5C73B7&amp;resid=4E77147A7E5C73B7%21130067&amp;authkey=AP8ZTE97ZNyTeDA" width="320" height="233" frameborder="0" scrolling="no"></iframe>
-
-<p>今回インストールしたものを列挙しておきます。</p>
-<ul>
-<li><p><a href="http://chocolatey.org/packages/GoogleChrome">GoogleChrome</a>, <a href="http://chocolatey.org/packages/Firefox">Firefox</a></p>
-<p>とりあえずブラウザ一式は必要だろうか。</p></li>
-<li><p><a href="http://chocolatey.org/packages/dropbox">dropbox</a></p>
-<p>何はなくともDropbox。 後でエディタの設定共有に使います。</p></li>
-<li><p><a href="http://chocolatey.org/packages/mingw">mingw</a></p>
-<p>Windowsでもあると便利なGNU環境。 いろいろありますが、とりあえずMinGW。 ちなみに、ChocolateyではCygwinの特別サポートがあって、 <code>chocolatey cygwin</code> または <code>ccygwin</code> コマンドで、 Cygwin上のパッケージ管理ができたりします。</p>
-<p>mingwでもその辺は別に困らなくて、 mingwインストール後に <code>mingw-get install</code> コマンドでいろんなパッケージを入れられます。</p>
-<p>Cygwinを使う場合は、本家よりも <a href="http://gnupack.sourceforge.jp/docs/latest/UsersGuide.html">gnupack</a> を使うのがとても便利です。 zipを落として展開するだけで、それなりにナイスに設定されたCygwinをインスタントに使えます。 それなりにナイスに設定されたemacsとvimも付いてきます。</p></li>
-<li><p><a href="http://chocolatey.org/packages/git">git</a></p>
-<p>何はなくともgit。 git関係のパッケージいろいろありますが、素直にこれでいいと思います。 <a href="http://windows.github.com/">Github for Windows</a>とかもありますが、 GUIが特にいらない人はこれで良いかと。</p></li>
-<li><p><a href="http://chocolatey.org/packages/sublimetext2">sublimetext2</a></p>
-<p>今時のエディタ。今のメインエディタ。後の方で設定を記しておきます。 emacsやvimがお好きな方は、これもChocolateyでインストールできます。 ダウンロード数から見ると、vimの方が人気が高いようですね。</p></li>
-<li><p><a href="http://chocolatey.org/packages/ConEmu">ConEmu</a></p>
-<p>Windowsでコマンドラインを使うに当たって、 入れておいて損はない、高機能ターミナルエミュレータ。</p>
-<p><a href="../posts/2011-11-15-windows-terminal.html">一年半前の記事</a>では、 <a href="https://code.google.com/p/mintty/">mintty</a>を推していましたが、 今は<a href="https://code.google.com/p/conemu-maximus5/">ConEmu</a>を使っています。</p>
-<p>どちらも甲乙つけがたいのですが、今はConEmuかなあという感じです。 Chocolateyでは、Console2というのが一番人気のようですが、 日本語環境では全然だめっぽいのと、UIがいまいちいけてないです。 その点、minttyとConEmuはどちらもクール。</p></li>
-</ul>
-<p>Chocolateyは、Cygwinだけでなく、そのほかいくつかのツールに関して、 特別なパッケージサポートが組み込まれています。 よく使いそうなのは、RubyとPythonでしょうか。 それぞれ <code>cgem</code> と <code>cpyton</code> で利用できます。 Node.jsなどもさくっと入るので、LLユーザの方には大変便利だと思います。</p>
-<h2 id="conemuの設定">ConEmuの設定</h2>
-<p>ConEmuはデフォルトでは<code>cmd.exe</code>をシェルとして使う設定になっていますが、 <code>cmd.exe</code>、PowerShell、MinGWのbash、 この三色のシェルを一発起動できるようにしておくと、大変クールです。</p>
-<p>設定の、Startup → Taksに三つを登録しておきます。</p>
-<iframe src="https://skydrive.live.com/embed?cid=4E77147A7E5C73B7&amp;resid=4E77147A7E5C73B7%21130073&amp;authkey=ALmw7uGtBBG3V9o" width="319" height="236" frameborder="0" scrolling="no"></iframe>
-
-<iframe src="https://skydrive.live.com/embed?cid=4E77147A7E5C73B7&amp;resid=4E77147A7E5C73B7%21130071&amp;authkey=AINSh3AKd3Db7Ko" width="319" height="236" frameborder="0" scrolling="no"></iframe>
-
-<iframe src="https://skydrive.live.com/embed?cid=4E77147A7E5C73B7&amp;resid=4E77147A7E5C73B7%21130079&amp;authkey=AL6mL78YDUheVfs" width="319" height="236" frameborder="0" scrolling="no"></iframe>
-
-<p>bashは、bash.exeに <code>--login -i</code> パラメータを渡してやります。</p>
-<pre><code>C:\MinGW\msys\1.0\bin\bash --login -i</code></pre>
-<p>powershellとcmdはそのまま適当にコマンドを貼ればOK。 デフォルトのシェルをbashに変更しておくと、さらに便利です。</p>
-<iframe src="https://skydrive.live.com/embed?cid=4E77147A7E5C73B7&amp;resid=4E77147A7E5C73B7%21130072&amp;authkey=AGyCQ5CZq_xj83w" width="319" height="236" frameborder="0" scrolling="no"></iframe>
-
-<p>ちなみに、bashはHOME環境変数を参照するので、 これも設定しておきましょう。 HOMEは、Windowsの個人アカウントのホームと共有するのがおそらく便利です。 Rapid Environment Editorで、<code>HOME=C:\Users\&lt;ユーザ名&gt;</code>を追加します。</p>
-<p>ついでに、<code>LANG=C</code>を入れておくと、GNU系ツールが死ぬ確率がちょっと下がります。</p>
-<iframe src="https://skydrive.live.com/embed?cid=4E77147A7E5C73B7&amp;resid=4E77147A7E5C73B7%21130070&amp;authkey=APrs8Xu4kujkgQY" width="319" height="244" frameborder="0" scrolling="no"></iframe>
-
-<p>こんな風に特に問題なくbashできています。</p>
-<h2 id="エディタの設定">エディタの設定</h2>
-<p>SublimeText2を複数の環境で利用しているのですが、 毎度設定していてはとても面倒なので、 Dropboxを使って設定を同期するようにしています。</p>
-<p>Dropboxの方に、設定ディレクトリの本体をおいて、 ローカルマシンにはシンボリックリンクをおいておきます。 こうすれば、勝手にインストールしたパッケージやら設定やらが同期されます。</p>
-<p>Windowsでのシンボリックリンク作成は、 普通にやるとちょっと面倒なのですが、最初に紹介したExplzhをインストールすると、 なぜか右クリックメニュー拡張にシンボリックリンク作成が追加されるので、 これを使うと楽ちんです。</p>
-<iframe src="https://skydrive.live.com/embed?cid=4E77147A7E5C73B7&amp;resid=4E77147A7E5C73B7%21130075&amp;authkey=ALW2hR-sAopOYXY" width="319" height="198" frameborder="0" scrolling="no"></iframe>
-
-<iframe src="https://skydrive.live.com/embed?cid=4E77147A7E5C73B7&amp;resid=4E77147A7E5C73B7%21130076&amp;authkey=AIjxBw7xtnPJPqo" width="320" height="213" frameborder="0" scrolling="no"></iframe>
-
-<p>ちなみに、Windowsアプリの、アプリ固有設定置き場のデフォルトは、<code>%APPDATA%</code>です。 エクスプローラのロケーションバーに<code>%APPDATA%</code>と打ち込むと、 展開されたフォルダ名が開きます。</p>
-<p>私はemacsも併用していて、こちらの設定もDropboxで同期しています。 <code>.emacs</code>を<code>.emacs.d/init.el</code>に変更して、 <code>.emacs.d</code>に設定を一本化すれば楽です。 emacs24以降だとパッケージマネージャがデフォルトで含まれており、 インストールしたパッケージはこのディレクトリ以下に入るようになるので、 パッケージも共有できます。</p>
-<p>あとは、Sublimeの時と同様にシンボリックリンクを貼るだけです。 emacsはGNU流のソフトなので、 <code>%APPDATA%</code>ではなく<code>%HOME%</code>に貼る必要があることに注意します。</p>
-<h2 id="以降の設定">以降の設定</h2>
-<p>各自利用するツールなり、プログラミング言語なりをインストールします。 私の場合ですと、Haskell Platformとかを適当に入れました。 エディタの言語向け設定とか、いろいろありますが、 それはまたの機会に。</p>
+<p>周囲にWindowsユーザがめっきり減ってきた昨今ですが、 Windowsユーザの皆様はいかがお過ごしでしょうか。  Windows8は使えないだの、 シェルがしょぼいからあれだのと言われることも多いですが、 圧倒的にたくさんのPCで安心して動かせるOSとして、 私個人としてはとても便利に使っています。  Let’snoteのCF-S10Dという2年ほど前の機種を使っているのですが、 ようやくPanasonicのWindows8サポートがこの機種までやってきたので、 Windows8に入れ替えることにしました。 実は発売当初にもWindows8を入れていたのですが、 Let’snoteを快適に使うには必須の、「くるくるホイール」が使えなかったり、 謎の認識されないデバイスがあったりだったので、 Windows7に戻していました。  というわけで、セットアップついでにそのときの記録を書いておこうと思います。  ## Windows8について  Windows8は、なんだかんだいわれてますが、 Windows7より目に見えてパフォーマンスがよくなってるので、とても快適です。 Windows9xの頃からろくに改善されてこなかった、 エクスプローラやら、タスクマネージャやら、ファイルコピーダイアログやらが改善されて、 デフォルトでISOマウント機能があったり、PDFリーダがあったり、 Windows Defenderというマルウェア対策ソフトが入っていたり、 地味なところが良くなっています。 スタートメニューは、どうなんでしょうかね。 Windowsボタンを押せばいい気がします。  <iframe src="https://skydrive.live.com/embed?cid=4E77147A7E5C73B7&amp;resid=4E77147A7E5C73B7%21130077&amp;authkey=ACvjI--JZB8wRhM" width="319" height="271" frameborder="0" scrolling="no"></iframe>  <iframe src="https://skydrive.live.com/embed?cid=4E77147A7E5C73B7&amp;resid=4E77147A7E5C73B7%21130063&amp;authkey=AM_VvnGVhmJjxFU" width="320" height="240" frameborder="0" scrolling="no"></iframe>  入れ替え記念のスクリーンショット。 GPU以外は二年前のノートPCとは思えないスペックだなあ。  あんまり関係ないけど、<a href="http://crystalmark.info/software/CrystalDiskMark/">CrystalDiskMark</a> が時代の波にのまれて萌え化してた。  <iframe src="https://skydrive.live.com/embed?cid=4E77147A7E5C73B7&amp;resid=4E77147A7E5C73B7%21130062&amp;authkey=ADED2ukIQv5InWw" width="320" height="274" frameborder="0" scrolling="no"></iframe>  スタート画面は、タイルは見なかったことにして、もっぱらテキストでの検索を使えば便利です。 ショートカット系の機能が充実しているので、それらを駆使すれば、 Windows7よりも検索機能が強力な分、便利に使えると思います。 それらを使わない場合、タッチパネルがあればよいのですが、 なければマウスのストロークが大変なので、 初心者向けにはちょっと不親切になっているのかもしれません。 意外だったのは、普通のノートPCでも、タッチパネルがついていると非常に便利に使えるということです。 ボタンを押すのとかも、タッチパッドでマウスを動かして押すよりも、 見えているものを指で押した方が早いというのは、 考えてみれば当然の話ではあります。  メトロアプリは現状生煮え感がすごいので、 全く使えていません。 Windows8.1で何とかなればいいのですが。 そもそも、CF-S10Dでは画面の解像度が足りてなくて、 画面の横にアプリを固定する機能が使えないという、 悲しい現状があります。 マシンスペックはここ最近大して変わっていないのに、 画面の解像度だけはだいぶ変わりましたね。  ## 下準備  開発環境を整える前に、下準備としていくつかツールを適当に放り込みます。  - Explzh <a href="http://www.ponsoftware.com/archiver/download.htm">http://www.ponsoftware.com/archiver/download.htm</a>  アーカイバは昔からずっとこれを使っています。 開発もコンスタントに続いていてすばらしい。 解凍時に必要なDLLを勝手に取ってきてくれます。 64ビット版は対応DLLが少ないので、64ビットOSでも32ビット版で。 なぜかこのソフトを入れると、 エクスプローラ拡張でシンボリックリンクを貼る機能を追加してくれるので、大変便利。 後の方で使います  - KeySwap for XP <a href="http://www.vector.co.jp/soft/winnt/util/se228667.html">http://www.vector.co.jp/soft/winnt/util/se228667.html</a>  CapsLockをCtrl化するのに利用。 インストール不要でさくっと入れ替え。 名前に反してVista以降でも問題なく使える。  - Rapid Environment Editor <a href="http://www.rapidee.com/en/about">http://www.rapidee.com/en/about</a>  環境変数をいじるソフト。 最近Twitterで「Windowsの環境変数設定ダイアログいつまでたってもしょぼいままだなあ」 とぼやいていたら教えていただいたソフト。 あまりにも便利で、今までの苦労は何だったのかという。  <iframe src="https://skydrive.live.com/embed?cid=4E77147A7E5C73B7&amp;resid=4E77147A7E5C73B7%21130078&amp;authkey=ALD_sH29Qslt1_Y" width="320" height="221" frameborder="0" scrolling="no"></iframe>  パスを配列として編集できたり、パスをダイアログから選択できたり、 存在しないパスが含まれる変数に対してwarningが出たりするので、 アンインストールしても環境変数を直さないお行儀の悪いソフトのお掃除にも便利です。  - Clover <a href="http://ejie.me/">http://ejie.me/</a>  エクスプローラをChromeそっくりにタブ化するソフト。 キーバインドもChromeと全く同じなので、非常に使い易いです。 ブックマーク機能もあって、ここによくアクセスするフォルダを突っ込んでおくと、 非常に捗ります。  <iframe src="https://skydrive.live.com/embed?cid=4E77147A7E5C73B7&amp;resid=4E77147A7E5C73B7%21130069&amp;authkey=AB-3OV8x4qAT6lA" width="320" height="224" frameborder="0" scrolling="no"></iframe>  ## Chocolatey <a href="http://chocolatey.org/">http://chocolatey.org/</a>  ようやく、開発環境編です。  まずはこれ。<a href="http://chocolatey.org/">Chocolatey</a>です。 <a href="http://nuget.org/">NuGet</a>のコマンドラインフロントエンドらしく、 要するに、Wndows版apt-getのようなものです。  <iframe src="https://skydrive.live.com/embed?cid=4E77147A7E5C73B7&amp;resid=4E77147A7E5C73B7%21130065&amp;authkey=ALHouBA3wdeC7xI" width="319" height="215" frameborder="0" scrolling="no"></iframe>  「Windowsのソフトは、インストーラ探しに行くのが面倒」 とお嘆きの皆さんも、これでだいぶ救われると思います。 前のところで紹介したソフトは登録されていなかったり、まだまだパッケージが少ないようですが、 開発環境周りはやたら充実しています。 <a href="http://chocolatey.org/packages/VisualStudio2012WDX">VisualStudio</a>やら、 <a href="http://chocolatey.org/packages/ie9">IE</a>の各バージョンやらも、 コマンドラインでインストールできるみたいで、 ちょっとびっくりしました。  Chocolatey自体のインストールはとても簡単で、トップページにばばーんと書いてあるコマンドを <code>cmd.exe</code> に貼り付けるだけです。  <iframe src="https://skydrive.live.com/embed?cid=4E77147A7E5C73B7&amp;resid=4E77147A7E5C73B7%21130066&amp;authkey=AJtT3jIa3MK-cuY" width="320" height="233" frameborder="0" scrolling="no"></iframe>  あとは、powershellなりcmdなりから、  <sub>~</sub> &gt; chocolatey install <ほげほげ> <sub><sub><sub>  もしくは  </sub></sub></sub> &gt; cinst <ほげほげ> <sub>~</sub>  と打ち込めば、いろいろインストールできます。  <iframe src="https://skydrive.live.com/embed?cid=4E77147A7E5C73B7&amp;resid=4E77147A7E5C73B7%21130068&amp;authkey=AGeE-VGSneKoAMU" width="320" height="233" frameborder="0" scrolling="no"></iframe>  <iframe src="https://skydrive.live.com/embed?cid=4E77147A7E5C73B7&amp;resid=4E77147A7E5C73B7%21130067&amp;authkey=AP8ZTE97ZNyTeDA" width="320" height="233" frameborder="0" scrolling="no"></iframe>  今回インストールしたものを列挙しておきます。  - <a href="http://chocolatey.org/packages/GoogleChrome">GoogleChrome</a>, <a href="http://chocolatey.org/packages/Firefox">Firefox</a>  とりあえずブラウザ一式は必要だろうか。  - <a href="http://chocolatey.org/packages/dropbox">dropbox</a>  何はなくともDropbox。 後でエディタの設定共有に使います。  - <a href="http://chocolatey.org/packages/mingw">mingw</a>  Windowsでもあると便利なGNU環境。 いろいろありますが、とりあえずMinGW。 ちなみに、ChocolateyではCygwinの特別サポートがあって、 <code>chocolatey cygwin</code> または <code>ccygwin</code> コマンドで、 Cygwin上のパッケージ管理ができたりします。  mingwでもその辺は別に困らなくて、 mingwインストール後に <code>mingw-get install</code> コマンドでいろんなパッケージを入れられます。  Cygwinを使う場合は、本家よりも <a href="http://gnupack.sourceforge.jp/docs/latest/UsersGuide.html">gnupack</a> を使うのがとても便利です。 zipを落として展開するだけで、それなりにナイスに設定されたCygwinをインスタントに使えます。 それなりにナイスに設定されたemacsとvimも付いてきます。  - <a href="http://chocolatey.org/packages/git">git</a>  何はなくともgit。 git関係のパッケージいろいろありますが、素直にこれでいいと思います。 <a href="http://windows.github.com/">Github for Windows</a>とかもありますが、 GUIが特にいらない人はこれで良いかと。  - <a href="http://chocolatey.org/packages/sublimetext2">sublimetext2</a>  今時のエディタ。今のメインエディタ。後の方で設定を記しておきます。 emacsやvimがお好きな方は、これもChocolateyでインストールできます。 ダウンロード数から見ると、vimの方が人気が高いようですね。  - <a href="http://chocolatey.org/packages/ConEmu">ConEmu</a>  Windowsでコマンドラインを使うに当たって、 入れておいて損はない、高機能ターミナルエミュレータ。  <a href="../posts/2011-11-15-windows-terminal.html">一年半前の記事</a>では、 <a href="https://code.google.com/p/mintty/">mintty</a>を推していましたが、 今は<a href="https://code.google.com/p/conemu-maximus5/">ConEmu</a>を使っています。  どちらも甲乙つけがたいのですが、今はConEmuかなあという感じです。 Chocolateyでは、Console2というのが一番人気のようですが、 日本語環境では全然だめっぽいのと、UIがいまいちいけてないです。 その点、minttyとConEmuはどちらもクール。  Chocolateyは、Cygwinだけでなく、そのほかいくつかのツールに関して、 特別なパッケージサポートが組み込まれています。 よく使いそうなのは、RubyとPythonでしょうか。 それぞれ <code>cgem</code> と <code>cpyton</code> で利用できます。 Node.jsなどもさくっと入るので、LLユーザの方には大変便利だと思います。  ## ConEmuの設定  ConEmuはデフォルトでは<code>cmd.exe</code>をシェルとして使う設定になっていますが、 <code>cmd.exe</code>、PowerShell、MinGWのbash、 この三色のシェルを一発起動できるようにしておくと、大変クールです。  設定の、Startup → Taksに三つを登録しておきます。  <iframe src="https://skydrive.live.com/embed?cid=4E77147A7E5C73B7&amp;resid=4E77147A7E5C73B7%21130073&amp;authkey=ALmw7uGtBBG3V9o" width="319" height="236" frameborder="0" scrolling="no"></iframe>  <iframe src="https://skydrive.live.com/embed?cid=4E77147A7E5C73B7&amp;resid=4E77147A7E5C73B7%21130071&amp;authkey=AINSh3AKd3Db7Ko" width="319" height="236" frameborder="0" scrolling="no"></iframe>  <iframe src="https://skydrive.live.com/embed?cid=4E77147A7E5C73B7&amp;resid=4E77147A7E5C73B7%21130079&amp;authkey=AL6mL78YDUheVfs" width="319" height="236" frameborder="0" scrolling="no"></iframe>  bashは、bash.exeに <code>--login -i</code> パラメータを渡してやります。  <sub>~</sub> C:.0–login -i <sub>~</sub>  powershellとcmdはそのまま適当にコマンドを貼ればOK。 デフォルトのシェルをbashに変更しておくと、さらに便利です。  <iframe src="https://skydrive.live.com/embed?cid=4E77147A7E5C73B7&amp;resid=4E77147A7E5C73B7%21130072&amp;authkey=AGyCQ5CZq_xj83w" width="319" height="236" frameborder="0" scrolling="no"></iframe>  ちなみに、bashはHOME環境変数を参照するので、 これも設定しておきましょう。 HOMEは、Windowsの個人アカウントのホームと共有するのがおそらく便利です。 Rapid Environment Editorで、<code>HOME=C:\Users\&lt;ユーザ名&gt;</code>を追加します。  ついでに、<code>LANG=C</code>を入れておくと、GNU系ツールが死ぬ確率がちょっと下がります。  <iframe src="https://skydrive.live.com/embed?cid=4E77147A7E5C73B7&amp;resid=4E77147A7E5C73B7%21130070&amp;authkey=APrs8Xu4kujkgQY" width="319" height="244" frameborder="0" scrolling="no"></iframe>  こんな風に特に問題なくbashできています。  ## エディタの設定  SublimeText2を複数の環境で利用しているのですが、 毎度設定していてはとても面倒なので、 Dropboxを使って設定を同期するようにしています。  Dropboxの方に、設定ディレクトリの本体をおいて、 ローカルマシンにはシンボリックリンクをおいておきます。 こうすれば、勝手にインストールしたパッケージやら設定やらが同期されます。  Windowsでのシンボリックリンク作成は、 普通にやるとちょっと面倒なのですが、最初に紹介したExplzhをインストールすると、 なぜか右クリックメニュー拡張にシンボリックリンク作成が追加されるので、 これを使うと楽ちんです。  <iframe src="https://skydrive.live.com/embed?cid=4E77147A7E5C73B7&amp;resid=4E77147A7E5C73B7%21130075&amp;authkey=ALW2hR-sAopOYXY" width="319" height="198" frameborder="0" scrolling="no"></iframe>  <iframe src="https://skydrive.live.com/embed?cid=4E77147A7E5C73B7&amp;resid=4E77147A7E5C73B7%21130076&amp;authkey=AIjxBw7xtnPJPqo" width="320" height="213" frameborder="0" scrolling="no"></iframe>  ちなみに、Windowsアプリの、アプリ固有設定置き場のデフォルトは、<code>%APPDATA%</code>です。 エクスプローラのロケーションバーに<code>%APPDATA%</code>と打ち込むと、 展開されたフォルダ名が開きます。  私はemacsも併用していて、こちらの設定もDropboxで同期しています。 <code>.emacs</code>を<code>.emacs.d/init.el</code>に変更して、 <code>.emacs.d</code>に設定を一本化すれば楽です。 emacs24以降だとパッケージマネージャがデフォルトで含まれており、 インストールしたパッケージはこのディレクトリ以下に入るようになるので、 パッケージも共有できます。  あとは、Sublimeの時と同様にシンボリックリンクを貼るだけです。 emacsはGNU流のソフトなので、 <code>%APPDATA%</code>ではなく<code>%HOME%</code>に貼る必要があることに注意します。  ## 以降の設定  各自利用するツールなり、プログラミング言語なりをインストールします。 私の場合ですと、Haskell Platformとかを適当に入れました。 エディタの言語向け設定とか、いろいろありますが、 それはまたの機会に。</p>
 
 <br>
 

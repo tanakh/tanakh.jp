@@ -95,177 +95,31 @@
 
 <hr>
 
-<p><a href="http://fay-lang.org">Fay</a> をいじってみたので、 せっかくだから記事を書いておこうと思います。</p>
-<p>なお、Fayは新しい言語（というより、処理系と言った方が適切かな）ですので、 ここに書いてある情報は、来年か、あるいは半年後か、 それとももっとずっと早くに陳腐化する可能性がそれなりに低くないことを、 あらかじめお断りしておきます。</p>
-<p>この記事執筆時に用いたFayのバージョンは、 <a href="http://hackage.haskell.org/package/fay-0.14.5.0">fay-0.14.5.0</a> です。</p>
-<h2 id="デモ前置き">デモ・前置き</h2>
-<p>特に何か作りたいものが有ったわけではなかったので、 今回作ってみたものは超どうでも良いツールです。</p>
-<p><a href="http://tanakh.jp/tools/sudden.html">http://tanakh.jp/tools/sudden.html</a></p>
-<pre><code>＿人人人人人人＿
-＞　突然の死　＜
-￣Y^Y^Y^Y^Y￣</code></pre>
-<p>こういうテキストを生成するだけのツールです。</p>
-<ul>
-<li><a href="https://github.com/tanakh/tanakh.jp/blob/master/tools/sudden.hs">Fayのコード</a></li>
-<li><a href="https://github.com/tanakh/tanakh.jp/blob/master/tools/sudden.html">HTMLコード</a></li>
-</ul>
-<p>これらのコンパイルなどもhakyllでまとめて管理できるようにしました。 hakyllには、ファイル変更監視による自動再コンパイル機能があるので、 変更の度に手でコンパイルしなくても良くて、 コンパイルコマンドを叩くのが面倒な人にも安心ですね。</p>
-<ul>
-<li><a href="https://github.com/tanakh/tanakh.jp/blob/master/site.hs">https://github.com/tanakh/tanakh.jp/blob/master/site.hs</a></li>
-</ul>
-<p>いくつかの、これよりは遙かにまともな例を、 このあたりから見つけることが出来ると思います。</p>
-<p><a href="https://github.com/faylang/fay/wiki#fay-in-the-wild">https://github.com/faylang/fay/wiki#fay-in-the-wild</a></p>
-<p>あと、おそらくこちらの記事（日本語）も、 私の記事よりは、幾分充実したものだと思います。</p>
-<p><a href="http://blog.konn-san.com/article/20121225/fay-introduction">http://blog.konn-san.com/article/20121225/fay-introduction</a></p>
-<h2 id="fay-とは何か">Fay とは何か？</h2>
-<p>いわゆる一つの、JavaScriptをターゲットとする言語で、 Haskellの <strong>PROPER</strong> なサブセットになっています。 いくつかの当然の疑問とともに、Fayのアドバンテージを 最初に語っておこうかと思います。</p>
-<ul>
-<li><p>なんでこんなものが必要なのか</p>
-<p>JavaScriptでWebアプリを書きたくないから。 なぜなのかは、JavaScriptの代替言語が雨後のタケノコのように 乱立している昨今においては、あえて説明する必要はないかとも思います。 いくつかの理由は、以下のURLにて説明されていますが、 これが万人にとって賛同されるべきものなのかどうかは 私には分かりません。</p>
-<p><a href="http://www.haskell.org/haskellwiki/The_JavaScript_Problem">The JavaScript Problem</a></p></li>
-<li><p>なんでHaskellのサブセットなのか</p>
-<p>まず第一に、Haskellは良い言語であると言うこと。 第二に、Haskellは大きな言語であると言うこと。</p>
-<p>第一の理由は、好み以外にありません。 Haskellが良い言語だと思わない人には、 わざわざFayを使う理由もないでしょう。 JavaScriptと比較してのHaskellの一番の特徴は、 リッチな型システムによって、静的な型検証が行われることだと思います。</p>
-<p>第二の理由は深刻です。フルのHaskellを実装するのは大変だからです。 サブセットという選択肢にもいくつかのオプションがあるでしょう。</p>
-<ul>
-<li><p>フルのHaskellを実装する</p>
-<p>難しいと言ったそばからですが、フルのHaskellをJavaScriptにコンパイルする というオプションも当然あります。</p>
-<p><a href="https://github.com/ghcjs/ghcjs">GHCJS</a> は、GHCのバックエンドとしてJavaScriptを生成するものと、 JavaScriptで書かれたランタイムからなるアプローチをとっています。 フロントエンドにGHCを用いるとはいえ、ランタイムのほうには、 グリーンスレッドやSTMなど、やっかいな（だけど、とてつもなく便利な） 代物を実装する必要が依然としてあります。</p>
-<p><a href="https://github.com/valderman/haste-compiler">Haste</a> という 似たアプローチの別処理系もありますが、 こちらはより実装を軽くすることを目的としているようです。</p>
-<p><a href="https://github.com/atzedijkstra/javascript-runtime-for-UHC">UHC</a> というHaskell処理系は最近ターゲット言語として、 JavaScriptをサポートしたようです。 しかし、そもそもUHC自体の機能がGHCより少ないのと、 インストールが面倒だというUHC自体を使うに当たる問題にぶち当たります。</p>
-<p>フルHaskellがサポートされる処理系が出来れば、素晴らしいですが、 残念ながら今のところ、ちゃんと使えたり、楽に使えたりするものは なさそうなのが現状です。</p></li>
-<li><p>全くの新しい言語を設計する</p>
-<p><a href="http://roy.brianmckenna.org/">Roy</a> という言語は、 どことなくHaskellに似た、 Hindley-Milner型推論を持つ関数型言語です。</p></li>
-<li><p>Haskellと似て異なる言語を実装する</p>
-<p><a href="http://elm-lang.org/">Elm</a> はかなりHaskell似た言語です。 でも、正格評価だったり、Reactive Programmingのための機能があったり、 似て異なる言語です。</p></li>
-</ul></li>
-</ul>
-<p>おそらく、Fayが良いのは、Haskellの完全なサブセットだという所です。 Fayのコードは（Fayにバグがなければ）普通のHaskellとして動作します。 実際に型チェックにはGHCが用いられます。 ただ、表現に制限がかかるだけです。 似て異なる言語を覚えるのは、実際問題難しいとは言いませんが、 少なくとも私は、かなりの精神的負担と混乱を強いられると感じます。 その点、サブセットであるならば、変な挙動をして悩まされるということは、 あまりありません。 出来ないことを把握しておけば良くて、 出来ないことは、コンパイル時に判明するからです。</p>
-<h2 id="fayの導入">Fayの導入</h2>
-<p>Fayを導入するには、あらかじめ <a href="http://www.haskell.org/platform/">Haskell Platform</a> を導入しておく必要があります。 リンク先にある、プラットフォーム毎の指示に従えば、 簡単にインストールできるはずです。</p>
-<p>Haskell Platformがインストールされれば、fayの導入は簡単です。</p>
-<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">cabal</span> update
-$ <span class="kw">cabal</span> install fay fay-base</code></pre>
-<p>このコマンドを実行すれば、インストールは完了です。お疲れ様でした！</p>
-<h2 id="fayの第一歩">Fayの第一歩</h2>
-<p>とあるHaskell入門本では中盤まで登場しない「Hello, World!」ですが、 Haskellを知らない人がいきなりFayを勉強しようと思うとは思えないので、 今回はいきなり「Hello, World!」です。 書き忘れましたけど、Haskellの知識は前提とします。</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE NoImplicitPrelude #-}</span>
-<span class="kw">import</span>           Prelude
+<a href="http://fay-lang.org">Fay</a> をいじってみたので、 せっかくだから記事を書いておこうと思います。  なお、Fayは新しい言語（というより、処理系と言った方が適切かな）ですので、 ここに書いてある情報は、来年か、あるいは半年後か、 それとももっとずっと早くに陳腐化する可能性がそれなりに低くないことを、 あらかじめお断りしておきます。  この記事執筆時に用いたFayのバージョンは、 <a href="http://hackage.haskell.org/package/fay-0.14.5.0">fay-0.14.5.0</a> です。  ## デモ・前置き  特に何か作りたいものが有ったわけではなかったので、 今回作ってみたものは超どうでも良いツールです。  <a href="http://tanakh.jp/tools/sudden.html">http://tanakh.jp/tools/sudden.html</a>  <sub><sub><sub> ＿人人人人人人＿ ＞　突然の死　＜ ￣Y<sup>Y</sup>Y<sup>Y</sup>Y￣ </sub></sub></sub>  こういうテキストを生成するだけのツールです。  * <a href="https://github.com/tanakh/tanakh.jp/blob/master/tools/sudden.hs">Fayのコード</a> * <a href="https://github.com/tanakh/tanakh.jp/blob/master/tools/sudden.html">HTMLコード</a>  これらのコンパイルなどもhakyllでまとめて管理できるようにしました。 hakyllには、ファイル変更監視による自動再コンパイル機能があるので、 変更の度に手でコンパイルしなくても良くて、 コンパイルコマンドを叩くのが面倒な人にも安心ですね。  * <a href="https://github.com/tanakh/tanakh.jp/blob/master/site.hs">https://github.com/tanakh/tanakh.jp/blob/master/site.hs</a>  いくつかの、これよりは遙かにまともな例を、 このあたりから見つけることが出来ると思います。  <a href="https://github.com/faylang/fay/wiki#fay-in-the-wild">https://github.com/faylang/fay/wiki#fay-in-the-wild</a>  あと、おそらくこちらの記事（日本語）も、 私の記事よりは、幾分充実したものだと思います。  <a href="http://blog.konn-san.com/article/20121225/fay-introduction">http://blog.konn-san.com/article/20121225/fay-introduction</a>  ## Fay とは何か？  いわゆる一つの、JavaScriptをターゲットとする言語で、 Haskellの <strong>PROPER</strong> なサブセットになっています。 いくつかの当然の疑問とともに、Fayのアドバンテージを 最初に語っておこうかと思います。  * なんでこんなものが必要なのか  JavaScriptでWebアプリを書きたくないから。 なぜなのかは、JavaScriptの代替言語が雨後のタケノコのように 乱立している昨今においては、あえて説明する必要はないかとも思います。 いくつかの理由は、以下のURLにて説明されていますが、 これが万人にとって賛同されるべきものなのかどうかは 私には分かりません。  <a href="http://www.haskell.org/haskellwiki/The_JavaScript_Problem">The JavaScript Problem</a>  * なんでHaskellのサブセットなのか  まず第一に、Haskellは良い言語であると言うこと。 第二に、Haskellは大きな言語であると言うこと。  第一の理由は、好み以外にありません。 Haskellが良い言語だと思わない人には、 わざわざFayを使う理由もないでしょう。 JavaScriptと比較してのHaskellの一番の特徴は、 リッチな型システムによって、静的な型検証が行われることだと思います。  第二の理由は深刻です。フルのHaskellを実装するのは大変だからです。 サブセットという選択肢にもいくつかのオプションがあるでしょう。  * フルのHaskellを実装する  難しいと言ったそばからですが、フルのHaskellをJavaScriptにコンパイルする というオプションも当然あります。  <a href="https://github.com/ghcjs/ghcjs">GHCJS</a> は、GHCのバックエンドとしてJavaScriptを生成するものと、 JavaScriptで書かれたランタイムからなるアプローチをとっています。 フロントエンドにGHCを用いるとはいえ、ランタイムのほうには、 グリーンスレッドやSTMなど、やっかいな（だけど、とてつもなく便利な） 代物を実装する必要が依然としてあります。  <a href="https://github.com/valderman/haste-compiler">Haste</a> という 似たアプローチの別処理系もありますが、 こちらはより実装を軽くすることを目的としているようです。  <a href="https://github.com/atzedijkstra/javascript-runtime-for-UHC">UHC</a> というHaskell処理系は最近ターゲット言語として、 JavaScriptをサポートしたようです。 しかし、そもそもUHC自体の機能がGHCより少ないのと、 インストールが面倒だというUHC自体を使うに当たる問題にぶち当たります。  フルHaskellがサポートされる処理系が出来れば、素晴らしいですが、 残念ながら今のところ、ちゃんと使えたり、楽に使えたりするものは なさそうなのが現状です。  * 全くの新しい言語を設計する  <a href="http://roy.brianmckenna.org/">Roy</a> という言語は、 どことなくHaskellに似た、 Hindley-Milner型推論を持つ関数型言語です。  * Haskellと似て異なる言語を実装する  <a href="http://elm-lang.org/">Elm</a> はかなりHaskell似た言語です。 でも、正格評価だったり、Reactive Programmingのための機能があったり、 似て異なる言語です。  おそらく、Fayが良いのは、Haskellの完全なサブセットだという所です。 Fayのコードは（Fayにバグがなければ）普通のHaskellとして動作します。 実際に型チェックにはGHCが用いられます。 ただ、表現に制限がかかるだけです。 似て異なる言語を覚えるのは、実際問題難しいとは言いませんが、 少なくとも私は、かなりの精神的負担と混乱を強いられると感じます。 その点、サブセットであるならば、変な挙動をして悩まされるということは、 あまりありません。 出来ないことを把握しておけば良くて、 出来ないことは、コンパイル時に判明するからです。  ## Fayの導入  Fayを導入するには、あらかじめ <a href="http://www.haskell.org/platform/">Haskell Platform</a> を導入しておく必要があります。 リンク先にある、プラットフォーム毎の指示に従えば、 簡単にインストールできるはずです。  Haskell Platformがインストールされれば、fayの導入は簡単です。  <sub>~</sub> {.bash} $ cabal update $ cabal install fay fay-base <sub>~</sub>  このコマンドを実行すれば、インストールは完了です。お疲れ様でした！  ## Fayの第一歩  とあるHaskell入門本では中盤まで登場しない「Hello, World!」ですが、 Haskellを知らない人がいきなりFayを勉強しようと思うとは思えないので、 今回はいきなり「Hello, World!」です。 書き忘れましたけど、Haskellの知識は前提とします。  <sub>~</sub> {.haskell} {-# LANGUAGE NoImplicitPrelude #-} import Prelude  main :: Fay () main = putStrLn “Hello, Fay!” <sub>~</sub>  最初のLANGUAGEプラグマは、暗黙の<code>Prelude</code>を用いないようにする指示です。 Fayの<code>Prelude</code>はHaskell標準の<code>Prelude</code>のサブセットになっているので、 暗黙の<code>Prelude</code>を無効化しつつ、改めて<code>import</code>する必要があります。  FayのPreludeにどのような関数が用意されているのかは、 <code>fay-base</code> のドキュメントを参照してください。  <a href="http://hackage.haskell.org/package/fay-base">http://hackage.haskell.org/package/fay-base</a>  このように、Haddockで普通のHaskellのパッケージと同様に ドキュメントが参照できるのも、Haskellのサブセットであるところの 利点でもあります。  <code>main</code>の型が<code>IO ()</code>でなく<code>Fay ()</code>になっていることに注意してください。 Fayには<code>IO</code>はありません。 その代わりに何だかよく分からない<code>Fay</code>モナドになっています。 あまり気にしてはいけません。  そのほかはいつも通りです。コンパイルして実行してみましょう。  <sub>~</sub> {.bash} $ fay hello.hs # hello.js が生成される $ node hello.js Hello, Fay! <sub><sub><sub>  至って普通です。ブラウザからも実行してしてみましょう。 コンパイル時に、<code>--html-wrapper</code>オプションを付けると、 HTMLファイルと、mainを起動するためのラッパコードが生成されます。  </sub></sub></sub> {.bash} $ fay –html-wrapper hello.hs $ ls hello.* hello.hs hello.html hello.js <sub>~</sub>  hello.html をブラウザから開けば、実行されます。 といっても、デフォルトでは標準出力は<code>console</code>になってますので、 画面は真っ白だと思います。 Chromeなどのブラウザで、<code>Ctrl+Shift+I</code>などでデバッグコンソールを開き、 何かが出力されていることを確認してください。  ## FayからJavaScriptを呼び出す  さて、これでFayのコードをJavaScriptにコンパイルして、 実行することが出来ましたが、 ブラウザで実行するのであれば、 DOMをいじれなければ、何の意味もありません。 あるいは、すでに豊富にあるJavaScriptのライブラリを 呼び出したいこともあるでしょう。  Fayには、JavaScriptを呼び出すための、 とてもシンプルで便利な方法が用意されています。  まずは、これもとてもありきたりですが、 <code>alert</code>でダイアログを表示させてみましょう。  <sub>~</sub> {.haskell} {-# LANGUAGE NoImplicitPrelude #-}  import FFI import Prelude  alert :: String -&gt; Fay () alert = ffi “alert(%1)”  main :: Fay () main = alert “Hello, JavaScript!” <sub><sub><sub>  <code>ffi</code>というのがJavaScript呼び出しを実現する<strong>関数</strong>です。 特殊構文でも何でもなく、ただの<strong>関数</strong>です。 このことが、とてもFayのFFIを扱いやすいものにしています。 ffiの第一引数には、任意のJavaScript文字列を与えることが出来ます。 プレースホルダを指定することが出来て、これによって、 任意に引数を与えたり、メソッド呼び出しを行うことが出来ます。 上の例では、alertの引数として、第一引数を渡すコードになっています。  これを<code>--html-wrapper</code>付きでコンパイルして、 ブラウザで表示させてみますと、次のように、 確かに<code>alert</code>を呼び出すことが出来ています。  <img src="../img/posts/fay-alert.png" />  一般的なHaskellのFFIのように、 FayのFFIも返り値はFayモナドにしますが、 副作用のない場合は、純粋な関数として扱うことも可能です。 例えば、文字列の大文字化を行う<code>toUpperCase</code>メソッドをFFIしてみましょう。  </sub></sub></sub> {.haskell} {-# LANGUAGE NoImplicitPrelude #-}  import FFI import Prelude  alert :: String -&gt; Fay () alert = ffi “alert(%1)”  toUpperCase :: String -&gt; String toUpperCase = ffi “%1.toUpperCase()”  main :: Fay () main = alert . toUpperCase $ “Hello, JavaScript!” <sub>~</sub>  これを実行すると、次のように、確かに大文字化されることが確認できます。  <img src="../img/posts/fay-alert-uc.png" />  <code>ffi</code>の文字列中のプレースホルダが、 オブジェクトのメソッド呼び出しになっていることに注目してください。 このように、プレースホルダは、任意の位置に置くことが出来ます。 また、このコードは副作用を持ちませんので、 安全に純粋な関数として扱うことが出来ます。 ただし、一般的に安全かどうかは、もちろん実行するコードによります。  ## jQueryを使う  <code>ffi</code>を用いると、どのようなJavaScriptのコードでも実行できますので、 がんばれば、何でも出来るということになります。 でも、がんばりたくないのです。せめて、jQueryが使えたら…。  という人のために、jQueryのFay-bindingである、 <code>fay-jquery</code>というパッケージがあります。 インストールもとても簡単です。  <sub>~</sub> {.bash} $ cabal install fay-jquery <sub><sub><sub>  利用するときは、  </sub></sub></sub> {.bash} $ fay –package fay-jquery hoge.hs <sub><sub><sub>  のように、<code>fay</code>コマンドの<code>--package</code>オプションに渡します。 Fayのパッケージ管理は、いろいろ紆余曲折あったようですが、 “今のところ”、<code>cabal</code>でインストールして、 <code>--package</code>オプションで指定するという形に落ち着いたようです。  さて、<code>fay-jquery</code>パッケージの解説をしたいところですが、 私自身がいまいちjQueryに詳しくないので、解説は簡単なところに とどめておくことにします。 より詳しくは、<a href="https://github.com/tanakh/tanakh.jp/blob/master/tools/sudden.hs">「突然の死」ジェネレータのソースコード</a>や、 本家のドキュメント、  <a href="http://hackage.haskell.org/package/fay-jquery">http://hackage.haskell.org/package/fay-jquery</a>  をご参照ください。  まず、適当なHTMLを用意します。  </sub></sub></sub> {.html} <!DOCTYPE html>
+<html>
 
-<span class="ot">main ::</span> <span class="dt">Fay</span> ()
-main <span class="fu">=</span> putStrLn <span class="st">&quot;Hello, Fay!&quot;</span></code></pre>
-<p>最初のLANGUAGEプラグマは、暗黙の<code>Prelude</code>を用いないようにする指示です。 Fayの<code>Prelude</code>はHaskell標準の<code>Prelude</code>のサブセットになっているので、 暗黙の<code>Prelude</code>を無効化しつつ、改めて<code>import</code>する必要があります。</p>
-<p>FayのPreludeにどのような関数が用意されているのかは、 <code>fay-base</code> のドキュメントを参照してください。</p>
-<p><a href="http://hackage.haskell.org/package/fay-base">http://hackage.haskell.org/package/fay-base</a></p>
-<p>このように、Haddockで普通のHaskellのパッケージと同様に ドキュメントが参照できるのも、Haskellのサブセットであるところの 利点でもあります。</p>
-<p><code>main</code>の型が<code>IO ()</code>でなく<code>Fay ()</code>になっていることに注意してください。 Fayには<code>IO</code>はありません。 その代わりに何だかよく分からない<code>Fay</code>モナドになっています。 あまり気にしてはいけません。</p>
-<p>そのほかはいつも通りです。コンパイルして実行してみましょう。</p>
-<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">fay</span> hello.hs <span class="co"># hello.js が生成される</span>
-$ <span class="kw">node</span> hello.js
-<span class="kw">Hello</span>, Fay!</code></pre>
-<p>至って普通です。ブラウザからも実行してしてみましょう。 コンパイル時に、<code>--html-wrapper</code>オプションを付けると、 HTMLファイルと、mainを起動するためのラッパコードが生成されます。</p>
-<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">fay</span> --html-wrapper hello.hs
-$ <span class="kw">ls</span> hello.*
-<span class="kw">hello.hs</span> hello.html hello.js</code></pre>
-<p>hello.html をブラウザから開けば、実行されます。 といっても、デフォルトでは標準出力は<code>console</code>になってますので、 画面は真っ白だと思います。 Chromeなどのブラウザで、<code>Ctrl+Shift+I</code>などでデバッグコンソールを開き、 何かが出力されていることを確認してください。</p>
-<h2 id="fayからjavascriptを呼び出す">FayからJavaScriptを呼び出す</h2>
-<p>さて、これでFayのコードをJavaScriptにコンパイルして、 実行することが出来ましたが、 ブラウザで実行するのであれば、 DOMをいじれなければ、何の意味もありません。 あるいは、すでに豊富にあるJavaScriptのライブラリを 呼び出したいこともあるでしょう。</p>
-<p>Fayには、JavaScriptを呼び出すための、 とてもシンプルで便利な方法が用意されています。</p>
-<p>まずは、これもとてもありきたりですが、 <code>alert</code>でダイアログを表示させてみましょう。</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE NoImplicitPrelude #-}</span>
+<head>
 
-<span class="kw">import</span>           FFI
-<span class="kw">import</span>           Prelude
+<title>
+fay-jquery Test
+</title>
 
-<span class="ot">alert ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Fay</span> ()
-alert <span class="fu">=</span> ffi <span class="st">&quot;alert(%1)&quot;</span>
+</head>
+ 
+<body>
 
-<span class="ot">main ::</span> <span class="dt">Fay</span> ()
-main <span class="fu">=</span> alert <span class="st">&quot;Hello, JavaScript!&quot;</span></code></pre>
-<p><code>ffi</code>というのがJavaScript呼び出しを実現する<strong>関数</strong>です。 特殊構文でも何でもなく、ただの<strong>関数</strong>です。 このことが、とてもFayのFFIを扱いやすいものにしています。 ffiの第一引数には、任意のJavaScript文字列を与えることが出来ます。 プレースホルダを指定することが出来て、これによって、 任意に引数を与えたり、メソッド呼び出しを行うことが出来ます。 上の例では、alertの引数として、第一引数を渡すコードになっています。</p>
-<p>これを<code>--html-wrapper</code>付きでコンパイルして、 ブラウザで表示させてみますと、次のように、 確かに<code>alert</code>を呼び出すことが出来ています。</p>
-<div class="figure">
-<img src="../img/posts/fay-alert.png" />
-</div>
-<p>一般的なHaskellのFFIのように、 FayのFFIも返り値はFayモナドにしますが、 副作用のない場合は、純粋な関数として扱うことも可能です。 例えば、文字列の大文字化を行う<code>toUpperCase</code>メソッドをFFIしてみましょう。</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE NoImplicitPrelude #-}</span>
+<button id="btn1">
+Push me!
+</button>
+ 
+<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
 
-<span class="kw">import</span>           FFI
-<span class="kw">import</span>           Prelude
+<script src="jq.js"></script>
 
-<span class="ot">alert ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Fay</span> ()
-alert <span class="fu">=</span> ffi <span class="st">&quot;alert(%1)&quot;</span>
+</body>
 
-<span class="ot">toUpperCase ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">String</span>
-toUpperCase <span class="fu">=</span> ffi <span class="st">&quot;%1.toUpperCase()&quot;</span>
-
-<span class="ot">main ::</span> <span class="dt">Fay</span> ()
-main <span class="fu">=</span> alert <span class="fu">.</span> toUpperCase <span class="fu">$</span> <span class="st">&quot;Hello, JavaScript!&quot;</span></code></pre>
-<p>これを実行すると、次のように、確かに大文字化されることが確認できます。</p>
-<div class="figure">
-<img src="../img/posts/fay-alert-uc.png" />
-</div>
-<p><code>ffi</code>の文字列中のプレースホルダが、 オブジェクトのメソッド呼び出しになっていることに注目してください。 このように、プレースホルダは、任意の位置に置くことが出来ます。 また、このコードは副作用を持ちませんので、 安全に純粋な関数として扱うことが出来ます。 ただし、一般的に安全かどうかは、もちろん実行するコードによります。</p>
-<h2 id="jqueryを使う">jQueryを使う</h2>
-<p><code>ffi</code>を用いると、どのようなJavaScriptのコードでも実行できますので、 がんばれば、何でも出来るということになります。 でも、がんばりたくないのです。せめて、jQueryが使えたら…。</p>
-<p>という人のために、jQueryのFay-bindingである、 <code>fay-jquery</code>というパッケージがあります。 インストールもとても簡単です。</p>
-<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">cabal</span> install fay-jquery</code></pre>
-<p>利用するときは、</p>
-<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">fay</span> --package fay-jquery hoge.hs</code></pre>
-<p>のように、<code>fay</code>コマンドの<code>--package</code>オプションに渡します。 Fayのパッケージ管理は、いろいろ紆余曲折あったようですが、 “今のところ”、<code>cabal</code>でインストールして、 <code>--package</code>オプションで指定するという形に落ち着いたようです。</p>
-<p>さて、<code>fay-jquery</code>パッケージの解説をしたいところですが、 私自身がいまいちjQueryに詳しくないので、解説は簡単なところに とどめておくことにします。 より詳しくは、<a href="https://github.com/tanakh/tanakh.jp/blob/master/tools/sudden.hs">「突然の死」ジェネレータのソースコード</a>や、 本家のドキュメント、</p>
-<p><a href="http://hackage.haskell.org/package/fay-jquery">http://hackage.haskell.org/package/fay-jquery</a></p>
-<p>をご参照ください。</p>
-<p>まず、適当なHTMLを用意します。</p>
-<pre class="sourceCode html"><code class="sourceCode html"><span class="dt">&lt;!DOCTYPE </span>html<span class="dt">&gt;</span>
-<span class="kw">&lt;html&gt;</span>
-  <span class="kw">&lt;head&gt;</span>
-    <span class="kw">&lt;title&gt;</span>fay-jquery Test<span class="kw">&lt;/title&gt;</span>
-  <span class="kw">&lt;/head&gt;</span>
-
-  <span class="kw">&lt;body&gt;</span>
-    <span class="kw">&lt;button</span><span class="ot"> id=</span><span class="st">&quot;btn1&quot;</span><span class="kw">&gt;</span>Push me!<span class="kw">&lt;/button&gt;</span>
-
-    <span class="kw">&lt;script</span><span class="ot"> src=</span><span class="st">&quot;http://code.jquery.com/jquery-1.9.1.min.js&quot;</span><span class="kw">&gt;&lt;/script&gt;</span>
-    <span class="kw">&lt;script</span><span class="ot"> src=</span><span class="st">&quot;jq.js&quot;</span><span class="kw">&gt;&lt;/script&gt;</span>
-  <span class="kw">&lt;/body&gt;</span>
-<span class="kw">&lt;/html&gt;</span></code></pre>
-<p>あやしいボタンが一個あるだけのページです。 その後に、作成予定のfayのコードを読み込ませる<code>script</code>タグを配置します。 jQueryをロードするのも忘れずに。</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE NoImplicitPrelude #-}</span>
-
-<span class="kw">import</span>           FFI
-<span class="kw">import</span>           JQuery
-<span class="kw">import</span>           Prelude
-
-<span class="ot">alert ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Fay</span> ()
-alert <span class="fu">=</span> ffi <span class="st">&quot;alert(%1)&quot;</span>
-
-<span class="ot">main ::</span> <span class="dt">Fay</span> ()
-main <span class="fu">=</span> <span class="kw">do</span>
-  select <span class="st">&quot;#btn1&quot;</span> <span class="fu">&gt;&gt;=</span> onClick (\_ev <span class="ot">-&gt;</span> <span class="kw">do</span>
-    alert <span class="st">&quot;Hello, jQuery!&quot;</span>
-    return <span class="dt">False</span>
-    )
-  return ()</code></pre>
-<p><code>select</code>でボタン要素を拾って、 それの<code>onClick</code>に<code>alert</code>を呼び出すハンドラを設定しているだけのコードです。 Haskellのコードが、イベントハンドラとして呼び出されます。 引数にはEvent型のいろいろ情報が詰まったものが渡されてきますが、 今回は無視しています。</p>
-<p>さて、これをコンパイルして実行します。 今回はHTMLは自前で用意したので、間違えて <code>--html-wrapper</code>を指定して上書きしてしまわないように注意します。</p>
-<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">fay</span> --package fay-jquery jq.hs <span class="co"># jq.js が生成される</span></code></pre>
-<p>先ほど用意した、<code>jq.html</code>をブラウザで開き、ボタンをクリックすると、</p>
-<div class="figure">
-<img src="../img/posts/fay-jq.png" />
-</div>
-<p>正しく、ハンドラが呼び出されました！</p>
-<h2 id="まとめ">まとめ</h2>
-<p>Fayを使ってみて、思っていたより便利だなあという印象です。 似て異なる言語を覚えなくて良いのは、想像以上に精神的に楽です。 パッケージ管理も割と良い感じです。 <a href="http://hackage.haskell.org/package/fay-jquery">jQueryバインディング</a>や、 <a href="http://hackage.haskell.org/package/fay-dom">DOM、SVGバインディング</a>も パッケージとして用意されています。 もっとも、これらは絶賛開発中で、 抜けているところがたくさんあります。 しかし、抜けているところがあったとしても、 <code>ffi</code>関数でわりとどうとでもなりそうだという安心感はあります。</p>
-<p><a href="http://crooney.github.io/cinder/index.html">Cinder</a> という Fay向けのうにょうにょ動くライブラリも開発されているみたいなので、 コミュニティーもそれなりに大きくなりつつあるのかなあという印象です。</p>
-<p>というわけで、</p>
-<ul>
-<li>いわゆるJavaScript代替言語が欲しくて</li>
-<li>静的型チェックがあるものが良くて</li>
-<li>Haskellが嫌いじゃなくて</li>
-<li>Haskellをすでに習得している人</li>
-</ul>
-<p>にとっては、現状使えるツールとして、有望な選択肢だと思います。 皆さんも是非お試しください。</p>
+</html>
+<p> <sub><sub><sub>  あやしいボタンが一個あるだけのページです。 その後に、作成予定のfayのコードを読み込ませる<code>script</code>タグを配置します。 jQueryをロードするのも忘れずに。  </sub></sub></sub> {.haskell} {-# LANGUAGE NoImplicitPrelude #-}  import FFI import JQuery import Prelude  alert :: String -&gt; Fay () alert = ffi “alert(%1)”  main :: Fay () main = do select “#btn1” &gt;&gt;= onClick (_ev -&gt; do alert “Hello, jQuery!” return False ) return () <sub><sub><sub>  <code>select</code>でボタン要素を拾って、 それの<code>onClick</code>に<code>alert</code>を呼び出すハンドラを設定しているだけのコードです。 Haskellのコードが、イベントハンドラとして呼び出されます。 引数にはEvent型のいろいろ情報が詰まったものが渡されてきますが、 今回は無視しています。  さて、これをコンパイルして実行します。 今回はHTMLは自前で用意したので、間違えて <code>--html-wrapper</code>を指定して上書きしてしまわないように注意します。  </sub></sub></sub> {.bash} $ fay –package fay-jquery jq.hs # jq.js が生成される <sub>~</sub>  先ほど用意した、<code>jq.html</code>をブラウザで開き、ボタンをクリックすると、  <img src="../img/posts/fay-jq.png" />  正しく、ハンドラが呼び出されました！  ## まとめ  Fayを使ってみて、思っていたより便利だなあという印象です。 似て異なる言語を覚えなくて良いのは、想像以上に精神的に楽です。 パッケージ管理も割と良い感じです。 <a href="http://hackage.haskell.org/package/fay-jquery">jQueryバインディング</a>や、 <a href="http://hackage.haskell.org/package/fay-dom">DOM、SVGバインディング</a>も パッケージとして用意されています。 もっとも、これらは絶賛開発中で、 抜けているところがたくさんあります。 しかし、抜けているところがあったとしても、 <code>ffi</code>関数でわりとどうとでもなりそうだという安心感はあります。  <a href="http://crooney.github.io/cinder/index.html">Cinder</a> という Fay向けのうにょうにょ動くライブラリも開発されているみたいなので、 コミュニティーもそれなりに大きくなりつつあるのかなあという印象です。  というわけで、  * いわゆるJavaScript代替言語が欲しくて * 静的型チェックがあるものが良くて * Haskellが嫌いじゃなくて * Haskellをすでに習得している人  にとっては、現状使えるツールとして、有望な選択肢だと思います。 皆さんも是非お試しください。</p>
 
 <br>
 
