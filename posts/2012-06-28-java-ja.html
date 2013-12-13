@@ -95,52 +95,15 @@
 
 <hr>
 
-<p>例外の勉強会をやるので、是非にというお話を頂いて、 <a href="http://connpass.com/event/607/">LOG.debug(“nice catch!”)</a> というイベントで発表させていただきました。 当日の資料はこちらでご覧になれます。</p>
-<blockquote>
-<p><a href="../pub/exception-logging-study-2012-06-28/exception.html">エラー処理の抽象化</a></p>
-</blockquote>
-<p>昨年末頃に社内セミナーで発表した <a href="../pub/pfi-seminar-2011-12-08.html">エラー処理を書いてはいけない</a> をもうちょっと抽象的に、あるいは具体的な話を入れて焼き直したような内容です。</p>
-<p>今回は <a href="http://java-ja.yoshiori.org/">java-ja</a> さんの勉強会という事で、 なにやらモヒカンとかマサカリとかが飛んでくるらしい、 とんでもないところに来てしまったとビクビクしていましたが、 この難局も何とか乗り切りました。はい。</p>
-<p>皆さんとても真面目にソフトウェアエンジニアリングについて議論していて、楽しかったです。 僕は普段Javaでコードは書かないのですが、 Javaだと普通こうする的なのが垣間見えて、 いろいろJavaのバッドノウハウ（あるいはグッドプラクティス）が学べました。 Javaは大変だと思いました。</p>
-<hr />
-<p>発表後、幾つかご意見・質問・フィードバックをいただきましたので、 ここで回答させていただこうと思います。</p>
-<ul>
-<li>エラーフレームワーク、どれがデファクトなのか？</li>
-</ul>
-<p><a href="http://hackage.haskell.org/package/mtl">mtl</a>の<code>MonadError</code>は事実上の標準で、 サポートも割りと手厚いですが、機能が貧弱かもしれません。 でもこれで十分なことも多いです。</p>
-<p><a href="http://hackage.haskell.org/packages/archive/monad-control/0.3.1.3/doc/html/Control-Monad-Trans-Control.html">monad-control</a>/ <a href="http://hackage.haskell.org/package/lifted-base">lifted-base</a>はモナド変換子に対してきちんとしたサポートがある、新しめのライブラリです。 Webフレームワーク<a href="http://www.yesodweb.com/">Yesod</a>でも使われています。</p>
-<ul>
-<li>n回再試行するやつ、失敗するごとにログに出したいような場合は？純粋なHaskellでは難しいのではないか。</li>
-</ul>
-<p>元のコードはこれです。たしかにこのままではIOができないのでログは出せません。</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">tryN ::</span> (<span class="dt">MonadError</span> e m) <span class="ot">=&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> m a <span class="ot">-&gt;</span> m a
-tryN n m <span class="fu">=</span> go n <span class="kw">where</span>
-  go <span class="dv">1</span> <span class="fu">=</span> m
-  go i <span class="fu">=</span> m <span class="ot">`catchError`</span> (\e <span class="ot">-&gt;</span> go (i<span class="fu">-</span><span class="dv">1</span>))</code></pre>
-<p>そういう時は私なら、コンテクスト (上のコードでは、<code>(MonadError e m) =&gt;</code>）に このモナドはIOできますよという <code>MonadIO</code> を追加して解決します。</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">tryN ::</span> (<span class="dt">MonadError</span> e m, <span class="dt">MonadIO</span> m) <span class="ot">=&gt;</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> m a <span class="ot">-&gt;</span> m a
-tryN n m <span class="fu">=</span> go n <span class="kw">where</span>
-  go <span class="dv">1</span> <span class="fu">=</span> m
-  go i <span class="fu">=</span> m <span class="ot">`catchError`</span> (\e <span class="ot">-&gt;</span> liftIO (outputLog <span class="fu">$</span> show e) <span class="fu">&gt;&gt;</span> go (i<span class="fu">-</span><span class="dv">1</span>))</code></pre>
-<p>m が MonadIO のインスタンスになることにより、このモナドは中にIOを含むことができるようになります。</p>
-<ul>
-<li>（46ページ～49ページのくだり）このあと組み合わせたコードが来るんですよね？ → 来ない！</li>
-</ul>
-<p>すいません、一番美味しいところを忘れていました！ 当日は宿題とか言いましたが、追記しておきました。</p>
-<ul>
-<li>全人類が読むべき本第2位は？</li>
-</ul>
+例外の勉強会をやるので、是非にというお話を頂いて、 <a href="http://connpass.com/event/607/">LOG.debug(“nice catch!”)</a> というイベントで発表させていただきました。 当日の資料はこちらでご覧になれます。  &gt; <a href="../pub/exception-logging-study-2012-06-28/exception.html">エラー処理の抽象化</a>  昨年末頃に社内セミナーで発表した <a href="../pub/pfi-seminar-2011-12-08.html">エラー処理を書いてはいけない</a> をもうちょっと抽象的に、あるいは具体的な話を入れて焼き直したような内容です。  今回は <a href="http://java-ja.yoshiori.org/">java-ja</a> さんの勉強会という事で、 なにやらモヒカンとかマサカリとかが飛んでくるらしい、 とんでもないところに来てしまったとビクビクしていましたが、 この難局も何とか乗り切りました。はい。  皆さんとても真面目にソフトウェアエンジニアリングについて議論していて、楽しかったです。 僕は普段Javaでコードは書かないのですが、 Javaだと普通こうする的なのが垣間見えて、 いろいろJavaのバッドノウハウ（あるいはグッドプラクティス）が学べました。 Javaは大変だと思いました。  —  発表後、幾つかご意見・質問・フィードバックをいただきましたので、 ここで回答させていただこうと思います。  * エラーフレームワーク、どれがデファクトなのか？  <a href="http://hackage.haskell.org/package/mtl">mtl</a>の<code>MonadError</code>は事実上の標準で、 サポートも割りと手厚いですが、機能が貧弱かもしれません。 でもこれで十分なことも多いです。  <a href="http://hackage.haskell.org/packages/archive/monad-control/0.3.1.3/doc/html/Control-Monad-Trans-Control.html">monad-control</a>/ <a href="http://hackage.haskell.org/package/lifted-base">lifted-base</a>はモナド変換子に対してきちんとしたサポートがある、新しめのライブラリです。 Webフレームワーク<a href="http://www.yesodweb.com/">Yesod</a>でも使われています。  * n回再試行するやつ、失敗するごとにログに出したいような場合は？純粋なHaskellでは難しいのではないか。  元のコードはこれです。たしかにこのままではIOができないのでログは出せません。  <sub>~</sub> {.haskell} tryN :: (MonadError e m) =&gt; Int -&gt; m a -&gt; m a tryN n m = go n where go 1 = m go i = m <code>catchError</code> (-&gt; go (i-1)) <sub>~</sub>  そういう時は私なら、コンテクスト (上のコードでは、<code>(MonadError e m) =&gt;</code>）に このモナドはIOできますよという <code>MonadIO</code> を追加して解決します。  <sub>~</sub> {.haskell} tryN :: (MonadError e m, MonadIO m) =&gt; Int -&gt; m a -&gt; m a tryN n m = go n where go 1 = m go i = m <code>catchError</code> (-&gt; liftIO (outputLog $ show e) &gt;&gt; go (i-1)) <sub>~</sub>  m が MonadIO のインスタンスになることにより、このモナドは中にIOを含むことができるようになります。  * （46ページ～49ページのくだり）このあと組み合わせたコードが来るんですよね？ → 来ない！  すいません、一番美味しいところを忘れていました！ 当日は宿題とか言いましたが、追記しておきました。  * 全人類が読むべき本第2位は？ 
 <blockquote class="twitter-tweet" lang="ja"><p>
 とりあえず @<a href="https://twitter.com/niha28">niha28</a> さんに、全人類が読むべき書籍第２位である “Purely Functional Data Structures” <a href="http://bit.ly/4rdXiX">http://bit.ly/4rdXiX</a> を読まねばならぬという事実を伝道した
 </p>
 — kinabaさん (<span class="citation">@kinaba</span>) <a href="https://twitter.com/kinaba/status/7062808769" data-datetime="2009-12-26T15:21:03+00:00">12月 26, 2009</a>
 </blockquote>
-<script src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
 
-<ul>
-<li>他のやり方を知らないと、そういうものだと思ってしまう。 そういうものだと思ってしまっていると、 頑張って漏れ無く手でエラー処理コードを書くことは素晴らしいことだ、 あまつさえ優れたプログラマである、そんな風に思われているフシもある</li>
-</ul>
-<p>はい、残念なことです。 正規表現を使って置換すれば1分で終わる仕事を、 何時間もかけてコツコツ手で編集してるのと同じ構図の話です。 手でやれば時間もかかるし、間違いも起こります。 正規表現を使うとズルだと言われるとか、そういう話を笑えません。 プログラマは怠惰でありたいものです。</p>
+<script src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p>  * 他のやり方を知らないと、そういうものだと思ってしまう。 そういうものだと思ってしまっていると、 頑張って漏れ無く手でエラー処理コードを書くことは素晴らしいことだ、 あまつさえ優れたプログラマである、そんな風に思われているフシもある  はい、残念なことです。 正規表現を使って置換すれば1分で終わる仕事を、 何時間もかけてコツコツ手で編集してるのと同じ構図の話です。 手でやれば時間もかかるし、間違いも起こります。 正規表現を使うとズルだと言われるとか、そういう話を笑えません。 プログラマは怠惰でありたいものです。</p>
 
 <br>
 
