@@ -95,7 +95,66 @@
 
 <hr>
 
-<p>皆さん、Windowsでコマンドライン使ってますか？ まともなターミナルエミュレータすらないと思っている方もいらっしゃるかもしれませんが、案外何とかなるものです。  <a href="../img/posts/mintty.png"><img src="../img/posts/mintty.png" alt="MINTTY" /></a>  これが完成図です。1週間ほどいろいろ試した結果、動作、見た目、フォントレンダリング、どれもおおむね満足行く結果になりました。  ## Terminal Emulator選び  Windowsをお使いの皆様ならご存じかとは思いますが、デフォルトのTerminal Emulatorである cmd.exe が良くないです。 <del>挙動、フォント云々の話をするまでもなく、横幅が80文字固定なのがどうしようもありません。</del> プロパティのレイアウトのところから幅の変更ができるようでした。ご指摘ありがとうございます。  <a href="http://en.wikipedia.org/wiki/List_of_terminal_emulators">この辺</a>を見てWindowsで動作するものを一通り試してみたのですが、動作がおかしいか、フォントが気に入らないか、プロプライエタリかで、どれもよくないなあという結論を一度は下しました。  それでVMWare PlayerでLinuxを入れてgnome-terminalをUnityモードで使っていたのですが、Gnome3になったりVMWarePlayerが新しくなってVMWareToolsがうまく動かなくなったりして、どうしたものかなあというときに、ふと起動してみた [mintty] が案外良かったので、そのまま移行してしまいました。  ## mintty とは  [mintty] はCygwinのターミナルエミュレータです。あるバージョンからCygwinに同梱されるようになっていて、当時はなんじゃこりゃ、と思った記憶があります。それがバージョンアップを繰り返して最近1.0.0になっていたようなのですが、非常に使い勝手が良くなっていました。動作にもおかしなところはなく、それもそのはず、minttyは [putty] のターミナル部分をベースに開発されているそうなのでした。しかし、puttyはずいぶん昔に更新が止まっており（最近約4年ぶりに新しいバージョンが出ましたが）、WindowsVista/7での高品位なフォントレンダリングに対応していなかったり、いろいろ不満がありました。  また、minttyは最近では [MSYS] にも対応したようで、Cygwinをインストールせずに利用することもできます。MSYSのパッケージマネージャでインストールすることも可能で、Windowsのターミナルエミュレータとしてかなり使い勝手の良いものになっています。  ## 環境最速構築手順  ここではMSYSのminttyをインストールすることにします。  ### MinGW/MSYSのインストール  [MSYS] のインストールは、インストーラを使うのが便利です。以下のURLから新しいものをダウンロードしてください。  <a href="http://sourceforge.net/projects/mingw/files/Installer/mingw-get-inst/">http://sourceforge.net/projects/mingw/files/Installer/mingw-get-inst/</a>  インストーラを実行すればMinGW/MSYSのインストールは完了です。インストールの際にMSYS Basic Systemのところにチェックを入れるのを忘れずに。  ### minttyのインストール  MSYSのインストールが完了したら、MinGW Shellを起動して、以下のコマンドを実行します。  <sub>~</sub> {.bash} $ mingw-get update $ mingw-get install mintty <sub>~</sub>  これで mintty のインストールは完了です。MinGWも便利になったもんですね。mintty コマンドを起動できる用になったはずです。起動した mintty をタスクバーにピン留めしておけば一発で起動できるようになって便利です。  ### <span class="math"><em>H</em><em>O</em><em>M</em><em>E</em><em>の</em><em>設</em><em>定</em><em>s</em><em>s</em><em>h</em><em>や</em><em>e</em><em>m</em><em>a</em><em>c</em><em>s</em><em>な</em><em>ど</em><em>が</em><em>設</em><em>定</em><em>フ</em><em>ァ</em><em>イ</em><em>ル</em><em>を</em><em>参</em><em>照</em><em>で</em><em>き</em><em>る</em><em>よ</em><em>う</em><em>に</em>、</span>HOME環境変数を設定しておきます。$HOMEの値は c:&lt;ユーザ名&gt; にします。そこに .ssh/ ディレクトリを作成して鍵を置いておけば mintty からSSHができるようになります。  ### フォントの設定  minttyはデフォルトではあまりいい感じのフォントとウインドウ表示ではないので、お好みの見た目になるように調節します。  まずはフォントですが、私のおすすめは [Inconsolata] です。Inconsolataは <a href="http://hivelogic.com/articles/top-10-programming-fonts/">Top 10 programming fonts</a> でも1位として挙げられている非常に美しいフォントです。  <img src="http://www.levien.com/type/myfonts/incoshow.png" alt="Inconsolata" />  Inconsolataは本家から取得しても良いですが、<a href="http://www.google.com/webfonts">Google Web Fonts</a> にあるものはヒンティングの修正が行われており、Clear Type環境下でより高品位なレンダリングが期待できるので、こちらから取得するのがおすすめです。  ### フォントリンク  Inconsolataは英文フォントなので、日本語は（WindowsXP以降では）フォントリンクされたフォント、デフォルトではMS ゴシックでレンダリングされます。これはあまりうれしくありません。というのもMS ゴシックは小さいサイズだとビットマップフォントになるのと、ヒンティングがないからです。  そこで、Inconsolataにメイリオをリンクさせるのがおすすめです。フォントリンクを設定するにはレジストリにエントリを追加する必要があります（フォントリンクに関して詳しくは<a href="http://blog.livedoor.jp/mailnobu/archives/16399739.html">このあたりを</a>参照）。  <code>HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\FontLink\SystemLink</code> に Inconsolata という名前のキーを複数行文字列データとして作成し、meiryo.ttc,Meiryo という行を追加すればOKです。  フォントリンクするのが面倒なら、プログラミング用フォント [Ricty]を利用するのがお手軽です。  <img src="http://save.sys.t.u-tokyo.ac.jp/~yusa/fonts/print_ricty/print_ricty_thumbnail.png" alt="Ricty" />  Rictyは、Inconsolataと [Migu] の合成フォントです。Miguも非常に視認性の高い日本語フォントですが、個人的にメイリオの字形の方が好みなのと、Inconsolataにあったヒンティングが損なわれているようで、Windowsだとフォントがあまりきれいにレンダリングされないので、私はInconsolataにメイリオをリンクする方が好きです。  ### ウインドウの設定  フォントが設定できたら、後はウインドウの見た目をお好みにいじります。お好みでいいですが、LooksのTransparencyのところをGlassにするのが個人的お勧めです。AeroUIの磨りガラス風UIがウインドウ全体になって、なんだか無駄にかっこいいです。デフォルトでは背景が透けすぎるので、Windowsのウインドウの設定から、色を濃いめにした方がいいでしょう。  <a href="../img/posts/mintty2.png"> <img src="../img/posts/mintty2.png" alt="mintty-glass" /> </a>  特に何もなくとも適当にhtopを表示しておくとなんだか楽しいです。  ## その他  minttyにはウインドウ分割機能がないので、ログイン先サーバにscreen/tmuxなどをインストールしておくと便利です。  私は最近はbyobu-tmuxを利用しています。最初のスクリーンショットのようにウインドウを分割して使えます。ウインドウの移動がShift+Left/Rightでできたりして割と直感的に操作できます。  ## まとめ  gnome-terminal on VMWare からの移行ですが、おおむね満足です。  良かったところ：  * フォントがきれい * 無駄にかっこいい * 軽い * WindowsのIMEが使える  不満点：  * タブがない（tmuxがあればそんなに困らないけど）  というわけで、mintty、おすすめです。  [mintty]: http://code.google.com/p/mintty/ [putty]: http://www.chiark.greenend.org.uk/~sgtatham/putty/ [MSYS]: http://www.mingw.org/wiki/MSYS [Inconsolata]: http://www.levien.com/type/myfonts/inconsolata.html [Ricty]: http://save.sys.t.u-tokyo.ac.jp/~yusa/fonts/ricty.html [Migu]: http://mix-mplus-ipa.sourceforge.jp/</p>
+<p>皆さん、Windowsでコマンドライン使ってますか？ まともなターミナルエミュレータすらないと思っている方もいらっしゃるかもしれませんが、案外何とかなるものです。</p>
+<p><a href="../img/posts/mintty.png"><img src="../img/posts/mintty.png" alt="MINTTY" /></a></p>
+<p>これが完成図です。1週間ほどいろいろ試した結果、動作、見た目、フォントレンダリング、どれもおおむね満足行く結果になりました。</p>
+<h2 id="terminal-emulator選び">Terminal Emulator選び</h2>
+<p>Windowsをお使いの皆様ならご存じかとは思いますが、デフォルトのTerminal Emulatorである cmd.exe が良くないです。 <del>挙動、フォント云々の話をするまでもなく、横幅が80文字固定なのがどうしようもありません。</del> プロパティのレイアウトのところから幅の変更ができるようでした。ご指摘ありがとうございます。</p>
+<p><a href="http://en.wikipedia.org/wiki/List_of_terminal_emulators">この辺</a>を見てWindowsで動作するものを一通り試してみたのですが、動作がおかしいか、フォントが気に入らないか、プロプライエタリかで、どれもよくないなあという結論を一度は下しました。</p>
+<p>それでVMWare PlayerでLinuxを入れてgnome-terminalをUnityモードで使っていたのですが、Gnome3になったりVMWarePlayerが新しくなってVMWareToolsがうまく動かなくなったりして、どうしたものかなあというときに、ふと起動してみた <a href="http://code.google.com/p/mintty/">mintty</a> が案外良かったので、そのまま移行してしまいました。</p>
+<h2 id="mintty-とは">mintty とは</h2>
+<p><a href="http://code.google.com/p/mintty/">mintty</a> はCygwinのターミナルエミュレータです。あるバージョンからCygwinに同梱されるようになっていて、当時はなんじゃこりゃ、と思った記憶があります。それがバージョンアップを繰り返して最近1.0.0になっていたようなのですが、非常に使い勝手が良くなっていました。動作にもおかしなところはなく、それもそのはず、minttyは <a href="http://www.chiark.greenend.org.uk/~sgtatham/putty/">putty</a> のターミナル部分をベースに開発されているそうなのでした。しかし、puttyはずいぶん昔に更新が止まっており（最近約4年ぶりに新しいバージョンが出ましたが）、WindowsVista/7での高品位なフォントレンダリングに対応していなかったり、いろいろ不満がありました。</p>
+<p>また、minttyは最近では <a href="http://www.mingw.org/wiki/MSYS">MSYS</a> にも対応したようで、Cygwinをインストールせずに利用することもできます。MSYSのパッケージマネージャでインストールすることも可能で、Windowsのターミナルエミュレータとしてかなり使い勝手の良いものになっています。</p>
+<h2 id="環境最速構築手順">環境最速構築手順</h2>
+<p>ここではMSYSのminttyをインストールすることにします。</p>
+<h3 id="mingwmsysのインストール">MinGW/MSYSのインストール</h3>
+<p><a href="http://www.mingw.org/wiki/MSYS">MSYS</a> のインストールは、インストーラを使うのが便利です。以下のURLから新しいものをダウンロードしてください。</p>
+<p><a href="http://sourceforge.net/projects/mingw/files/Installer/mingw-get-inst/">http://sourceforge.net/projects/mingw/files/Installer/mingw-get-inst/</a></p>
+<p>インストーラを実行すればMinGW/MSYSのインストールは完了です。インストールの際にMSYS Basic Systemのところにチェックを入れるのを忘れずに。</p>
+<h3 id="minttyのインストール">minttyのインストール</h3>
+<p>MSYSのインストールが完了したら、MinGW Shellを起動して、以下のコマンドを実行します。</p>
+<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">mingw-get</span> update
+$ <span class="kw">mingw-get</span> install mintty</code></pre>
+<p>これで mintty のインストールは完了です。MinGWも便利になったもんですね。mintty コマンドを起動できる用になったはずです。起動した mintty をタスクバーにピン留めしておけば一発で起動できるようになって便利です。</p>
+<h3 id="home-の設定">$HOME の設定</h3>
+<p>sshやemacsなどが設定ファイルを参照できるように、<span class="math"><em>H</em><em>O</em><em>M</em><em>E</em><em>環</em><em>境</em><em>変</em><em>数</em><em>を</em><em>設</em><em>定</em><em>し</em><em>て</em><em>お</em><em>き</em><em>ま</em><em>す</em>。</span>HOMEの値は c:&lt;ユーザ名&gt; にします。そこに .ssh/ ディレクトリを作成して鍵を置いておけば mintty からSSHができるようになります。</p>
+<h3 id="フォントの設定">フォントの設定</h3>
+<p>minttyはデフォルトではあまりいい感じのフォントとウインドウ表示ではないので、お好みの見た目になるように調節します。</p>
+<p>まずはフォントですが、私のおすすめは <a href="http://www.levien.com/type/myfonts/inconsolata.html">Inconsolata</a> です。Inconsolataは <a href="http://hivelogic.com/articles/top-10-programming-fonts/">Top 10 programming fonts</a> でも1位として挙げられている非常に美しいフォントです。</p>
+<div class="figure">
+<img src="http://www.levien.com/type/myfonts/incoshow.png" alt="Inconsolata" /><p class="caption">Inconsolata</p>
+</div>
+<p>Inconsolataは本家から取得しても良いですが、<a href="http://www.google.com/webfonts">Google Web Fonts</a> にあるものはヒンティングの修正が行われており、Clear Type環境下でより高品位なレンダリングが期待できるので、こちらから取得するのがおすすめです。</p>
+<h3 id="フォントリンク">フォントリンク</h3>
+<p>Inconsolataは英文フォントなので、日本語は（WindowsXP以降では）フォントリンクされたフォント、デフォルトではMS ゴシックでレンダリングされます。これはあまりうれしくありません。というのもMS ゴシックは小さいサイズだとビットマップフォントになるのと、ヒンティングがないからです。</p>
+<p>そこで、Inconsolataにメイリオをリンクさせるのがおすすめです。フォントリンクを設定するにはレジストリにエントリを追加する必要があります（フォントリンクに関して詳しくは<a href="http://blog.livedoor.jp/mailnobu/archives/16399739.html">このあたりを</a>参照）。</p>
+<p><code>HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\FontLink\SystemLink</code> に Inconsolata という名前のキーを複数行文字列データとして作成し、meiryo.ttc,Meiryo という行を追加すればOKです。</p>
+<p>フォントリンクするのが面倒なら、プログラミング用フォント <a href="http://save.sys.t.u-tokyo.ac.jp/~yusa/fonts/ricty.html">Ricty</a>を利用するのがお手軽です。</p>
+<div class="figure">
+<img src="http://save.sys.t.u-tokyo.ac.jp/~yusa/fonts/print_ricty/print_ricty_thumbnail.png" alt="Ricty" /><p class="caption">Ricty</p>
+</div>
+<p>Rictyは、Inconsolataと <a href="http://mix-mplus-ipa.sourceforge.jp/">Migu</a> の合成フォントです。Miguも非常に視認性の高い日本語フォントですが、個人的にメイリオの字形の方が好みなのと、Inconsolataにあったヒンティングが損なわれているようで、Windowsだとフォントがあまりきれいにレンダリングされないので、私はInconsolataにメイリオをリンクする方が好きです。</p>
+<h3 id="ウインドウの設定">ウインドウの設定</h3>
+<p>フォントが設定できたら、後はウインドウの見た目をお好みにいじります。お好みでいいですが、LooksのTransparencyのところをGlassにするのが個人的お勧めです。AeroUIの磨りガラス風UIがウインドウ全体になって、なんだか無駄にかっこいいです。デフォルトでは背景が透けすぎるので、Windowsのウインドウの設定から、色を濃いめにした方がいいでしょう。</p>
+<p><a href="../img/posts/mintty2.png"> <img src="../img/posts/mintty2.png" alt="mintty-glass" /> </a></p>
+<p>特に何もなくとも適当にhtopを表示しておくとなんだか楽しいです。</p>
+<h2 id="その他">その他</h2>
+<p>minttyにはウインドウ分割機能がないので、ログイン先サーバにscreen/tmuxなどをインストールしておくと便利です。</p>
+<p>私は最近はbyobu-tmuxを利用しています。最初のスクリーンショットのようにウインドウを分割して使えます。ウインドウの移動がShift+Left/Rightでできたりして割と直感的に操作できます。</p>
+<h2 id="まとめ">まとめ</h2>
+<p>gnome-terminal on VMWare からの移行ですが、おおむね満足です。</p>
+<p>良かったところ：</p>
+<ul>
+<li>フォントがきれい</li>
+<li>無駄にかっこいい</li>
+<li>軽い</li>
+<li>WindowsのIMEが使える</li>
+</ul>
+<p>不満点：</p>
+<ul>
+<li>タブがない（tmuxがあればそんなに困らないけど）</li>
+</ul>
+<p>というわけで、mintty、おすすめです。</p>
 
 <br>
 

@@ -95,351 +95,198 @@
 
 <hr>
 
-<p>この記事は <a href="http://www.yesodweb.com/blog/2012/06/conduit-0-5">http://www.yesodweb.com/blog/2012/06/conduit-0-5</a> の翻訳です。  —  <a href="http://hackage.haskell.org/package/conduit-0.5.0">conduit-0.5</a> をリリースしました。 <code>conduit</code>はストリームデータを扱うためのライブラリです。 <code>conduit</code>を用いると、様々な形のデータを生成、変形、消費するような処理を、 簡単に組み合わせることができるようになります。 <code>enumerator</code>/<code>iteratee</code>パラダイムと同じ問題を解決することを目的に作られましたが、 アプローチはこれらのものとは異なります。 <code>conduit</code>は簡単に理解して利用できるものになることを一番の目的としています。 遅延I/Oとは異なり、リソースの即時開放を保証し、 また、純粋なコードに例外を持ち込みません。  今回のリリースで<code>Source</code>、<code>Sink</code>、<code>Conduit</code>のそれぞれを作るための、 シンプルで効率の良い、高レベルのインターフェースが提供されるようになりました。 コンストラクタ（Haskellのデータコンストラクタ）をダイレクトに用いる必要は もう殆どなくなったはずです。 床下（訳注：Conduitの持つ機能のこと）には、 上流の結果を受け取ったり、<code>Leftover</code>（訳注：データの食い残し）を明示的に無視するといった、 より強力な機能が組み込まれました。 これらの変更は、Conduitを<code>Category</code>(訳注：圏を表す<a href="http://hackage.haskell.org/packages/archive/base/4.5.1.0/doc/html/Control-Category.html">Haskellの型クラス</a>) として振る舞うことを可能にします（訳注：今のところ実装はされていない模様）。  新しいバージョンでは、 ひと通りのチュートリアルが<a href="http://hackage.haskell.org/packages/archive/conduit/0.5.0/doc/html/Data-Conduit.html">Haddock</a>自身に含まれています。 使い始めるにあたっては、まずこれを読むのをお勧めします。 以前のバージョンのConduitを使ったことがある人も、 このチュートリアルを読めば以前と変わった部分がはっきりすると思います （finalizationの動作の詳細とか）。  最後に一つ注意。このリリースには<code>conduit</code>とそのデフォルト付属パッケージ、 <code>attoparsec-conduit</code>や<code>zlib-conduit</code>しか含まれていません。 <code>wai</code>, <code>parsistent</code>, <code>yesod</code>あるいはもっといろいろな古いconduitに依存したパッケージは含まれません。 それらは十分にテストしてリリース準備が整い次第リリースされる予定です。 <strong>これらの問題や、リリースについての質問をGithubのIssueに挙げないこと。</strong> Yesodチームがリリースの準備が十分にできたと判断した時に、リリースは行われます。  この記事の残りの部分で、<code>conduit</code>の使い方の洗練された例を紹介します。 ネットワークサーバの作成についての <a href="http://www.haskell.org/pipermail/haskell-cafe/2012-June/102008.html">MLでの質問</a> がベースになっています。  —  <a href="http://hackage.haskell.org/package/network-conduit">network-conduit</a> はネットワークサーバとクライアントを作るための高レベルのライブラリです。 基本的なサンプルから、違うアプリケーションを作っていきます。 まず、次のコードから始めましょう。  <sub>~</sub> {.haskell} import Data.Conduit import Data.Conduit.Network  main :: IO () main = runTCPServer (ServerSettings 4000 HostAny) app  app :: Application IO app = … <sub><sub><sub>  <code>Application</code>とはなんじゃらホイ？ これはソースとシンクを受け取って、それらに何か処理をする単なる関数です （訳注：<code>Application</code>の型を補足）。  </sub></sub></sub> {.haskell} type Application m = Source m ByteString -&gt; Sink ByteString m () -&gt; m () <sub><sub><sub>  一番シンプルな例、echoでも実装してみましょうか。  </sub></sub></sub> {.haskell} app src sink = src <br /><span class="math">$$$ sink
-~~~
+<p>この記事は <a href="http://www.yesodweb.com/blog/2012/06/conduit-0-5">http://www.yesodweb.com/blog/2012/06/conduit-0-5</a> の翻訳です。</p>
+<p><a href="http://hackage.haskell.org/package/network-conduit">network-conduit</a> はネットワークサーバとクライアントを作るための高レベルのライブラリです。 基本的なサンプルから、違うアプリケーションを作っていきます。 まず、次のコードから始めましょう。</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> Data.Conduit
+<span class="kw">import</span> Data.Conduit.Network
 
-ここで必要になるのは、ソースとシンクをつなぐことだけ。
-あとは`conduit`が全部面倒を見てくれます。
-受け取ったデータは即座に正しくシンクに送られます。
-ここには明示的なループがないこと、
-中間データを触るコードがないこと、
-そして、終了についての明示的なコードが無いこと。
-これらに注意されたい。
+<span class="ot">main ::</span> <span class="dt">IO</span> ()
+main <span class="fu">=</span> runTCPServer (<span class="dt">ServerSettings</span> <span class="dv">4000</span> <span class="dt">HostAny</span>) app
 
-&gt; 訳注：
-&gt; TCPサーバのオプションにはポート番号とホストの設定以外含まれていないが、
-&gt; これで十分実用的なのである。
-&gt; このTCPサーバは完全に並行にリクエストを処理する実装になる。
-&gt; つまり接続ごとに独立したスレッドが作られる。
-&gt; Haskellのスレッドは非常に軽量で、スレッドを一つ作るコストは
-&gt; オブジェクトをひとつ作るコストと大して変わらない。
-&gt; したがって、サーバオプションとしての並行度の指定は必要がない。
-&gt; タイムアウトの設定も必要ない。
-&gt; Haskellのスレッドは（FFIなどを使わない限り）いつでも安全にキャンセルできる。
-&gt; 標準が提供するI/Oライブラリはすべてキャンセル可能なAPIの呼び出しによって行われる。
-&gt; つまりタイムアウトが必要であれば [System.Timeout](http://hackage.haskell.org/packages/archive/base/4.5.1.0/doc/html/System-Timeout.html)
-&gt; を使えばよい。
+<span class="ot">app ::</span> <span class="dt">Application</span> <span class="dt">IO</span>
+app <span class="fu">=</span> <span class="fu">...</span></code></pre>
+<p><code>Application</code>とはなんじゃらホイ？ これはソースとシンクを受け取って、それらに何か処理をする単なる関数です （訳注：<code>Application</code>の型を補足）。</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">type</span> <span class="dt">Application</span> m <span class="fu">=</span> <span class="dt">Source</span> m <span class="dt">ByteString</span> <span class="ot">-&gt;</span> <span class="dt">Sink</span> <span class="dt">ByteString</span> m () <span class="ot">-&gt;</span> m ()</code></pre>
+<p>一番シンプルな例、echoでも実装してみましょうか。</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">app src sink <span class="fu">=</span> src <span class="fu">$$$$</span> sink</code></pre>
+<p>ここで必要になるのは、ソースとシンクをつなぐことだけ。 あとは<code>conduit</code>が全部面倒を見てくれます。 受け取ったデータは即座に正しくシンクに送られます。 ここには明示的なループがないこと、 中間データを触るコードがないこと、 そして、終了についての明示的なコードが無いこと。 これらに注意されたい。</p>
+<blockquote>
+<p>訳注： TCPサーバのオプションにはポート番号とホストの設定以外含まれていないが、 これで十分実用的なのである。 このTCPサーバは完全に並行にリクエストを処理する実装になる。 つまり接続ごとに独立したスレッドが作られる。 Haskellのスレッドは非常に軽量で、スレッドを一つ作るコストは オブジェクトをひとつ作るコストと大して変わらない。 したがって、サーバオプションとしての並行度の指定は必要がない。 タイムアウトの設定も必要ない。 Haskellのスレッドは（FFIなどを使わない限り）いつでも安全にキャンセルできる。 標準が提供するI/Oライブラリはすべてキャンセル可能なAPIの呼び出しによって行われる。 つまりタイムアウトが必要であれば <a href="http://hackage.haskell.org/packages/archive/base/4.5.1.0/doc/html/System-Timeout.html">System.Timeout</a> を使えばよい。</p>
+</blockquote>
+<p>これはあまりにもつまらない例ですね。 エコーバックする際に大文字化するものでも書いてみましょう。 このタスクに必要となるものを列挙します。 まず最初に、バイナリをテキストデータにデコードする必要があります （ascii文字列を仮定することによってこれをインチキすることもできるけど、 それは正しくも楽しくもないので、ちゃんとやることにします）。 次に1文字ずつ大文字に変換します。 最後に、文字データをバイナリに再エンコードして出力に送ります。</p>
+<p>幾つか追加の<code>import</code>が必要になります。 で、これがそのコードです。</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> <span class="kw">qualified</span> Data.Conduit.List <span class="kw">as</span> CL
+<span class="kw">import</span> Data.Conduit.Text
+<span class="kw">import</span> Data.Text (toUpper)
 
-これはあまりにもつまらない例ですね。
-エコーバックする際に大文字化するものでも書いてみましょう。
-このタスクに必要となるものを列挙します。
-まず最初に、バイナリをテキストデータにデコードする必要があります
-（ascii文字列を仮定することによってこれをインチキすることもできるけど、
-それは正しくも楽しくもないので、ちゃんとやることにします）。
-次に1文字ずつ大文字に変換します。
-最後に、文字データをバイナリに再エンコードして出力に送ります。
-
-幾つか追加の`import`が必要になります。
-で、これがそのコードです。
-
-~~~ {.haskell}
-import qualified Data.Conduit.List as CL
-import Data.Conduit.Text
-import Data.Text (toUpper)
-
-app src sink = src
-            $</span><br /><br /><span class="math">$ decode utf8
-            =$ CL.map toUpper
-            =$ encode utf8
-            =$ sink
-~~~
-
-なんという宣言的なアプローチでしょう。
-上で列挙した各ステップが、
-次のステップにつながれているだけ！
-
-別の例を考えましょう。
-受け取った各チャンクに対して、そのサイズを表示します。
-
-~~~ {.haskell}
-import qualified Data.ByteString.Char8 as S8
-app src sink = src
-            $</span><br /><br /><span class="math">$ CL.map (\bs -&gt; S8.pack $ show (S8.length bs) ++ &quot;\n&quot;)
-            =$ sink
-~~~
-
-なにやらパターンが見えてきました。
-ソースとシンクを端において、その間を`conduit`のパイプラインでつなぐ。
-ではその考えを進めて、パターンを抽象化してみましょう。
-
-~~~ {.haskell}
-app src sink = src $</span><br /><br /><span class="math">$ conduit =$ sink
-~~~
-
-~~~ {.haskell}
-conduit :: Conduit ByteString IO ByteString
-conduit = CL.map (\bs -&gt; S8.pack $ show (S8.length bs) ++ &quot;\n&quot;)
-~~~
-
-最初の例だと、こうなります。
-
-~~~ {.haskell}
-conduit = decode utf8 =$= CL.map toUpper =$= encode utf8
-~~~
-
-さてこうなると、一つ疑問が生じます。
-なんで`network-conduit`はソースとシンクを提供しているのでしょうか？
-`Application`は単に`Conduit`ではだめなのか？
-その答え、ソースとシンクに分けて提供しているのは、
-それが`Conduit`よりも真に強力だからです。
-あとで見ていきますが、それによって`connect-and-resume`のような
-強力な機能が実現できます。
-
-## 制御フロー
-
-今までの例はどれも無限のパイプライン、
-つまり、同じ処理を接続が切れるまで繰り返すものでした。
-なにか制御フローを追加してみましょう。
-次のコードは先頭に `&quot;quit&quot;` の4文字が含まれるチャンクを受信するまで、
-エコーを繰り返すというものです。
-
-~~~ {.haskell}
-conduit = do
-    mbs &lt;- await
-    case mbs of
-        Nothing -&gt; return ()
-        Just bs
-            | &quot;quit&quot; `S8.isPrefixOf` bs -&gt; return ()
-            | otherwise -&gt; do
+app src sink <span class="fu">=</span> src
+            <span class="fu">$$$$</span> decode utf8
+            <span class="fu">=$</span> CL.map toUpper
+            <span class="fu">=$</span> encode utf8
+            <span class="fu">=$</span> sink</code></pre>
+<p>なんという宣言的なアプローチでしょう。 上で列挙した各ステップが、 次のステップにつながれているだけ！</p>
+<p>別の例を考えましょう。 受け取った各チャンクに対して、そのサイズを表示します。</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> <span class="kw">qualified</span> Data.ByteString.Char8 <span class="kw">as</span> S8
+app src sink <span class="fu">=</span> src
+            <span class="fu">$$$$</span> CL.map (\bs <span class="ot">-&gt;</span> S8.pack <span class="fu">$</span> show (S8.length bs) <span class="fu">++</span> <span class="st">&quot;\n&quot;</span>)
+            <span class="fu">=$</span> sink</code></pre>
+<p>なにやらパターンが見えてきました。 ソースとシンクを端において、その間を<code>conduit</code>のパイプラインでつなぐ。 ではその考えを進めて、パターンを抽象化してみましょう。</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">app src sink <span class="fu">=</span> src <span class="fu">$$$$</span> conduit <span class="fu">=$</span> sink</code></pre>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">conduit ::</span> <span class="dt">Conduit</span> <span class="dt">ByteString</span> <span class="dt">IO</span> <span class="dt">ByteString</span>
+conduit <span class="fu">=</span> CL.map (\bs <span class="ot">-&gt;</span> S8.pack <span class="fu">$</span> show (S8.length bs) <span class="fu">++</span> <span class="st">&quot;\n&quot;</span>)</code></pre>
+<p>最初の例だと、こうなります。</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">conduit <span class="fu">=</span> decode utf8 <span class="fu">=$=</span> CL.map toUpper <span class="fu">=$=</span> encode utf8</code></pre>
+<p>さてこうなると、一つ疑問が生じます。 なんで<code>network-conduit</code>はソースとシンクを提供しているのでしょうか？ <code>Application</code>は単に<code>Conduit</code>ではだめなのか？ その答え、ソースとシンクに分けて提供しているのは、 それが<code>Conduit</code>よりも真に強力だからです。 あとで見ていきますが、それによって<code>connect-and-resume</code>のような 強力な機能が実現できます。</p>
+<h2 id="制御フロー">制御フロー</h2>
+<p>今までの例はどれも無限のパイプライン、 つまり、同じ処理を接続が切れるまで繰り返すものでした。 なにか制御フローを追加してみましょう。 次のコードは先頭に <code>&quot;quit&quot;</code> の4文字が含まれるチャンクを受信するまで、 エコーを繰り返すというものです。</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">conduit <span class="fu">=</span> <span class="kw">do</span>
+    mbs <span class="ot">&lt;-</span> await
+    <span class="kw">case</span> mbs <span class="kw">of</span>
+        <span class="dt">Nothing</span> <span class="ot">-&gt;</span> return ()
+        <span class="dt">Just</span> bs
+            <span class="fu">|</span> <span class="st">&quot;quit&quot;</span> <span class="ot">`S8.isPrefixOf`</span> bs <span class="ot">-&gt;</span> return ()
+            <span class="fu">|</span> otherwise <span class="ot">-&gt;</span> <span class="kw">do</span>
                 yield bs
-                conduit -- loop
-~~~
+                conduit <span class="co">-- loop</span></code></pre>
+<p>単なる無限ループではなく、 明示的に <code>await</code> と <code>yield</code> を読んでデータを読み書きするようになりました。</p>
+<h2 id="他のioとインターリーブ">他のI/Oとインターリーブ</h2>
+<p>簡単なファイルサーバを作りましょう。 ファイル名を送ると、サーバがそのファイルの内容を返してくるようなものです。 これを行うためには、わずかにプログラムの型を変更する必要があります。 <code>IO</code>モナドの代わりに、<code>ResourceT IO</code>モナドを使うようにします。 そうすれば、例外安全にファイルアクセスができるようになります。</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> <span class="kw">qualified</span> Data.Conduit.Binary <span class="kw">as</span> CB
 
-単なる無限ループではなく、
-明示的に `await` と `yield` を読んでデータを読み書きするようになりました。
+<span class="ot">main ::</span> <span class="dt">IO</span> ()
+main <span class="fu">=</span> runResourceT <span class="fu">$</span> runTCPServer (<span class="dt">ServerSettings</span> <span class="dv">4000</span> <span class="dt">HostAny</span>) app
 
-## 他のI/Oとインターリーブ
+<span class="ot">app ::</span> <span class="dt">Application</span> (<span class="dt">ResourceT</span> <span class="dt">IO</span>)
+app src sink <span class="fu">=</span> src <span class="fu">$$$$</span> conduit <span class="fu">=$</span> sink
 
-簡単なファイルサーバを作りましょう。
-ファイル名を送ると、サーバがそのファイルの内容を返してくるようなものです。
-これを行うためには、わずかにプログラムの型を変更する必要があります。
-`IO`モナドの代わりに、`ResourceT IO`モナドを使うようにします。
-そうすれば、例外安全にファイルアクセスができるようになります。
+<span class="ot">conduit ::</span> <span class="dt">Conduit</span> <span class="dt">ByteString</span> (<span class="dt">ResourceT</span> <span class="dt">IO</span>) <span class="dt">ByteString</span>
+conduit <span class="fu">=</span> CB.lines <span class="fu">=$=</span>
+          awaitForever (CB.sourceFile <span class="fu">.</span> S8.unpack <span class="fu">.</span> S8.takeWhile (<span class="fu">/=</span> <span class="ch">'\r'</span>))</code></pre>
+<p>ここでは意図的にファイル名のエンコーディングを無視しています。 普通は（訳注：モダンなHaskellコードでは、次のようなイケてる） <a href="http://hackage.haskell.org/package/system-filepath">system-filepath</a>と <a href="http://hackage.haskell.org/package/filesystem-conduit">filesystem-conduit</a>パッケージを使うのだけど、 説明が億劫なので、単にascii文字列としてアンパックしています。 また、<code>Data.Conduit.Binary.lines</code>関数は’\n’しか取り除かないので、 ’\r’を手動で取り除いています。 ほとんどのtelnetクライアントは改行コードとしてCRLFを送信するので、 これを取り除く処理を入れるべきでしょう。</p>
+<p><a href="http://hackage.haskell.org/packages/archive/conduit/0.5.0/doc/html/Data-Conduit.html#v:awaitForever"><code>awaitForever</code></a> は 入力がある限り内部の関数を実行する、便利関数です。 もちろん、さっきみたいな“quitアプローチ”と組み合わせての、手動ループ制御もできます。</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">conduit <span class="fu">=</span>
+    CB.lines <span class="fu">=$=</span> loop
+  <span class="kw">where</span>
+    loop <span class="fu">=</span> <span class="kw">do</span>
+        mbs <span class="ot">&lt;-</span> await
+        <span class="kw">case</span> mbs <span class="kw">of</span>
+            <span class="dt">Nothing</span> <span class="ot">-&gt;</span> return ()
+            <span class="dt">Just</span> bs
+                <span class="fu">|</span> <span class="st">&quot;quit&quot;</span> <span class="ot">`S8.isPrefixOf`</span> bs <span class="ot">-&gt;</span> return ()
+                <span class="fu">|</span> otherwise <span class="ot">-&gt;</span> <span class="kw">do</span>
+                    CB.sourceFile <span class="fu">$</span> S8.unpack <span class="fu">$</span> S8.takeWhile (<span class="fu">/=</span> <span class="ch">'\r'</span>) bs
+                    loop</code></pre>
+<h2 id="クライアントサイド">クライアントサイド</h2>
+<p><code>network-conduit</code> には、サーバのインターフェースにとても良く似た、 クライアントのためのインターフェースもあります。 例を見てみます。</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE OverloadedStrings #-}</span>
+<span class="kw">import</span> Data.Conduit
+<span class="kw">import</span> <span class="kw">qualified</span> Data.Conduit.List <span class="kw">as</span> CL
+<span class="kw">import</span> Data.Conduit.Network
+<span class="kw">import</span> Data.ByteString.Char8 ()
 
-~~~ {.haskell}
-import qualified Data.Conduit.Binary as CB
+<span class="ot">main ::</span> <span class="dt">IO</span> ()
+main <span class="fu">=</span> runTCPClient (<span class="dt">ClientSettings</span> <span class="dv">4000</span> <span class="st">&quot;localhost&quot;</span>) client
 
-main :: IO ()
-main = runResourceT $ runTCPServer (ServerSettings 4000 HostAny) app
+<span class="ot">client ::</span> <span class="dt">Application</span> <span class="dt">IO</span>
+client src sink <span class="fu">=</span>
+    src <span class="fu">$$$$</span> conduit <span class="fu">=$</span> sink
+  <span class="kw">where</span>
+    conduit <span class="fu">=</span> <span class="kw">do</span>
+        yield <span class="st">&quot;hello&quot;</span>
+        await <span class="fu">&gt;&gt;=</span> liftIO <span class="fu">.</span> print
 
-app :: Application (ResourceT IO)
-app src sink = src $</span><br /><br /><span class="math">$ conduit =$ sink
+        yield <span class="st">&quot;world&quot;</span>
+        await <span class="fu">&gt;&gt;=</span> liftIO <span class="fu">.</span> print
 
-conduit :: Conduit ByteString (ResourceT IO) ByteString
-conduit = CB.lines =$=
-          awaitForever (CB.sourceFile . S8.unpack . S8.takeWhile (/= '\r'))
-~~~
+        yield <span class="st">&quot;goodbye&quot;</span>
+        await <span class="fu">&gt;&gt;=</span> liftIO <span class="fu">.</span> print</code></pre>
+<p>ここには特に見所はありません。 このセクションの目的は、最後の例のための準備です。</p>
+<h2 id="プロキシサーバ">プロキシサーバ</h2>
+<p><code>conduit</code>のモチベーションの一つとして、 HTTPプロキシサーバを作れるようにするというのがあります。 <code>enumerator</code>では、私（訳注：もちろん原文の著者）を含む多くの人が、 ちゃんと動作するプロキシサーバを、 与えられたピースの組み合わせで作るのが とてつもなく難しいということを発見していました （多段にネストしたIterateeを使えば、実際にはできます。でもそれは恐るべき苦痛でもあります）。</p>
+<p>じゃあ、簡単なネットワークプロキシサーバを作ってみましょうか。 これは次のように動作します。</p>
+<ul>
+<li>クライアントが接続する</li>
+<li>クライアントはサーバのポート番号を一行で送ってくる</li>
+<li>クライアントはサーバのホスト名を一行で送ってくる</li>
+<li>プロキシがサーバに接続する</li>
+<li>プロキシはクライアントに “Successful connection” と返答する</li>
+<li><p>次を繰り返す</p>
+<ul>
+<li>クライアントはプロキシにチャンクを送る</li>
+<li>プロキシは同じチャンクをサーバに送る</li>
+<li>サーバはプロキシにチャンクを送る</li>
+<li>プロキシはクライアントにそのチャンクを送る</li>
+</ul></li>
+</ul>
+<p>標準のソケットベース（あるいはハンドルベース）の関数を使えば、 これは別にそんなに難しくありません。 2つの別々のソケットに対して、sendとrecvをすれば良いだけです。 ここでのポイントは、自分自身がアプリケーションの実行フローを制御するので、 違うソースを使う処理に簡単にインターリーブできるということです。 Conduit（やEnumerator）は制御フローの面倒を見てもらう代わりに、 インターリーブが難しくなるという、ちょうど逆転が起こるのです。</p>
+<p>そこでConduitはコントロールフローをアプリケーションに返す「抜け道」を 用意することにしました。 それが<code>connect-and-resume</code>と呼ばれるものです。 なんだか恐ろしげに聞こえますが、大丈夫、怖くないですよ。 ソースにシンクを接続し、シンクが終了するまで実行して、結果を返します。 ここで、その結果と一緒に新しい <strong>resumable source</strong> を返します。 それから、その<code>resumable source</code>を再度ソースとして使います。 それの繰り返しになります。</p>
+<p>最初に、main関数を見ていきましょう。 クライアントからの接続を受け付けます。</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">main <span class="fu">=</span> forkIO <span class="fu">$</span> runTCPServer (<span class="dt">ServerSettings</span> <span class="dv">5000</span> <span class="dt">HostAny</span>) proxy</code></pre>
+<p>プロキシの処理では、ポートとホスト名が必要になります。 次に、そのサーバへ接続します。 一行読み込みを行う関数と、 ポートとホスト名のペアを読み込むヘルパ関数を定義しましょう。</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">takeLine <span class="fu">=</span> <span class="kw">do</span>
+    <span class="kw">let</span> linefeed <span class="fu">=</span> <span class="dv">10</span>
+    bss <span class="ot">&lt;-</span> CB.takeWhile (<span class="fu">/=</span> linefeed) <span class="fu">=$</span> CL.consume
+    CB.drop <span class="dv">1</span> <span class="co">-- drop the newline</span>
+    return <span class="fu">$</span> S8.takeWhile (<span class="fu">/=</span> <span class="ch">'\r'</span>) <span class="fu">$</span> S8.concat bss
 
-ここでは意図的にファイル名のエンコーディングを無視しています。
-普通は（訳注：モダンなHaskellコードでは、次のようなイケてる）
-[system-filepath](http://hackage.haskell.org/package/system-filepath)と
-[filesystem-conduit](http://hackage.haskell.org/package/filesystem-conduit)パッケージを使うのだけど、
-説明が億劫なので、単にascii文字列としてアンパックしています。
-また、`Data.Conduit.Binary.lines`関数は'\\n'しか取り除かないので、
-'\\r'を手動で取り除いています。
-ほとんどのtelnetクライアントは改行コードとしてCRLFを送信するので、
-これを取り除く処理を入れるべきでしょう。
-
-[`awaitForever`](http://hackage.haskell.org/packages/archive/conduit/0.5.0/doc/html/Data-Conduit.html#v:awaitForever) は
-入力がある限り内部の関数を実行する、便利関数です。
-もちろん、さっきみたいな&quot;quitアプローチ&quot;と組み合わせての、手動ループ制御もできます。
-
-~~~ {.haskell}
-conduit =
-    CB.lines =$= loop
-  where
-    loop = do
-        mbs &lt;- await
-        case mbs of
-            Nothing -&gt; return ()
-            Just bs
-                | &quot;quit&quot; `S8.isPrefixOf` bs -&gt; return ()
-                | otherwise -&gt; do
-                    CB.sourceFile $ S8.unpack $ S8.takeWhile (/= '\r') bs
-                    loop
-~~~
-
-## クライアントサイド
-
-`network-conduit` には、サーバのインターフェースにとても良く似た、
-クライアントのためのインターフェースもあります。
-例を見てみます。
-
-~~~ {.haskell}
-{-# LANGUAGE OverloadedStrings #-}
-import Data.Conduit
-import qualified Data.Conduit.List as CL
-import Data.Conduit.Network
-import Data.ByteString.Char8 ()
-
-main :: IO ()
-main = runTCPClient (ClientSettings 4000 &quot;localhost&quot;) client
-
-client :: Application IO
-client src sink =
-    src $</span><br /><br /><span class="math">$ conduit =$ sink
-  where
-    conduit = do
-        yield &quot;hello&quot;
-        await &gt;&gt;= liftIO . print
-
-        yield &quot;world&quot;
-        await &gt;&gt;= liftIO . print
-
-        yield &quot;goodbye&quot;
-        await &gt;&gt;= liftIO . print
-~~~
-
-ここには特に見所はありません。
-このセクションの目的は、最後の例のための準備です。
-
-## プロキシサーバ
-
-`conduit`のモチベーションの一つとして、
-HTTPプロキシサーバを作れるようにするというのがあります。
-`enumerator`では、私（訳注：もちろん原文の著者）を含む多くの人が、
-ちゃんと動作するプロキシサーバを、
-与えられたピースの組み合わせで作るのが
-とてつもなく難しいということを発見していました
-（多段にネストしたIterateeを使えば、実際にはできます。でもそれは恐るべき苦痛でもあります）。
-
-じゃあ、簡単なネットワークプロキシサーバを作ってみましょうか。
-これは次のように動作します。
-
-* クライアントが接続する
-* クライアントはサーバのポート番号を一行で送ってくる
-* クライアントはサーバのホスト名を一行で送ってくる
-* プロキシがサーバに接続する
-* プロキシはクライアントに &quot;Successful connection&quot; と返答する
-* 次を繰り返す
-
-    * クライアントはプロキシにチャンクを送る
-    * プロキシは同じチャンクをサーバに送る
-    * サーバはプロキシにチャンクを送る
-    * プロキシはクライアントにそのチャンクを送る
-
-標準のソケットベース（あるいはハンドルベース）の関数を使えば、
-これは別にそんなに難しくありません。
-2つの別々のソケットに対して、sendとrecvをすれば良いだけです。
-ここでのポイントは、自分自身がアプリケーションの実行フローを制御するので、
-違うソースを使う処理に簡単にインターリーブできるということです。
-Conduit（やEnumerator）は制御フローの面倒を見てもらう代わりに、
-インターリーブが難しくなるという、ちょうど逆転が起こるのです。
-
-そこでConduitはコントロールフローをアプリケーションに返す「抜け道」を
-用意することにしました。
-それが`connect-and-resume`と呼ばれるものです。
-なんだか恐ろしげに聞こえますが、大丈夫、怖くないですよ。
-ソースにシンクを接続し、シンクが終了するまで実行して、結果を返します。
-ここで、その結果と一緒に新しい **resumable source** を返します。
-それから、その`resumable source`を再度ソースとして使います。
-それの繰り返しになります。
-
-最初に、main関数を見ていきましょう。
-クライアントからの接続を受け付けます。
-
-~~~ {.haskell}
-main = forkIO $ runTCPServer (ServerSettings 5000 HostAny) proxy
-~~~
-
-プロキシの処理では、ポートとホスト名が必要になります。
-次に、そのサーバへ接続します。
-一行読み込みを行う関数と、
-ポートとホスト名のペアを読み込むヘルパ関数を定義しましょう。
-
-~~~ {.haskell}
-takeLine = do
-    let linefeed = 10
-    bss &lt;- CB.takeWhile (/= linefeed) =$ CL.consume
-    CB.drop 1 -- drop the newline
-    return $ S8.takeWhile (/= '\r') $ S8.concat bss
-
-getPortHost = do
-    portBS &lt;- takeLine
-    hostBS &lt;- takeLine
-    return $ ClientSettings (read $ S8.unpack portBS) (S8.unpack hostBS)
-~~~
-
-次に、`connect-and-resume` (`$</span><br /><br /><span class="math">$+` 演算子) を用いて`proxy`関数を定義しましょう。
-ソースをシンク、`getPortHost`に接続して、クライアントの設定と新しい`ResumableSource`を受け取ります。
-これをリードループ(`proxyLoop`)に渡します。
-
-~~~ {.haskell}
-proxy :: Application IO
-proxy fromClient0 toClient = do
-    (fromClient, clientSettings) &lt;- fromClient0 $</span><br /><br /><span class="math">$+ getPortHost
-    runTCPClient clientSettings (proxyLoop fromClient toClient)
-~~~
-
-`proxyLoop`からは、まず接続成功メッセージをクライアントに送ります。
-サーバから受け取るための`ResumableSource`を作り、ループを開始します。
-
-~~~ {.haskell}
-proxyLoop fromClient toClient fromServer0 toServer = do
-    yield &quot;Connected to server&quot; $</span><br /><br /><span class="math"><em>t</em><em>o</em><em>C</em><em>l</em><em>i</em><em>e</em><em>n</em><em>t</em> −  − <em>c</em><em>o</em><em>n</em><em>v</em><em>e</em><em>r</em><em>t</em><em>f</em><em>r</em><em>o</em><em>m</em><em>S</em><em>e</em><em>r</em><em>v</em><em>e</em><em>r</em>0<em>f</em><em>r</em><em>o</em><em>m</em><em>a</em><em>n</em><em>o</em><em>r</em><em>m</em><em>a</em><em>l</em><em>S</em><em>o</em><em>u</em><em>r</em><em>c</em><em>e</em><em>t</em><em>o</em><em>a</em><em>R</em><em>e</em><em>s</em><em>u</em><em>m</em><em>a</em><em>b</em><em>l</em><em>e</em><em>S</em><em>o</em><em>u</em><em>r</em><em>c</em><em>e</em>(<em>f</em><em>r</em><em>o</em><em>m</em><em>S</em><em>e</em><em>r</em><em>v</em><em>e</em><em>r</em>, ()) &lt;  − <em>f</em><em>r</em><em>o</em><em>m</em><em>S</em><em>e</em><em>r</em><em>v</em><em>e</em><em>r</em>0</span><br /><br /><span class="math"> + <em>r</em><em>e</em><em>t</em><em>u</em><em>r</em><em>n</em>()<em>l</em><em>o</em><em>o</em><em>p</em><em>f</em><em>r</em><em>o</em><em>m</em><em>C</em><em>l</em><em>i</em><em>e</em><em>n</em><em>t</em><em>f</em><em>r</em><em>o</em><em>m</em><em>S</em><em>e</em><em>r</em><em>v</em><em>e</em><em>r</em><em>w</em><em>h</em><em>e</em><em>r</em><em>e</em>   <em>内</em><em>部</em><em>の</em><em>ル</em><em>ー</em><em>プ</em><em>は</em>（<em>訳</em><em>注</em>：<em>ち</em><em>ょ</em><em>っ</em><em>と</em><em>や</em><em>や</em><em>こ</em><em>し</em><em>そ</em><em>う</em><em>に</em><em>見</em><em>え</em><em>る</em><em>け</em><em>ど</em>）<em>と</em><em>て</em><em>も</em><em>直</em><em>接</em><em>的</em><em>で</em><em>す</em>。<em>上</em><em>の</em>4<em>ス</em><em>テ</em><em>ッ</em><em>プ</em><em>を</em><em>忠</em><em>実</em><em>に</em><em>こ</em><em>な</em><em>し</em><em>て</em><em>い</em><em>る</em><em>だ</em><em>け</em><em>で</em><em>す</em>。   . <em>h</em><em>a</em><em>s</em><em>k</em><em>e</em><em>l</em><em>l</em><em>l</em><em>o</em><em>o</em><em>p</em><em>f</em><em>r</em><em>o</em><em>m</em><em>C</em><em>l</em><em>i</em><em>e</em><em>n</em><em>t</em><em>f</em><em>r</em><em>o</em><em>m</em><em>S</em><em>e</em><em>r</em><em>v</em><em>e</em><em>r</em> = <em>d</em><em>o</em>(<em>f</em><em>r</em><em>o</em><em>m</em><em>C</em><em>l</em><em>i</em><em>e</em><em>n</em><em>t</em>ʹ, <em>m</em><em>b</em><em>s</em>) &lt;  − <em>f</em><em>r</em><em>o</em><em>m</em><em>C</em><em>l</em><em>i</em><em>e</em><em>n</em><em>t</em></span><br /><br /><span class="math"> +  + <em>a</em><em>w</em><em>a</em><em>i</em><em>t</em><em>c</em><em>a</em><em>s</em><em>e</em><em>m</em><em>b</em><em>s</em><em>o</em><em>f</em><em>N</em><em>o</em><em>t</em><em>h</em><em>i</em><em>n</em><em>g</em> −  &gt; <em>c</em><em>l</em><em>o</em><em>s</em><em>e</em><em>f</em><em>r</em><em>o</em><em>m</em><em>C</em><em>l</em><em>i</em><em>e</em><em>n</em><em>t</em>ʹ<em>f</em><em>r</em><em>o</em><em>m</em><em>S</em><em>e</em><em>r</em><em>v</em><em>e</em><em>r</em><em>J</em><em>u</em><em>s</em><em>t</em><em>b</em><em>s</em> −  &gt; <em>d</em><em>o</em><em>y</em><em>i</em><em>e</em><em>l</em><em>d</em><em>b</em><em>s</em></span><br /><br /><span class="math"><em>t</em><em>o</em><em>S</em><em>e</em><em>r</em><em>v</em><em>e</em><em>r</em>(<em>f</em><em>r</em><em>o</em><em>m</em><em>S</em><em>e</em><em>r</em><em>v</em><em>e</em><em>r</em>ʹ, <em>m</em><em>b</em><em>s</em>) &lt;  − <em>f</em><em>r</em><em>o</em><em>m</em><em>S</em><em>e</em><em>r</em><em>v</em><em>e</em><em>r</em></span><br /><br /><span class="math">$++ await
-                case mbs of
-                    Nothing -&gt; do
-                        yield &quot;Server closed connection&quot; $</span><br /><br /><span class="math"><em>t</em><em>o</em><em>C</em><em>l</em><em>i</em><em>e</em><em>n</em><em>t</em><em>c</em><em>l</em><em>o</em><em>s</em><em>e</em><em>f</em><em>r</em><em>o</em><em>m</em><em>C</em><em>l</em><em>i</em><em>e</em><em>n</em><em>t</em>ʹ<em>f</em><em>r</em><em>o</em><em>m</em><em>S</em><em>e</em><em>r</em><em>v</em><em>e</em><em>r</em>ʹ<em>J</em><em>u</em><em>s</em><em>t</em><em>b</em><em>s</em> −  &gt; <em>d</em><em>o</em><em>y</em><em>i</em><em>e</em><em>l</em><em>d</em><em>b</em><em>s</em></span><br /><br /><span class="math">$ toClient
-                        loop fromClient' fromServer'
-~~~
-
-ここでは2つのトリックが用いられています。
-1つ目は、`$</span><br /><br /><span class="math">$++` 演算子。
-これは `$</span><br /><br /><span class="math">$+` 演算子と同じですが、普通の`Source`の代わりに
-すでにある`ResumableSource`に対して動作します。
-&quot;continue resuming&quot;ということです。
-2つ目は、`close` 関数の呼び出し。
-普通の`Source`、`Sink`を使っているときは、
-これらは使い終わると自動的に閉じられ（訳注：リソース解放など）ます。
-しかし`ResumableSource`は、あとでの利用のためにすぐには閉じません。
-これを行うためには明示的に閉じてやる必要があります。
-これをやるのは簡単です。`$</span><br /><br /><span class="math">$+-`演算子を使います。
-
-~~~ {.haskell}
-    close x y = do
-        x $</span><br /><br /><span class="math"> +  − <em>r</em><em>e</em><em>t</em><em>u</em><em>r</em><em>n</em>()<em>y</em></span><br /><br /><span class="math">$+- return ()
-~~~
-
-`connect-and-resume`は常に必要になるとは限りませんが、
-やりたいことが所謂「コーナーケース」にあるような場合には、とても便利に使えます。
-
-## 完全なソース
-
-[Gist](https://gist.github.com/3010975)で完全なソースが見られます。
-このチュートリアルが、Conduitの強力さと、その使い方を示す助けになれば幸いです。
-何か質問や、こうすべきだという点があれば、ぜひお知らせ願いたい！
-
-ところで、[Felipeの指摘](https://gist.github.com/3010975#gistcomment-360243)で、
-`proxyLoop`を、スレッドを用いて実装するというのがありました。
-私は`connect-and-resume`のデモのために、故意に`proxyLoop`をこのように書きました。
-でも、スレッドを用いれば次のようにも実装できます。
-
-~~~ {.haskell}
-proxyLoop fromClient0 toClient fromServer0 toServer = do
-    yield &quot;Connected to server&quot; $</span><br /><br /><span class="math">$ toClient
-    m &lt;- M.newEmptyMVar
-    tid1 &lt;- forkIO $ do
-        fromServer0 $</span><br /><br /><span class="math">$ toClient
-        M.putMVar m True
-    tid2 &lt;- forkIO $ do
-        fromClient0 $</span><br /><br /><span class="math">$+- toServer
-        M.putMVar m False
-    x &lt;- M.takeMVar m
-    if x
-        then killThread tid2
-        else killThread tid1
-~~~
-
-&gt; 訳注：
-&gt; 並行処理のための便利なライブラリ [async](http://hackage.haskell.org/package/async)
-&gt; を使うと恐ろしくシンプルに。
-&gt; (サーバのSource -&gt; クライアントのSink) と (クライアントのSource -&gt; サーバのSink)
-&gt; の接続を並行に行うというやりたい処理をまさにそのまま書けてしまった。
-&gt; 全体のソースは[こちら](https://gist.github.com/3017519)。
-&gt; 
-&gt; ~~~ {.haskell}
-&gt; proxyLoop fromClient0 toClient fromServer0 toServer = do
-&gt;   yield &quot;Connected to server&quot; $</span><br /><br /><span class="math"><em>t</em><em>o</em><em>C</em><em>l</em><em>i</em><em>e</em><em>n</em><em>t</em> &gt; (<em>f</em><em>r</em><em>o</em><em>m</em><em>S</em><em>e</em><em>r</em><em>v</em><em>e</em><em>r</em>0</span><br /><br /><span class="math">$ toClient) `race_` (fromClient0 $</span><br />$$+- toServer) &gt; <sub>~</sub></p>
+getPortHost <span class="fu">=</span> <span class="kw">do</span>
+    portBS <span class="ot">&lt;-</span> takeLine
+    hostBS <span class="ot">&lt;-</span> takeLine
+    return <span class="fu">$</span> <span class="dt">ClientSettings</span> (read <span class="fu">$</span> S8.unpack portBS) (S8.unpack hostBS)</code></pre>
+<p>次に、<code>connect-and-resume</code> (<code>$$$$+</code> 演算子) を用いて<code>proxy</code>関数を定義しましょう。 ソースをシンク、<code>getPortHost</code>に接続して、クライアントの設定と新しい<code>ResumableSource</code>を受け取ります。 これをリードループ(<code>proxyLoop</code>)に渡します。</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">proxy ::</span> <span class="dt">Application</span> <span class="dt">IO</span>
+proxy fromClient0 toClient <span class="fu">=</span> <span class="kw">do</span>
+    (fromClient, clientSettings) <span class="ot">&lt;-</span> fromClient0 <span class="fu">$$$$+</span> getPortHost
+    runTCPClient clientSettings (proxyLoop fromClient toClient)</code></pre>
+<p><code>proxyLoop</code>からは、まず接続成功メッセージをクライアントに送ります。 サーバから受け取るための<code>ResumableSource</code>を作り、ループを開始します。</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">proxyLoop fromClient toClient fromServer0 toServer <span class="fu">=</span> <span class="kw">do</span>
+    yield <span class="st">&quot;Connected to server&quot;</span> <span class="fu">$$$$</span> toClient
+    <span class="co">-- convert fromServer0 from a normal Source to a ResumableSource</span>
+    (fromServer, ()) <span class="ot">&lt;-</span> fromServer0 <span class="fu">$$$$+</span> return ()
+    loop fromClient fromServer
+  <span class="kw">where</span></code></pre>
+<p>内部のループは（訳注：ちょっとややこしそうに見えるけど）とても直接的です。 上の4ステップを忠実にこなしているだけです。</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">    loop fromClient fromServer <span class="fu">=</span> <span class="kw">do</span>
+        (fromClient', mbs) <span class="ot">&lt;-</span> fromClient <span class="fu">$$$$++</span> await
+        <span class="kw">case</span> mbs <span class="kw">of</span>
+            <span class="dt">Nothing</span> <span class="ot">-&gt;</span> close fromClient' fromServer
+            <span class="dt">Just</span> bs <span class="ot">-&gt;</span> <span class="kw">do</span>
+                yield bs <span class="fu">$$$$</span> toServer
+                (fromServer', mbs) <span class="ot">&lt;-</span> fromServer <span class="fu">$$$$++</span> await
+                <span class="kw">case</span> mbs <span class="kw">of</span>
+                    <span class="dt">Nothing</span> <span class="ot">-&gt;</span> <span class="kw">do</span>
+                        yield <span class="st">&quot;Server closed connection&quot;</span> <span class="fu">$$$$</span> toClient
+                        close fromClient' fromServer'
+                    <span class="dt">Just</span> bs <span class="ot">-&gt;</span> <span class="kw">do</span>
+                        yield bs <span class="fu">$$$$</span> toClient
+                        loop fromClient' fromServer'</code></pre>
+<p>ここでは2つのトリックが用いられています。 1つ目は、<code>$$$$++</code> 演算子。 これは <code>$$$$+</code> 演算子と同じですが、普通の<code>Source</code>の代わりに すでにある<code>ResumableSource</code>に対して動作します。 “continue resuming”ということです。 2つ目は、<code>close</code> 関数の呼び出し。 普通の<code>Source</code>、<code>Sink</code>を使っているときは、 これらは使い終わると自動的に閉じられ（訳注：リソース解放など）ます。 しかし<code>ResumableSource</code>は、あとでの利用のためにすぐには閉じません。 これを行うためには明示的に閉じてやる必要があります。 これをやるのは簡単です。<code>$$$$+-</code>演算子を使います。</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">    close x y <span class="fu">=</span> <span class="kw">do</span>
+        x <span class="fu">$$$$+-</span> return ()
+        y <span class="fu">$$$$+-</span> return ()</code></pre>
+<p><code>connect-and-resume</code>は常に必要になるとは限りませんが、 やりたいことが所謂「コーナーケース」にあるような場合には、とても便利に使えます。</p>
+<h2 id="完全なソース">完全なソース</h2>
+<p><a href="https://gist.github.com/3010975">Gist</a>で完全なソースが見られます。 このチュートリアルが、Conduitの強力さと、その使い方を示す助けになれば幸いです。 何か質問や、こうすべきだという点があれば、ぜひお知らせ願いたい！</p>
+<p>ところで、<a href="https://gist.github.com/3010975#gistcomment-360243">Felipeの指摘</a>で、 <code>proxyLoop</code>を、スレッドを用いて実装するというのがありました。 私は<code>connect-and-resume</code>のデモのために、故意に<code>proxyLoop</code>をこのように書きました。 でも、スレッドを用いれば次のようにも実装できます。</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">proxyLoop fromClient0 toClient fromServer0 toServer <span class="fu">=</span> <span class="kw">do</span>
+    yield <span class="st">&quot;Connected to server&quot;</span> <span class="fu">$$$$</span> toClient
+    m <span class="ot">&lt;-</span> M.newEmptyMVar
+    tid1 <span class="ot">&lt;-</span> forkIO <span class="fu">$</span> <span class="kw">do</span>
+        fromServer0 <span class="fu">$$$$</span> toClient
+        M.putMVar m <span class="dt">True</span>
+    tid2 <span class="ot">&lt;-</span> forkIO <span class="fu">$</span> <span class="kw">do</span>
+        fromClient0 <span class="fu">$$$$+-</span> toServer
+        M.putMVar m <span class="dt">False</span>
+    x <span class="ot">&lt;-</span> M.takeMVar m
+    <span class="kw">if</span> x
+        <span class="kw">then</span> killThread tid2
+        <span class="kw">else</span> killThread tid1</code></pre>
+<blockquote>
+<p>訳注： 並行処理のための便利なライブラリ <a href="http://hackage.haskell.org/package/async">async</a> を使うと恐ろしくシンプルに。 (サーバのSource -&gt; クライアントのSink) と (クライアントのSource -&gt; サーバのSink) の接続を並行に行うというやりたい処理をまさにそのまま書けてしまった。 全体のソースは<a href="https://gist.github.com/3017519">こちら</a>。</p>
+<pre class="sourceCode haskell"><code class="sourceCode haskell">proxyLoop fromClient0 toClient fromServer0 toServer <span class="fu">=</span> <span class="kw">do</span>
+  yield <span class="st">&quot;Connected to server&quot;</span> <span class="fu">$$$$</span> toClient
+  (fromServer0 <span class="fu">$$$$</span> toClient) <span class="ot">`race_`</span> (fromClient0 <span class="fu">$$$$+-</span> toServer)</code></pre>
+</blockquote>
 
 <br>
 
