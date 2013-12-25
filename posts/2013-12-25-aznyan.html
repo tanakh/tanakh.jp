@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <title>あずにゃんとは何だったのか。 - 純粋関数空間</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="../css/bootstrap-responsive.min.css" rel="stylesheet" media="screen">
+    <link href="../css/syntax.css" rel="stylesheet" media="screen">
+    <link href="../css/docs.css" rel="stylesheet" media="screen">
+
+    <script type="text/javascript" src="http://s.hatena.ne.jp/js/HatenaStar.js"></script>
+    <script type="text/javascript">
+        Hatena.Star.Token = '448676af7a3fe5b6511e9789fbaed5a26da61054';
+        Hatena.Star.SiteConfig = {
+            entryNodes: {
+                '.post-title': {
+                    uri: 'document.location',
+                    title: 'document.title',
+                    container: 'parent'
+                }
+            }
+        };
+    </script>
+  </head>
+  <body>
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+
+    <div class="container-fluid">
+        <div class="navbar">
+            <div class="navbar-inner">
+                <a class="brand" href="../">tanakh.jp</a>
+
+                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+
+                <div class="nav-collapse">
+                    <ul class="nav">
+                        <li><a href="../">Home</a></li>
+                        <li><a href="../about.html">About</a></li>
+                        <li><a href="../contact.html">Contact</a></li>
+                        <li><a href="../pub.html">Publications</a></li>
+                        <li><a href="../tools.html">Tools</a></li>
+                        <li><a href="../archive.html">Archive</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="row-fluid">
+            <div class="span1"></div>
+            <div class="span10">
+                <div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+<h2 class="post-title">あずにゃんとは何だったのか。</h2>
+
+<div class="info">Posted on December 25, 2013, Tags: <a href="../tags/others.html">others</a></div>
+
+<!-- Social Buttons -->
+<div class="social">
+    <div class="hatena">
+        <a href="http://b.hatena.ne.jp/entry/tanakh.jp/posts/2013-12-25-aznyan.html" class="hatena-bookmark-button" data-hatena-bookmark-title="あずにゃんとは何だったのか。 - tanakh.jp" data-hatena-bookmark-layout="standard-balloon" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+    </div>
+    <div class="facebook">
+        <div class="fb-like" data-href="http://tanakh.jp/posts/2013-12-25-aznyan.html" data-send="false" data-layout="button_count" data-width="450" data-show-faces="false" data-font="arial"></div>
+    </div>
+    <div class="gplus">
+        <!-- +1 ボタン を表示したい位置に次のタグを貼り付けてください。 -->
+        <div class="g-plusone" data-size="medium" data-href="http://tanakh.jp/posts/2013-12-25-aznyan.html"></div>
+        <!-- 最後の +1 ボタン タグの後に次のタグを貼り付けてください。 -->
+        <script type="text/javascript">
+          (function() {
+            var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+            po.src = 'https://apis.google.com/js/plusone.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+          })();
+        </script>
+    </div>
+    <div class="twitter">
+        <a href="https://twitter.com/share" class="twitter-share-button" data-via="tanakh" data-lang="ja">ツイート</a>
+        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+    </div>
+</div>
+
+<hr>
+
+<p>これは<a href="http://www.adventar.org/calendars/290">あずにゃん Advent Calendar 2013</a>16日目（大嘘）の記事です。</p>
+<div class="figure">
+<img src="../img/posts/aznyan.jpg" />
+</div>
+<h2 id="あずにゃん-advent-calendarってなんやねん">「あずにゃん Advent Calendar」ってなんやねん！</h2>
+<p>登録したのはいいものの、いったい何を書いたものかと迷っているうちに、クリスマスになってしまった。 困った。そもそも「あずにゃん Advent Calendar」とは何なのか。何なのか。 改めて考えると実に奇妙な企画だ。難解極まる。 今の私にはどう記事を書いていいものか難しすぎる。 うんうんと悩み唸ること一週間近く。 だが待てよ。 もしかすると、これがすなわちあずにゃんが如何に魅力的であるのかということを、 ある種自己言及的に示唆ているのではないか。 そんな風に昨日あたりから思い始めたのだった。 そういう訳で、それを少しまとめて書いてみようと思う。</p>
+<p>Advent Calendarができるということは、どういうことなのか？ すなわち25の記事が書かれるということである（あずにゃん Advent Calendarは記事が埋まっていないようだが）。 そしてこれは、25人のあずにゃん愛好家、それもアニメ放送終了3年以上、映画から2年以上、 原作終了から1年半も経とうという、この2013年の年の瀬に、 未だにあずにゃんを愛して止まない好事家が、25人もいるということなのだ （あずにゃん Advent Calendarは、同じ人が何度も登録しているように見えるが、そのことには目を瞑ろう）。</p>
+<h2 id="昨今のアニメキャラ事情">昨今のアニメキャラ事情</h2>
+<p>とかく近頃は、萌えキャラの大量消費時代だ。 粗製乱造された数多のキャラクターを、四半期毎にどれが嫁だのと乗り換えて、 つかの間の流行に浸るのが、今どきのオタクのスタイルのようだ。 今どきのオタクの、と書いたが、これは別に今に始まったことではない。 萌えキャラは、「萌えキャラ」というラベルの誕生を起点に、 そのジャンルを急速に発展させてきた。 萌えアニメ、萌え漫画などというジャンルが出来て久しい。 萌えアニメとは、萌えキャラが登場すること、 それ自体を視聴者の期待することとして狙い、 視聴者もそれを期待して観るアニメである。 当初はそれでよかった。 萌えアニメ自体が目新しく、とにかくかわいいキャラクターを出すということが、 そのアニメの評価に直結する時代が、確かにあったからである。</p>
+<p>時は流れ、現在。 萌えアニメは飽和しつつある。 あるいはすでに臨界点を超えているのかもしれない。 かわいいキャラクターが出ることは、アニメの人気に直結しなくなりつつある。 あるいは前提条件ですら無いかもしれない。 キャラクターの飽和だ。 あるいは萌えキャラ構築のノウハウがある一定の水準に達し、 鈍化したとも言えるだろうか、</p>
+<h2 id="僕が感じ始めた違和感">僕が感じ始めた違和感</h2>
+<p>最初の違和感は、ツンデレと言う言葉だった。 なぜ違和感を感じたのか？それは単純に僕がツンツンとした態度に あまり魅力を感じないからに過ぎないのだが、 こういうタイプのカテゴリーのキャラクターが広く市場に受け入れられるのは、 客観的に考えて驚くに値することだと思った。 しかしながら、これはある意味で必然であったと考える。 それはつまり、萌えキャラ市場の閉塞の打破に必要な物だったからである。 若い男は目新しさを好む。 オタクとカテゴライズされる人種には特にその傾向が強い。 二番煎じ、三番煎じのキャラクターなどには見向きをするはずがない。 そこへ来てのツンデレである。</p>
+<p>ツンデレでピンと来ないというなら、 ヤンデレを考えてみると良いだろう。 僕はヤンデレが苦手だ。 もちろん、それを好むという人は少なからずいると理解しているが、 少なくとも、多数派ではないはずだ。 何故なら、ストーカー的行為は普通は迷惑行為で、警察案件だからである。 つまりヤンデレはニッチなのだ。 しかし、ヤンデレというキャラクターは登場しなければならなかった。 それが萌えがビジネスとして継続するために必要だったからである。 萌えキャラの細分化、ニッチ化、これによるバリエーション。 ラベリングによる再利用性の向上。 いまやラベルを集めてきてシャッフルするだけで、 物語の登場人物に対して一揃いの個性を与えることができる。 もちろんそれだけでは駄目だ。 継続的な再利用可能なラベルの開発こそが重要である。 各作品は、競ってエキセントリックなキャラクタ作成に精を出すことになる。 変人、奇人、狂人、危険人物、女装、神、悪魔、怪物、人外、死人、幽霊。 視聴者と同格のオタク、あるいはアンチオタク、etc、etc…。</p>
+<h2 id="あずにゃん奇を衒わず奇を衒う">あずにゃん、奇を衒わず、奇を衒う。</h2>
+<p>そういう背景であずにゃんは生まれた。 あずにゃんは、極めてスタンダードなキャラクターだ。 性格は極めて平凡で素直、典型的な萌えキャラに多い女子高生。 髪の色がファンシーなわけでもなく、非凡な才能を持つわけでもなく、 不良でもなく、超能力も使えず、変な思想も持たず、変な口癖もなく、 もちろん種族は人間である。 エキセントリックな人物揃いのけいおん部にて、 他の部員にフラストレーションを感じる、 極めて真面目なキャラクターである。 別な言い方をすると、あずにゃんは伝統的技法により構築されたキャラクターであるとも言える。</p>
+<p>では、どうしてそんな平凡なキャラクターが、 3年後に Advent Calendar が企画されるほど、 根強くファンから愛される事になったのか。 これは平凡であるということ、それ自身にあると考えられる。 しかし、温故知新とか、逆に目新しいとか、そういうことではない。 考えてもみて欲しい。 けいおんに登場した他のけいおん部員、いずれも曲者ぞろいである。 その中においては、特徴がないことが特徴足りえるという、 いわば逆転の現象が起こるのだ。</p>
+<h2 id="あずにゃんってどんなキャラですか">あずにゃんって、どんなキャラですか？</h2>
+<p>特別なラベルが無いというのが、昨今では稀になってしまった。 キャラクタを構成する際に利用できる既存の再利用可能なラベルは、 一人に幾つもを割り当てても余るほどには、すでに十分すぎるほど多く確立している。 その中で、あえてラベルを用いないということ、 そのことがひとつの魅力をつくり上げるということは、 ある意味でコロンブスの卵的発想であり、 平凡な言い方をすれば、古くて新しいとも言える。 最新の技法を用いて、ラベリングに依らず、魅力あるキャラを構築する。 2010年前後のあずにゃんは、 そういった意味で特異点に産み落とされたキャラクターと言える。 これの結果として、本質的にあずにゃんは流行に左右され難い。 評価の基準が、時代とともに変動しづらい。 魅力そのものが、必然的にキャラクターの本質に踏み込んだものになるからである。</p>
+<p>我々がキャラクターを認識する場合、その情報量はいかほどになるだろう。 例えば、あるキャラクターが居たとする。 「べ、別にあんたのために～」と、彼女は言った。 その時点で我々の脳は、その識閾下において「ツンデレ」という4文字に変換される。 目及び耳から与えられた膨大な情報はほぼ捨てられ、 実に数十ビットに矮小化された情報のみが意識へと送られる。 さらに熟練した萌えアニメ愛好家であれば、声に関しても同様のことが行われるようで、 これは誰某という声優の「ツンデレ」キャラ、ということになる。 これはおかしなことではないし、普通人間というのはある行為に慣れればなれるほど、 それを効率的に行うようになる。 ここではそれはアニメを見るという行為である。</p>
+<p>例えば、通学路。 初日は道が分からないから、 進む道はどっちだろう、あ、ここは次のコンビニの角を右に曲がって…、と考える。 ところが一月も通えば、寝ぼけながらでも正しい道を進むことができるようになるはずだ。 目から入力された情報は、意識が処理することはなくなり、 すべて識閾下において現在地を暗黙に認識し、進路を暗黙に決定し、 暗黙的に体を動かし、あたかも自動で到着したかのようなことを成し遂げる。 アニメ鑑賞も大まかには同じような理屈で、最終的には非常に労力の軽いタスクになる。 そのおかげで、我々は話の内容の理解に集中できるようにもなるのだ。</p>
+<h2 id="キャラビジネスの未来">キャラビジネスの未来</h2>
+<p>だが、それはキャラクターにとっては不幸なことだ。 キャラクターに対する印象というのは、 意識上で処理された時間が長いほど深くなると考えられる。 誰しも「最初に見たアニメ」のキャラクターは印象深いものだし、 かつて無い、新しいタイプのキャラクターに対する印象も自然と深いものになるはずだ。 それを踏まえると、ラベリングでは語りづらいあずにゃんというキャラクターは、 その魅力を捉えようとすれば必然的に強い印象を残すこととなり、 さらには知名度の低い新人声優であったということも、 それに寄与した可能性もある。 それが、あずにゃんが長くファンに愛され、 ひいてはこの Advent Calendar が誕生した原因なのではないか。 僕はそのように考えるに至った。</p>
+<p>ここまで長く書いてきたが、 この考察は全く的はずれかもしれないし、 あるいはそうでもないかもしれない。 しかし、ジャンルが細分化されるということ、それはそのジャンルの成熟を意味することから、 萌えキャラビジネスが一つの袋小路に入っているのは間違いない。 その先に何があるのか。 僕にはまだ、あずにゃんの先に見えるものはない。</p>
+
+<br>
+
+<script type="text/javascript"><!--
+google_ad_client = "ca-pub-2554934724722249";
+/* normal */
+google_ad_slot = "6131209617";
+google_ad_width = 728;
+google_ad_height = 90;
+//-->
+</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+
+<br>
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'tanakh-jp'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+var disqus_shortname = 'tanakh-jp'; // required: replace example with your forum shortname
+
+/* * * DON'T EDIT BELOW THIS LINE * * */
+(function () {
+    var s = document.createElement('script'); s.async = true;
+    s.type = 'text/javascript';
+    s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+
+            </div>
+            <div class="span1"></div>
+        </div>
+
+        <hr>
+
+        <footer class="footer">
+            <center>
+            <p>
+                Copyright (c) 2011-2013, Hideyuki Tanaka (@<a href="https://twitter.com/tanakh">tanakh</a>)
+            </p>
+            <p>
+                Site proudly generated by <a href="http://jaspervdj.be/hakyll">Hakyll</a>.<br>
+                Served by <a href="http://mew.org/~kazu/proj/mighttpd/en/">Mighttpd2</a>.<br>
+                Tools are made with <a href="http://fay-lang.org/">Fay</a>.<br>
+                This site uses <a href="http://twitter.github.io/bootstrap/">Twitter Bootstrap</a>, and theme from <a href="http://bootswatch.com/">Bootswatch</a>.<br>
+            <p>
+            </center>
+        </footer>
+    </div>
+
+    <script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-26679036-1']);
+      _gaq.push(['_setDomainName', 'tanakh.jp']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>
+
+  </body>
+</html>
