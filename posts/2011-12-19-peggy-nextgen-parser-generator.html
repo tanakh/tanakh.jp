@@ -99,6 +99,26 @@
 <ul>
 <li><a href="../pub/haskell-bnk-peggy-2011-12-16.html#1">Peggy: 新しい時代のパーザジェネレータ</a></li>
 </ul>
+<hr />
+<p>ソースコードやチュートリアルなどの情報は以下から入手可能です。</p>
+<dl>
+<dt>ホームページ</dt>
+<dd><a href="http://tanakh.github.com/Peggy/">http://tanakh.github.com/Peggy/</a>
+</dd>
+<dd><p><a href="http://tanakh.github.com/Peggy/ja/">http://tanakh.github.com/Peggy/ja/</a> (日本語)</p>
+</dd>
+<dt>ソースレポジトリ</dt>
+<dd><p><a href="https://github.com/tanakh/peggy">https://github.com/tanakh/peggy</a></p>
+</dd>
+<dt>Hackage</dt>
+<dd><p><a href="http://hackage.haskell.org/package/peggy">http://hackage.haskell.org/package/peggy</a></p>
+</dd>
+</dl>
+<p><a href="http://hackage.haskell.org/platform/">Haskell Platform</a>をインストールすれば 次のコマンドで簡単にインストールできるので、 皆さん是非触ってみてください。</p>
+<pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">cabal</span> update
+$ <span class="kw">cabal</span> install peggy</code></pre>
+<p>現状はHaskell向けのパーザを生成することしかできませんが、 将来的には他の言語のパーザを生成できるようにすることも 目標としています。</p>
+<hr />
 <p>さて皆様、パーザ書いておられますか？</p>
 <p>“プログラミング言語なんて作らないし”とか、 “BNFとかわからん”とか思っている方もいらっしゃるかもしれませんが、 パーザというのはプログラムにおいて必ず登場するものなのです。 というのも、あらゆるコンソールプログラムは 標準入力からの入力をパーズして、標準出力に結果を返しますし、 あらゆるネットワークプログラムは、 ソケットからのストリームデータをパーズしてレスポンスを返すわけです。 行ごとに読むとか、JSONにするとか、正規表現を使うとか、 そういうのは単にパージングを簡単にするとか、 既存のものを使うとかの選択を行なっているに過ぎません。</p>
 <p>ではなぜ、そのようなものを利用して、いわゆるパーザジェネレータが使われにくい 傾向にあるのかというと、既存のパーザジェネレータには大掛かりで 扱いにくいものが多いからだと思います。 例えば、flex/bisonなど、まずScannerを作り、トークン型を作り、BNFで構文を書き、 セマンティックアクションを書いて、それから… というかなりの手順を踏まなければなりませんし、 それぞれに専用の言語を利用する必要があります。 また、一般的にパーザジェネレータに用いられる CFG（Context-free Grammar：文脈自由文法）というものそのものが、 割りと扱いが面倒だというのもあります。</p>

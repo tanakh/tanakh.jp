@@ -150,7 +150,7 @@ $ <span class="kw">cabal</span> install fay fay-base</code></pre>
 <h2 id="fayの第一歩">Fayの第一歩</h2>
 <p>とあるHaskell入門本では中盤まで登場しない「Hello, World!」ですが、 Haskellを知らない人がいきなりFayを勉強しようと思うとは思えないので、 今回はいきなり「Hello, World!」です。 書き忘れましたけど、Haskellの知識は前提とします。</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE NoImplicitPrelude #-}</span>
-<span class="kw">import</span>           Prelude
+<span class="kw">import           </span><span class="dt">Prelude</span>
 
 <span class="ot">main ::</span> <span class="dt">Fay</span> ()
 main <span class="fu">=</span> putStrLn <span class="st">&quot;Hello, Fay!&quot;</span></code></pre>
@@ -174,8 +174,8 @@ $ <span class="kw">ls</span> hello.*
 <p>まずは、これもとてもありきたりですが、 <code>alert</code>でダイアログを表示させてみましょう。</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE NoImplicitPrelude #-}</span>
 
-<span class="kw">import</span>           FFI
-<span class="kw">import</span>           Prelude
+<span class="kw">import           </span><span class="dt">FFI</span>
+<span class="kw">import           </span><span class="dt">Prelude</span>
 
 <span class="ot">alert ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Fay</span> ()
 alert <span class="fu">=</span> ffi <span class="st">&quot;alert(%1)&quot;</span>
@@ -190,8 +190,8 @@ main <span class="fu">=</span> alert <span class="st">&quot;Hello, JavaScript!&q
 <p>一般的なHaskellのFFIのように、 FayのFFIも返り値はFayモナドにしますが、 副作用のない場合は、純粋な関数として扱うことも可能です。 例えば、文字列の大文字化を行う<code>toUpperCase</code>メソッドをFFIしてみましょう。</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE NoImplicitPrelude #-}</span>
 
-<span class="kw">import</span>           FFI
-<span class="kw">import</span>           Prelude
+<span class="kw">import           </span><span class="dt">FFI</span>
+<span class="kw">import           </span><span class="dt">Prelude</span>
 
 <span class="ot">alert ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Fay</span> ()
 alert <span class="fu">=</span> ffi <span class="st">&quot;alert(%1)&quot;</span>
@@ -233,9 +233,9 @@ main <span class="fu">=</span> alert <span class="fu">.</span> toUpperCase <span
 <p>あやしいボタンが一個あるだけのページです。 その後に、作成予定のfayのコードを読み込ませる<code>script</code>タグを配置します。 jQueryをロードするのも忘れずに。</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE NoImplicitPrelude #-}</span>
 
-<span class="kw">import</span>           FFI
-<span class="kw">import</span>           JQuery
-<span class="kw">import</span>           Prelude
+<span class="kw">import           </span><span class="dt">FFI</span>
+<span class="kw">import           </span><span class="dt">JQuery</span>
+<span class="kw">import           </span><span class="dt">Prelude</span>
 
 <span class="ot">alert ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">Fay</span> ()
 alert <span class="fu">=</span> ffi <span class="st">&quot;alert(%1)&quot;</span>

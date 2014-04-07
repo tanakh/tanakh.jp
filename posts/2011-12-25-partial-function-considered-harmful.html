@@ -125,7 +125,7 @@ test <span class="dt">Foo</span> <span class="fu">=</span> <span class="dv">0</s
 <p>部分関数が良くない理由はただ1つ、</p>
 <p><strong><em>部分関数での未定義をエラーとして補足することが非常に困難</em></strong></p>
 <p>だからです。</p>
-<p>実際に XMonad<sup><a href="#fn1" class="footnoteRef" id="fnref1">1</a></sup> のようなクラッシュすることが許されない類のプロダクトでは、 部分関数を排除するスタイルのコーディングをルールにしているものもあります<sup><a href="#fn2" class="footnoteRef" id="fnref2">2</a></sup>。</p>
+<p>実際に XMonad<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a> のようなクラッシュすることが許されない類のプロダクトでは、 部分関数を排除するスタイルのコーディングをルールにしているものもあります<a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a>。</p>
 <h2 id="なぜ困難なのか">なぜ困難なのか？</h2>
 <p>部分関数の未定義を捕捉するのが困難なのには幾つかの理由があります。</p>
 <ul>
@@ -185,7 +185,7 @@ main <span class="fu">=</span> <span class="kw">do</span>
 <p>Test.hs: Prelude.read: no parse</p>
 </blockquote>
 <p>のように、非常に質素なものです。 これに加え、Haskellではスタックトレース、 すなわちこの例外が生成された場所を知る術がありません。 それは、実際には例外が作られた場所と評価された場所が異なることに起因するもので、 今のところ簡単な解決方法はありません。 大きなプログラムで突然何の情報もなくエラーで落ちる。 そしてどこが原因か全くわからない。 デバッグは非常に困難です。</p>
-<p>ところでこれはいろいろ問題だと認識されていて、 Haskellにスタックトレースを実装して もうすこしまともな情報を得られるようにしようという試みは いろいろなされていて<sup><a href="#fn3" class="footnoteRef" id="fnref3">3</a></sup>、 近い将来GHCに実装されるのではないかと思われます。</p>
+<p>ところでこれはいろいろ問題だと認識されていて、 Haskellにスタックトレースを実装して もうすこしまともな情報を得られるようにしようという試みは いろいろなされていて<a href="#fn3" class="footnoteRef" id="fnref3"><sup>3</sup></a>、 近い将来GHCに実装されるのではないかと思われます。</p>
 <h2 id="身の回りの部分関数">身の回りの部分関数</h2>
 <p>エラーとして部分関数を用いている関数が、 身近なところにも実はとてもたくさんあります。</p>
 <p>Preludeだけでも、</p>
@@ -254,7 +254,7 @@ hoge<span class="fu">---</span> moge<span class="fu">---</span>
 <p><a href="http://sites.google.com/site/haskell/notes/lazy-io-considered-harmful-way-to-go-left-fold-enumerator"><em>Lazy I/O Considered Harmful</em></a> なる記事も書かれており、エラーハンドリングの困難さはその問題の１つとして挙げられています。</p>
 <p>しかし困ったことに遅延IOというものは非常に便利な側面もあり、 堅牢なコードを書くためにこれを避けるのはもったいないものです。</p>
 <p>そこで、遅延IOを避けつつ、遅延IOがもたらす利益を享受しようと設計されたのが いわゆる <code>Iteratee</code>(もしくは<code>Enumerator</code>) と呼ばれるものです。</p>
-<p><code>Iteraete</code> に関しては、日本語を含むたくさんの解説記事 <sup><a href="#fn4" class="footnoteRef" id="fnref4">4</a></sup> <sup><a href="#fn5" class="footnoteRef" id="fnref5">5</a></sup> <sup><a href="#fn6" class="footnoteRef" id="fnref6">6</a></sup> <sup><a href="#fn7" class="footnoteRef" id="fnref7">7</a></sup> がありますので、 ぜひそちらをご参照ください。</p>
+<p><code>Iteraete</code> に関しては、日本語を含むたくさんの解説記事 <a href="#fn4" class="footnoteRef" id="fnref4"><sup>4</sup></a> <a href="#fn5" class="footnoteRef" id="fnref5"><sup>5</sup></a> <a href="#fn6" class="footnoteRef" id="fnref6"><sup>6</sup></a> <a href="#fn7" class="footnoteRef" id="fnref7"><sup>7</sup></a> がありますので、 ぜひそちらをご参照ください。</p>
 <p><code>Iteratee</code> 周りの動きは非常に活発で、 すでに多くのライブラリがこのインターフェースに基づいた実装を行ったり、 最近になって <a href="https://github.com/snoyberg/conduit">Conduit</a>という 設計を見なおして使いやすくした代替ライブラリなどが出現しています。</p>
 <h2 id="まとめ">まとめ</h2>
 <p>部分関数を用いるのは堅牢なプログラムを書く上で望ましくないという 話をしてきました。 実際のところ、エラーの発生する関数を部分関数にしてしまうのはとてもお手軽なので、 書き捨てのプログラム等では無理に除去する必要はないでしょう。 しかし、長時間動作する必要のあるサーバのようなプログラム、 あるいは汎用的に用いられるライブラリなどは 必ず代替手段を用意しておくべきです。</p>

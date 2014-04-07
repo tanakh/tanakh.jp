@@ -96,9 +96,16 @@
 <hr>
 
 <p>この記事は <a href="http://www.yesodweb.com/blog/2012/06/conduit-0-5">http://www.yesodweb.com/blog/2012/06/conduit-0-5</a> の翻訳です。</p>
+<hr />
+<p><a href="http://hackage.haskell.org/package/conduit-0.5.0">conduit-0.5</a> をリリースしました。 <code>conduit</code>はストリームデータを扱うためのライブラリです。 <code>conduit</code>を用いると、様々な形のデータを生成、変形、消費するような処理を、 簡単に組み合わせることができるようになります。 <code>enumerator</code>/<code>iteratee</code>パラダイムと同じ問題を解決することを目的に作られましたが、 アプローチはこれらのものとは異なります。 <code>conduit</code>は簡単に理解して利用できるものになることを一番の目的としています。 遅延I/Oとは異なり、リソースの即時開放を保証し、 また、純粋なコードに例外を持ち込みません。</p>
+<p>今回のリリースで<code>Source</code>、<code>Sink</code>、<code>Conduit</code>のそれぞれを作るための、 シンプルで効率の良い、高レベルのインターフェースが提供されるようになりました。 コンストラクタ（Haskellのデータコンストラクタ）をダイレクトに用いる必要は もう殆どなくなったはずです。 床下（訳注：Conduitの持つ機能のこと）には、 上流の結果を受け取ったり、<code>Leftover</code>（訳注：データの食い残し）を明示的に無視するといった、 より強力な機能が組み込まれました。 これらの変更は、Conduitを<code>Category</code>(訳注：圏を表す<a href="http://hackage.haskell.org/packages/archive/base/4.5.1.0/doc/html/Control-Category.html">Haskellの型クラス</a>) として振る舞うことを可能にします（訳注：今のところ実装はされていない模様）。</p>
+<p>新しいバージョンでは、 ひと通りのチュートリアルが<a href="http://hackage.haskell.org/packages/archive/conduit/0.5.0/doc/html/Data-Conduit.html">Haddock</a>自身に含まれています。 使い始めるにあたっては、まずこれを読むのをお勧めします。 以前のバージョンのConduitを使ったことがある人も、 このチュートリアルを読めば以前と変わった部分がはっきりすると思います （finalizationの動作の詳細とか）。</p>
+<p>最後に一つ注意。このリリースには<code>conduit</code>とそのデフォルト付属パッケージ、 <code>attoparsec-conduit</code>や<code>zlib-conduit</code>しか含まれていません。 <code>wai</code>, <code>parsistent</code>, <code>yesod</code>あるいはもっといろいろな古いconduitに依存したパッケージは含まれません。 それらは十分にテストしてリリース準備が整い次第リリースされる予定です。 <strong>これらの問題や、リリースについての質問をGithubのIssueに挙げないこと。</strong> Yesodチームがリリースの準備が十分にできたと判断した時に、リリースは行われます。</p>
+<p>この記事の残りの部分で、<code>conduit</code>の使い方の洗練された例を紹介します。 ネットワークサーバの作成についての <a href="http://www.haskell.org/pipermail/haskell-cafe/2012-June/102008.html">MLでの質問</a> がベースになっています。</p>
+<hr />
 <p><a href="http://hackage.haskell.org/package/network-conduit">network-conduit</a> はネットワークサーバとクライアントを作るための高レベルのライブラリです。 基本的なサンプルから、違うアプリケーションを作っていきます。 まず、次のコードから始めましょう。</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> Data.Conduit
-<span class="kw">import</span> Data.Conduit.Network
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import </span><span class="dt">Data.Conduit</span>
+<span class="kw">import </span><span class="dt">Data.Conduit.Network</span>
 
 <span class="ot">main ::</span> <span class="dt">IO</span> ()
 main <span class="fu">=</span> runTCPServer (<span class="dt">ServerSettings</span> <span class="dv">4000</span> <span class="dt">HostAny</span>) app
@@ -115,9 +122,9 @@ app <span class="fu">=</span> <span class="fu">...</span></code></pre>
 </blockquote>
 <p>これはあまりにもつまらない例ですね。 エコーバックする際に大文字化するものでも書いてみましょう。 このタスクに必要となるものを列挙します。 まず最初に、バイナリをテキストデータにデコードする必要があります （ascii文字列を仮定することによってこれをインチキすることもできるけど、 それは正しくも楽しくもないので、ちゃんとやることにします）。 次に1文字ずつ大文字に変換します。 最後に、文字データをバイナリに再エンコードして出力に送ります。</p>
 <p>幾つか追加の<code>import</code>が必要になります。 で、これがそのコードです。</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> <span class="kw">qualified</span> Data.Conduit.List <span class="kw">as</span> CL
-<span class="kw">import</span> Data.Conduit.Text
-<span class="kw">import</span> Data.Text (toUpper)
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import qualified</span> <span class="dt">Data.Conduit.List</span> <span class="kw">as</span> <span class="dt">CL</span>
+<span class="kw">import </span><span class="dt">Data.Conduit.Text</span>
+<span class="kw">import </span><span class="dt">Data.Text</span> (toUpper)
 
 app src sink <span class="fu">=</span> src
             <span class="fu">$$$$</span> decode utf8
@@ -126,7 +133,7 @@ app src sink <span class="fu">=</span> src
             <span class="fu">=$</span> sink</code></pre>
 <p>なんという宣言的なアプローチでしょう。 上で列挙した各ステップが、 次のステップにつながれているだけ！</p>
 <p>別の例を考えましょう。 受け取った各チャンクに対して、そのサイズを表示します。</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> <span class="kw">qualified</span> Data.ByteString.Char8 <span class="kw">as</span> S8
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import qualified</span> <span class="dt">Data.ByteString.Char8</span> <span class="kw">as</span> <span class="dt">S8</span>
 app src sink <span class="fu">=</span> src
             <span class="fu">$$$$</span> CL.map (\bs <span class="ot">-&gt;</span> S8.pack <span class="fu">$</span> show (S8.length bs) <span class="fu">++</span> <span class="st">&quot;\n&quot;</span>)
             <span class="fu">=$</span> sink</code></pre>
@@ -151,7 +158,7 @@ conduit <span class="fu">=</span> CL.map (\bs <span class="ot">-&gt;</span> S8.p
 <p>単なる無限ループではなく、 明示的に <code>await</code> と <code>yield</code> を読んでデータを読み書きするようになりました。</p>
 <h2 id="他のioとインターリーブ">他のI/Oとインターリーブ</h2>
 <p>簡単なファイルサーバを作りましょう。 ファイル名を送ると、サーバがそのファイルの内容を返してくるようなものです。 これを行うためには、わずかにプログラムの型を変更する必要があります。 <code>IO</code>モナドの代わりに、<code>ResourceT IO</code>モナドを使うようにします。 そうすれば、例外安全にファイルアクセスができるようになります。</p>
-<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import</span> <span class="kw">qualified</span> Data.Conduit.Binary <span class="kw">as</span> CB
+<pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">import qualified</span> <span class="dt">Data.Conduit.Binary</span> <span class="kw">as</span> <span class="dt">CB</span>
 
 <span class="ot">main ::</span> <span class="dt">IO</span> ()
 main <span class="fu">=</span> runResourceT <span class="fu">$</span> runTCPServer (<span class="dt">ServerSettings</span> <span class="dv">4000</span> <span class="dt">HostAny</span>) app
@@ -179,10 +186,10 @@ conduit <span class="fu">=</span> CB.lines <span class="fu">=$=</span>
 <h2 id="クライアントサイド">クライアントサイド</h2>
 <p><code>network-conduit</code> には、サーバのインターフェースにとても良く似た、 クライアントのためのインターフェースもあります。 例を見てみます。</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE OverloadedStrings #-}</span>
-<span class="kw">import</span> Data.Conduit
-<span class="kw">import</span> <span class="kw">qualified</span> Data.Conduit.List <span class="kw">as</span> CL
-<span class="kw">import</span> Data.Conduit.Network
-<span class="kw">import</span> Data.ByteString.Char8 ()
+<span class="kw">import </span><span class="dt">Data.Conduit</span>
+<span class="kw">import qualified</span> <span class="dt">Data.Conduit.List</span> <span class="kw">as</span> <span class="dt">CL</span>
+<span class="kw">import </span><span class="dt">Data.Conduit.Network</span>
+<span class="kw">import </span><span class="dt">Data.ByteString.Char8</span> ()
 
 <span class="ot">main ::</span> <span class="dt">IO</span> ()
 main <span class="fu">=</span> runTCPClient (<span class="dt">ClientSettings</span> <span class="dv">4000</span> <span class="st">&quot;localhost&quot;</span>) client

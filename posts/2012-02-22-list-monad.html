@@ -152,8 +152,8 @@
 <pre class="sourceCode haskell"><code class="sourceCode haskell">traverse
 <span class="ot">  ::</span> <span class="dt">ResourceIO</span> m 
   <span class="ot">=&gt;</span> <span class="dt">Bool</span>         <span class="co">-- Follow directory symlinks (only used on POSIX platforms)</span>
-  <span class="ot">-&gt;</span> FilePath     <span class="co">-- Root directory</span>
-  <span class="ot">-&gt;</span> <span class="dt">Source</span> m FilePath</code></pre>
+  <span class="ot">-&gt;</span> <span class="dt">FilePath</span>     <span class="co">-- Root directory</span>
+  <span class="ot">-&gt;</span> <span class="dt">Source</span> m <span class="dt">FilePath</span></code></pre>
 <p>これを使えば <code>getTerminals</code> はこうなります。</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">getTerminals root <span class="fu">=</span> runResourceT <span class="fu">$</span> traverse <span class="dt">True</span> root <span class="fu">$$$$</span> consume</code></pre>
 <p><code>conduit</code> は現在続々とサポートするライブラリが増えていますので、 ぜひ <a href="http://hackage.haskell.org/packages/archive/pkg-list.html">Hackage</a> を <code>conduit</code> で検索してみてください。</p>
