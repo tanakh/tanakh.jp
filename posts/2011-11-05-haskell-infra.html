@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="../css/bootstrap.min.css" rel="stylesheet" media="screen">
     <link href="../css/bootstrap-responsive.min.css" rel="stylesheet" media="screen">
+    <link href="../css/default.css" rel="stylesheet" media="screen">
     <link href="../css/syntax.css" rel="stylesheet" media="screen">
     <link href="../css/docs.css" rel="stylesheet" media="screen">
 
@@ -95,16 +96,17 @@
 
 <hr>
 
+<div class="post-content">
 <h2 id="このページについて">このページについて</h2>
 <p>ページのフッタに書いてあるので、お気付きの方もいらっしゃるかと思いますが、 このページは <a href="http://jaspervdj.be/hakyll/">Hakyll</a>と <a href="http://johnmacfarlane.net/pandoc/">Pandoc</a>と <a href="http://www.mew.org/~kazu/proj/mighttpd/en/">Mighttpd</a>にて運用されています。</p>
-<p>完全なソースコードを <a href="https://github.com/tanakh/tanakh.jp">https://github.com/tanakh/tanakh.jp</a> から参照できます。</p>
+<p>完全なソースコードを <a href="https://github.com/tanakh/tanakh.jp" class="uri">https://github.com/tanakh/tanakh.jp</a> から参照できます。</p>
 <p>HakyllとはHaskellによる静的ページ生成ツールで、 <a href="http://jekyllrb.com/">Jekyll</a>にインスパイアされて作られたものだそうです。 JekyllがRubyによって書かれ、Rubyによってページの構造を記述するのに対して、 HakyllはHaskellによって書かれ、Haskellによってページの構造を記述します。</p>
 <p>Pandocとはいろいろなドキュメントフォーマットのコンバータです。 Haskellで書かれています。さすがにもうHTMLを手で書きたくはない、 かついろいろなブログの独自のフォーマットなんて覚えていられないので、 汎用的なフォーマットから自分の好みのものを利用できるpandocは非常に便利です。</p>
 <p>MighttpdとはHaskellで書かれたHTTPサーバです。 軽量シンプル高性能で、<a href="http://nginx.org/">nginx</a>をも越えるパフォーマンスを叩き出します<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a>。</p>
 <p>見ての通りHaskellづくしです。 これはHaskellによって作られたインフラによって 十分実用に耐えうるサイトを運用できることを示し、 Haskellが現場で利用するに足る堅牢さと速度を兼ね備えたアプリケーションを 構築できる言語であるということを示すための 実証実験でもあります。 その顛末をここに記しておこうと思います。</p>
 <h2 id="事の経緯">事の経緯</h2>
 <p>実のところ最初はこの様な構成にする予定ではなくて、 <a href="http://pages.github.com/">github pages</a>でサイトを作ろうと思っていました。</p>
-<p>このドメイン(<a href="http://tanakh.jp">http://tanakh.jp</a>)をかなり昔に取ってはいたものの、 なかなかまともなコンテンツを作る余裕がなく放置する日々が続きました。 しかし、以前利用していた<a href="http://isweb.www.infoseek.co.jp/">isweb</a>の無料サービスが終了し、 それに伴い<a href="http://fxp.infoseek.ne.jp/">私のホームページ</a>も消滅(ついでにデータも消滅)したので、 新しいページを立ち上げようと重い腰をあげたのでした。</p>
+<p>このドメイン(<a href="http://tanakh.jp" class="uri">http://tanakh.jp</a>)をかなり昔に取ってはいたものの、 なかなかまともなコンテンツを作る余裕がなく放置する日々が続きました。 しかし、以前利用していた<a href="http://isweb.www.infoseek.co.jp/">isweb</a>の無料サービスが終了し、 それに伴い<a href="http://fxp.infoseek.ne.jp/">私のホームページ</a>も消滅(ついでにデータも消滅)したので、 新しいページを立ち上げようと重い腰をあげたのでした。</p>
 <p>github pagesを利用するなら、Jekyllというサイトジェネレータが利用できるということなので、 最初はそれを利用しようと考えました。 ところが、Jekyllを使うのは私にはとても難しかったのです。 Rubyを普段書いていないというのは瑣末なことですが、 とにかく思ったとおりに動作しなかったときに何が原因なのか特定するのがとても困難でした。 オプションの指定もよく分からないし、typoしても何も分からないし、 何ができるかもよく分からない。 普段私がドキュメントとしての型にどれだけ頼りきっているのかと言うことがよく分かりました。</p>
 <p>さらに困ったのが環境による動作の違いで、 github pagesにjekyllのファイルを置くと、 github側で実行してサイトを生成して公開してくれるのですが、 これが手元の結果と違ったりして、 そもそも処理系のバージョンもjekyllのバージョンも違うところでリモートで動かして、 しかもRubyとかあまりにも困難なのではないのかと ようやく私の鈍い頭も理解し始めたわけです。</p>
 <p>それで<a href="http://jaspervdj.be/hakyll/">Hakyll</a>です。なんかHaskellに似た様なのがあったなあといううっすらとした 記憶はあったので、どうせならそれを使おうということになりました。 HakyllならバックエンドがpandocなのでさらにHaskell感upです。 せっかくそこまでやるなら、HTTPサーバもHaskell製のMighttpdにして、 Pure Haskellを目指そうかと相成りました。</p>
@@ -202,16 +204,17 @@ $ <span class="kw">cabal</span> install mighttpd2</code></pre>
 <div class="footnotes">
 <hr />
 <ol>
-<li id="fn1"><p><a href="http://www.mew.org/~kazu/material/2011-mighttpd2.pdf">http://www.mew.org/~kazu/material/2011-mighttpd2.pdf</a><a href="#fnref1">↩</a></p></li>
-<li id="fn2"><p><a href="http://www.haskell.org/haskellwiki/Iteratee_I/O">http://www.haskell.org/haskellwiki/Iteratee_I/O</a><a href="#fnref2">↩</a></p></li>
-<li id="fn3"><p><a href="http://www.haskell.org/haskellwiki/Enumerator_and_iteratee">http://www.haskell.org/haskellwiki/Enumerator_and_iteratee</a><a href="#fnref3">↩</a></p></li>
-<li id="fn4"><p><a href="http://research.preferred.jp/2011/02/enumerator-package-yet-another-iteratee-tutorial/">http://research.preferred.jp/2011/02/enumerator-package-yet-another-iteratee-tutorial/</a><a href="#fnref4">↩</a></p></li>
-<li id="fn5"><p><a href="http://hackage.haskell.org/package/wai-0.4.2">http://hackage.haskell.org/package/wai-0.4.2</a><a href="#fnref5">↩</a></p></li>
-<li id="fn6"><p><a href="http://steve.vinoski.net/pdf/IC-Warp_a_Haskell_Web_Server.pdf">http://steve.vinoski.net/pdf/IC-Warp_a_Haskell_Web_Server.pdf</a><a href="#fnref6">↩</a></p></li>
-<li id="fn7"><p><a href="http://www.slideshare.net/nushio/peyton-jones2011parallel-haskellthefuture">http://www.slideshare.net/nushio/peyton-jones2011parallel-haskellthefuture</a><a href="#fnref7">↩</a></p></li>
-<li id="fn8"><p><a href="http://static.googleusercontent.com/external_content/untrusted_dlcp/research.google.com/ja//pubs/archive/36841.pdf">http://static.googleusercontent.com/external_content/untrusted_dlcp/research.google.com/ja//pubs/archive/36841.pdf</a><a href="#fnref8">↩</a></p></li>
-<li id="fn9"><p><a href="http://research.microsoft.com/pubs/74063/beautiful.pdf">http://research.microsoft.com/pubs/74063/beautiful.pdf</a><a href="#fnref9">↩</a></p></li>
+<li id="fn1"><p><a href="http://www.mew.org/~kazu/material/2011-mighttpd2.pdf" class="uri">http://www.mew.org/~kazu/material/2011-mighttpd2.pdf</a><a href="#fnref1">↩</a></p></li>
+<li id="fn2"><p><a href="http://www.haskell.org/haskellwiki/Iteratee_I/O" class="uri">http://www.haskell.org/haskellwiki/Iteratee_I/O</a><a href="#fnref2">↩</a></p></li>
+<li id="fn3"><p><a href="http://www.haskell.org/haskellwiki/Enumerator_and_iteratee" class="uri">http://www.haskell.org/haskellwiki/Enumerator_and_iteratee</a><a href="#fnref3">↩</a></p></li>
+<li id="fn4"><p><a href="http://research.preferred.jp/2011/02/enumerator-package-yet-another-iteratee-tutorial/" class="uri">http://research.preferred.jp/2011/02/enumerator-package-yet-another-iteratee-tutorial/</a><a href="#fnref4">↩</a></p></li>
+<li id="fn5"><p><a href="http://hackage.haskell.org/package/wai-0.4.2" class="uri">http://hackage.haskell.org/package/wai-0.4.2</a><a href="#fnref5">↩</a></p></li>
+<li id="fn6"><p><a href="http://steve.vinoski.net/pdf/IC-Warp_a_Haskell_Web_Server.pdf" class="uri">http://steve.vinoski.net/pdf/IC-Warp_a_Haskell_Web_Server.pdf</a><a href="#fnref6">↩</a></p></li>
+<li id="fn7"><p><a href="http://www.slideshare.net/nushio/peyton-jones2011parallel-haskellthefuture" class="uri">http://www.slideshare.net/nushio/peyton-jones2011parallel-haskellthefuture</a><a href="#fnref7">↩</a></p></li>
+<li id="fn8"><p><a href="http://static.googleusercontent.com/external_content/untrusted_dlcp/research.google.com/ja//pubs/archive/36841.pdf" class="uri">http://static.googleusercontent.com/external_content/untrusted_dlcp/research.google.com/ja//pubs/archive/36841.pdf</a><a href="#fnref8">↩</a></p></li>
+<li id="fn9"><p><a href="http://research.microsoft.com/pubs/74063/beautiful.pdf" class="uri">http://research.microsoft.com/pubs/74063/beautiful.pdf</a><a href="#fnref9">↩</a></p></li>
 </ol>
+</div>
 </div>
 
 <br>

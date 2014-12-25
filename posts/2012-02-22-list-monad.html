@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="../css/bootstrap.min.css" rel="stylesheet" media="screen">
     <link href="../css/bootstrap-responsive.min.css" rel="stylesheet" media="screen">
+    <link href="../css/default.css" rel="stylesheet" media="screen">
     <link href="../css/syntax.css" rel="stylesheet" media="screen">
     <link href="../css/docs.css" rel="stylesheet" media="screen">
 
@@ -95,15 +96,15 @@
 
 <hr>
 
+<div class="post-content">
 <h2 id="最近のhaskell">最近のHaskell</h2>
 <p>最近はHaskellに関するブログ記事をちらほら見かけるようになって来ました。 日々のスクリプトに使おうとしようという人もいるようで、</p>
-<p><a href="http://d.hatena.ne.jp/aya_eiya/20120221/1329836207">http://d.hatena.ne.jp/aya_eiya/20120221/1329836207</a></p>
+<p><a href="http://d.hatena.ne.jp/aya_eiya/20120221/1329836207" class="uri">http://d.hatena.ne.jp/aya_eiya/20120221/1329836207</a></p>
 <p>このようなブログ記事を見かけました。 Haskellで書いたらそんなに汚いコードにはならないというのはたしかにあります。 やってはならないということがHaskellには比較的少ないのだと思います。 というのも、Haskellでは、やってはいけないことがそもそもできないようになっているか、 やることが極めて難しくなっている（unsafeプリフィックスを持つ関数を駆使したりなど） ことが多いのです。</p>
 <p>しかし、そんなHaskellのプログラムも、少し工夫すればもっと良くなることもあります。</p>
 <h2 id="列挙問題">列挙問題</h2>
 <p>先ほどのブログの記事の1つ目のプログラムを見てみましょう。</p>
 <script src="https://gist.github.com/1875172.js?file=getAllUpperLowerPattern.hs"></script>
-
 <p>このプログラムは、与えられた文字列の書く文字を大文字、小文字にした各パターンを全て返すものです。</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="fu">&gt;</span> getAllUpperLowerPattern <span class="st">&quot;ABCD&quot;</span>
 [<span class="st">&quot;ABCD&quot;</span>,<span class="st">&quot;ABCd&quot;</span>,<span class="st">&quot;ABcD&quot;</span>,<span class="st">&quot;ABcd&quot;</span>,<span class="st">&quot;AbCD&quot;</span>,<span class="st">&quot;AbCd&quot;</span>,<span class="st">&quot;AbcD&quot;</span>,<span class="st">&quot;Abcd&quot;</span>,<span class="st">&quot;aBCD&quot;</span>,<span class="st">&quot;aBCd&quot;</span>,<span class="st">&quot;aBcD&quot;</span>,<span class="st">&quot;aBcd&quot;</span>,<span class="st">&quot;abCD&quot;</span>,<span class="st">&quot;abCd&quot;</span>,<span class="st">&quot;abcD&quot;</span>,<span class="st">&quot;abcd&quot;</span>]</code></pre>
@@ -152,11 +153,12 @@
 <pre class="sourceCode haskell"><code class="sourceCode haskell">traverse
 <span class="ot">  ::</span> <span class="dt">ResourceIO</span> m 
   <span class="ot">=&gt;</span> <span class="dt">Bool</span>         <span class="co">-- Follow directory symlinks (only used on POSIX platforms)</span>
-  <span class="ot">-&gt;</span> <span class="dt">FilePath</span>     <span class="co">-- Root directory</span>
-  <span class="ot">-&gt;</span> <span class="dt">Source</span> m <span class="dt">FilePath</span></code></pre>
+  <span class="ot">-&gt;</span> FilePath     <span class="co">-- Root directory</span>
+  <span class="ot">-&gt;</span> <span class="dt">Source</span> m FilePath</code></pre>
 <p>これを使えば <code>getTerminals</code> はこうなります。</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell">getTerminals root <span class="fu">=</span> runResourceT <span class="fu">$</span> traverse <span class="dt">True</span> root <span class="fu">$$$$</span> consume</code></pre>
 <p><code>conduit</code> は現在続々とサポートするライブラリが増えていますので、 ぜひ <a href="http://hackage.haskell.org/packages/archive/pkg-list.html">Hackage</a> を <code>conduit</code> で検索してみてください。</p>
+</div>
 
 <br>
 

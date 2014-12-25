@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="../css/bootstrap.min.css" rel="stylesheet" media="screen">
     <link href="../css/bootstrap-responsive.min.css" rel="stylesheet" media="screen">
+    <link href="../css/default.css" rel="stylesheet" media="screen">
     <link href="../css/syntax.css" rel="stylesheet" media="screen">
     <link href="../css/docs.css" rel="stylesheet" media="screen">
 
@@ -95,6 +96,7 @@
 
 <hr>
 
+<div class="post-content">
 <p>皆さん、Windowsでコマンドライン使ってますか？ まともなターミナルエミュレータすらないと思っている方もいらっしゃるかもしれませんが、案外何とかなるものです。</p>
 <p><a href="../img/posts/mintty.png"><img src="../img/posts/mintty.png" alt="MINTTY" /></a></p>
 <p>これが完成図です。1週間ほどいろいろ試した結果、動作、見た目、フォントレンダリング、どれもおおむね満足行く結果になりました。</p>
@@ -109,7 +111,7 @@
 <p>ここではMSYSのminttyをインストールすることにします。</p>
 <h3 id="mingwmsysのインストール">MinGW/MSYSのインストール</h3>
 <p><a href="http://www.mingw.org/wiki/MSYS">MSYS</a> のインストールは、インストーラを使うのが便利です。以下のURLから新しいものをダウンロードしてください。</p>
-<p><a href="http://sourceforge.net/projects/mingw/files/Installer/mingw-get-inst/">http://sourceforge.net/projects/mingw/files/Installer/mingw-get-inst/</a></p>
+<p><a href="http://sourceforge.net/projects/mingw/files/Installer/mingw-get-inst/" class="uri">http://sourceforge.net/projects/mingw/files/Installer/mingw-get-inst/</a></p>
 <p>インストーラを実行すればMinGW/MSYSのインストールは完了です。インストールの際にMSYS Basic Systemのところにチェックを入れるのを忘れずに。</p>
 <h3 id="minttyのインストール">minttyのインストール</h3>
 <p>MSYSのインストールが完了したら、MinGW Shellを起動して、以下のコマンドを実行します。</p>
@@ -122,7 +124,8 @@ $ <span class="kw">mingw-get</span> install mintty</code></pre>
 <p>minttyはデフォルトではあまりいい感じのフォントとウインドウ表示ではないので、お好みの見た目になるように調節します。</p>
 <p>まずはフォントですが、私のおすすめは <a href="http://www.levien.com/type/myfonts/inconsolata.html">Inconsolata</a> です。Inconsolataは <a href="http://hivelogic.com/articles/top-10-programming-fonts/">Top 10 programming fonts</a> でも1位として挙げられている非常に美しいフォントです。</p>
 <div class="figure">
-<img src="http://www.levien.com/type/myfonts/incoshow.png" alt="Inconsolata" /><p class="caption">Inconsolata</p>
+<img src="http://www.levien.com/type/myfonts/incoshow.png" alt="Inconsolata" />
+<p class="caption">Inconsolata</p>
 </div>
 <p>Inconsolataは本家から取得しても良いですが、<a href="http://www.google.com/webfonts">Google Web Fonts</a> にあるものはヒンティングの修正が行われており、Clear Type環境下でより高品位なレンダリングが期待できるので、こちらから取得するのがおすすめです。</p>
 <h3 id="フォントリンク">フォントリンク</h3>
@@ -131,7 +134,8 @@ $ <span class="kw">mingw-get</span> install mintty</code></pre>
 <p><code>HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\FontLink\SystemLink</code> に Inconsolata という名前のキーを複数行文字列データとして作成し、meiryo.ttc,Meiryo という行を追加すればOKです。</p>
 <p>フォントリンクするのが面倒なら、プログラミング用フォント <a href="http://save.sys.t.u-tokyo.ac.jp/~yusa/fonts/ricty.html">Ricty</a>を利用するのがお手軽です。</p>
 <div class="figure">
-<img src="http://save.sys.t.u-tokyo.ac.jp/~yusa/fonts/print_ricty/print_ricty_thumbnail.png" alt="Ricty" /><p class="caption">Ricty</p>
+<img src="http://save.sys.t.u-tokyo.ac.jp/~yusa/fonts/print_ricty/print_ricty_thumbnail.png" alt="Ricty" />
+<p class="caption">Ricty</p>
 </div>
 <p>Rictyは、Inconsolataと <a href="http://mix-mplus-ipa.sourceforge.jp/">Migu</a> の合成フォントです。Miguも非常に視認性の高い日本語フォントですが、個人的にメイリオの字形の方が好みなのと、Inconsolataにあったヒンティングが損なわれているようで、Windowsだとフォントがあまりきれいにレンダリングされないので、私はInconsolataにメイリオをリンクする方が好きです。</p>
 <h3 id="ウインドウの設定">ウインドウの設定</h3>
@@ -155,6 +159,7 @@ $ <span class="kw">mingw-get</span> install mintty</code></pre>
 <li>タブがない（tmuxがあればそんなに困らないけど）</li>
 </ul>
 <p>というわけで、mintty、おすすめです。</p>
+</div>
 
 <br>
 

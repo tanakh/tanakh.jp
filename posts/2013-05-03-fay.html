@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="../css/bootstrap.min.css" rel="stylesheet" media="screen">
     <link href="../css/bootstrap-responsive.min.css" rel="stylesheet" media="screen">
+    <link href="../css/default.css" rel="stylesheet" media="screen">
     <link href="../css/syntax.css" rel="stylesheet" media="screen">
     <link href="../css/docs.css" rel="stylesheet" media="screen">
 
@@ -95,12 +96,13 @@
 
 <hr>
 
+<div class="post-content">
 <p><a href="http://fay-lang.org">Fay</a> をいじってみたので、 せっかくだから記事を書いておこうと思います。</p>
 <p>なお、Fayは新しい言語（というより、処理系と言った方が適切かな）ですので、 ここに書いてある情報は、来年か、あるいは半年後か、 それとももっとずっと早くに陳腐化する可能性がそれなりに低くないことを、 あらかじめお断りしておきます。</p>
 <p>この記事執筆時に用いたFayのバージョンは、 <a href="http://hackage.haskell.org/package/fay-0.14.5.0">fay-0.14.5.0</a> です。</p>
 <h2 id="デモ前置き">デモ・前置き</h2>
 <p>特に何か作りたいものが有ったわけではなかったので、 今回作ってみたものは超どうでも良いツールです。</p>
-<p><a href="http://tanakh.jp/tools/sudden.html">http://tanakh.jp/tools/sudden.html</a></p>
+<p><a href="http://tanakh.jp/tools/sudden.html" class="uri">http://tanakh.jp/tools/sudden.html</a></p>
 <pre><code>＿人人人人人人＿
 ＞　突然の死　＜
 ￣Y^Y^Y^Y^Y￣</code></pre>
@@ -111,12 +113,12 @@
 </ul>
 <p>これらのコンパイルなどもhakyllでまとめて管理できるようにしました。 hakyllには、ファイル変更監視による自動再コンパイル機能があるので、 変更の度に手でコンパイルしなくても良くて、 コンパイルコマンドを叩くのが面倒な人にも安心ですね。</p>
 <ul>
-<li><a href="https://github.com/tanakh/tanakh.jp/blob/master/site.hs">https://github.com/tanakh/tanakh.jp/blob/master/site.hs</a></li>
+<li><a href="https://github.com/tanakh/tanakh.jp/blob/master/site.hs" class="uri">https://github.com/tanakh/tanakh.jp/blob/master/site.hs</a></li>
 </ul>
 <p>いくつかの、これよりは遙かにまともな例を、 このあたりから見つけることが出来ると思います。</p>
-<p><a href="https://github.com/faylang/fay/wiki#fay-in-the-wild">https://github.com/faylang/fay/wiki#fay-in-the-wild</a></p>
+<p><a href="https://github.com/faylang/fay/wiki#fay-in-the-wild" class="uri">https://github.com/faylang/fay/wiki#fay-in-the-wild</a></p>
 <p>あと、おそらくこちらの記事（日本語）も、 私の記事よりは、幾分充実したものだと思います。</p>
-<p><a href="http://blog.konn-san.com/article/20121225/fay-introduction">http://blog.konn-san.com/article/20121225/fay-introduction</a></p>
+<p><a href="http://blog.konn-san.com/article/20121225/fay-introduction" class="uri">http://blog.konn-san.com/article/20121225/fay-introduction</a></p>
 <h2 id="fay-とは何か">Fay とは何か？</h2>
 <p>いわゆる一つの、JavaScriptをターゲットとする言語で、 Haskellの <strong>PROPER</strong> なサブセットになっています。 いくつかの当然の疑問とともに、Fayのアドバンテージを 最初に語っておこうかと思います。</p>
 <ul>
@@ -156,7 +158,7 @@ $ <span class="kw">cabal</span> install fay fay-base</code></pre>
 main <span class="fu">=</span> putStrLn <span class="st">&quot;Hello, Fay!&quot;</span></code></pre>
 <p>最初のLANGUAGEプラグマは、暗黙の<code>Prelude</code>を用いないようにする指示です。 Fayの<code>Prelude</code>はHaskell標準の<code>Prelude</code>のサブセットになっているので、 暗黙の<code>Prelude</code>を無効化しつつ、改めて<code>import</code>する必要があります。</p>
 <p>FayのPreludeにどのような関数が用意されているのかは、 <code>fay-base</code> のドキュメントを参照してください。</p>
-<p><a href="http://hackage.haskell.org/package/fay-base">http://hackage.haskell.org/package/fay-base</a></p>
+<p><a href="http://hackage.haskell.org/package/fay-base" class="uri">http://hackage.haskell.org/package/fay-base</a></p>
 <p>このように、Haddockで普通のHaskellのパッケージと同様に ドキュメントが参照できるのも、Haskellのサブセットであるところの 利点でもあります。</p>
 <p><code>main</code>の型が<code>IO ()</code>でなく<code>Fay ()</code>になっていることに注意してください。 Fayには<code>IO</code>はありません。 その代わりに何だかよく分からない<code>Fay</code>モナドになっています。 あまり気にしてはいけません。</p>
 <p>そのほかはいつも通りです。コンパイルして実行してみましょう。</p>
@@ -186,6 +188,7 @@ main <span class="fu">=</span> alert <span class="st">&quot;Hello, JavaScript!&q
 <p>これを<code>--html-wrapper</code>付きでコンパイルして、 ブラウザで表示させてみますと、次のように、 確かに<code>alert</code>を呼び出すことが出来ています。</p>
 <div class="figure">
 <img src="../img/posts/fay-alert.png" />
+
 </div>
 <p>一般的なHaskellのFFIのように、 FayのFFIも返り値はFayモナドにしますが、 副作用のない場合は、純粋な関数として扱うことも可能です。 例えば、文字列の大文字化を行う<code>toUpperCase</code>メソッドをFFIしてみましょう。</p>
 <pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE NoImplicitPrelude #-}</span>
@@ -204,6 +207,7 @@ main <span class="fu">=</span> alert <span class="fu">.</span> toUpperCase <span
 <p>これを実行すると、次のように、確かに大文字化されることが確認できます。</p>
 <div class="figure">
 <img src="../img/posts/fay-alert-uc.png" />
+
 </div>
 <p><code>ffi</code>の文字列中のプレースホルダが、 オブジェクトのメソッド呼び出しになっていることに注目してください。 このように、プレースホルダは、任意の位置に置くことが出来ます。 また、このコードは副作用を持ちませんので、 安全に純粋な関数として扱うことが出来ます。 ただし、一般的に安全かどうかは、もちろん実行するコードによります。</p>
 <h2 id="jqueryを使う">jQueryを使う</h2>
@@ -214,7 +218,7 @@ main <span class="fu">=</span> alert <span class="fu">.</span> toUpperCase <span
 <pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="kw">fay</span> --package fay-jquery hoge.hs</code></pre>
 <p>のように、<code>fay</code>コマンドの<code>--package</code>オプションに渡します。 Fayのパッケージ管理は、いろいろ紆余曲折あったようですが、 “今のところ”、<code>cabal</code>でインストールして、 <code>--package</code>オプションで指定するという形に落ち着いたようです。</p>
 <p>さて、<code>fay-jquery</code>パッケージの解説をしたいところですが、 私自身がいまいちjQueryに詳しくないので、解説は簡単なところに とどめておくことにします。 より詳しくは、<a href="https://github.com/tanakh/tanakh.jp/blob/master/tools/sudden.hs">「突然の死」ジェネレータのソースコード</a>や、 本家のドキュメント、</p>
-<p><a href="http://hackage.haskell.org/package/fay-jquery">http://hackage.haskell.org/package/fay-jquery</a></p>
+<p><a href="http://hackage.haskell.org/package/fay-jquery" class="uri">http://hackage.haskell.org/package/fay-jquery</a></p>
 <p>をご参照ください。</p>
 <p>まず、適当なHTMLを用意します。</p>
 <pre class="sourceCode html"><code class="sourceCode html"><span class="dt">&lt;!DOCTYPE </span>html<span class="dt">&gt;</span>
@@ -253,6 +257,7 @@ main <span class="fu">=</span> <span class="kw">do</span>
 <p>先ほど用意した、<code>jq.html</code>をブラウザで開き、ボタンをクリックすると、</p>
 <div class="figure">
 <img src="../img/posts/fay-jq.png" />
+
 </div>
 <p>正しく、ハンドラが呼び出されました！</p>
 <h2 id="まとめ">まとめ</h2>
@@ -266,6 +271,7 @@ main <span class="fu">=</span> <span class="kw">do</span>
 <li>Haskellをすでに習得している人</li>
 </ul>
 <p>にとっては、現状使えるツールとして、有望な選択肢だと思います。 皆さんも是非お試しください。</p>
+</div>
 
 <br>
 

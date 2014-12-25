@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="../css/bootstrap.min.css" rel="stylesheet" media="screen">
     <link href="../css/bootstrap-responsive.min.css" rel="stylesheet" media="screen">
+    <link href="../css/default.css" rel="stylesheet" media="screen">
     <link href="../css/syntax.css" rel="stylesheet" media="screen">
     <link href="../css/docs.css" rel="stylesheet" media="screen">
 
@@ -95,7 +96,8 @@
 
 <hr>
 
-<p><a href="http://www.well-typed.com/blog/90/">http://www.well-typed.com/blog/90/</a></p>
+<div class="post-content">
+<p><a href="http://www.well-typed.com/blog/90/" class="uri">http://www.well-typed.com/blog/90/</a></p>
 <p><code>foldl</code>に関するこの記事（英文）が面白かったので、勝手翻訳しました。 <code>foldl</code>なんとかなるといいですね。</p>
 <hr />
 <h2 id="foldlを直す">foldlを直す</h2>
@@ -225,6 +227,7 @@ foldl'' (\_ y <span class="ot">-&gt;</span> y) undefined [<span class="dv">1</sp
 <p>二つ目のバージョンは、コード生成という観点からは魅力的である。 GHCが<code>foldl'</code>に対して（そして正格関数を渡されたときに）行える賢い最適化の一つに値のunbox化があり、 これにより例えば<code>Int</code>を<code>Int#</code>にunboxして、引数をヒープではなくレジスタで渡すことができる。 標準的なバージョンの<code>foldl'</code>では、ループの初回のみ、特別ケースとして扱わなければならない。 なぜならば、アキュームレータがまだ評価されていないかもしれないからである。 <code>foldl''</code>ではそういう心配はない。 最初のイテレーションから正しくunbox化できる。 もっとも、GHCは大抵の場合は初期値が常に評価されるかどうかを推論することができるが、常にではない。</p>
 <p>（Don Stewartと私は数年前、リストのstream fusionの作業中にこれに気づいた。 ストリームに対する<code>foldl'</code>を二つ目のバージョンに対応する形で実装して、 そして、標準リスト関数との正格性の比較テストの実行中に失敗した。）</p>
 <p>そういうわけで、<code>foldl</code>を正格バージョンに修正しようとするなら、 「最初のイテレーション以降を正格に」バージョンではなく、 完全正格バージョンにするべきかもしれない。</p>
+</div>
 
 <br>
 

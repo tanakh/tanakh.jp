@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="../css/bootstrap.min.css" rel="stylesheet" media="screen">
     <link href="../css/bootstrap-responsive.min.css" rel="stylesheet" media="screen">
+    <link href="../css/default.css" rel="stylesheet" media="screen">
     <link href="../css/syntax.css" rel="stylesheet" media="screen">
     <link href="../css/docs.css" rel="stylesheet" media="screen">
 
@@ -95,7 +96,8 @@
 
 <hr>
 
-<p>この記事は <a href="http://www.yesodweb.com/blog/2012/06/conduit-0-5">http://www.yesodweb.com/blog/2012/06/conduit-0-5</a> の翻訳です。</p>
+<div class="post-content">
+<p>この記事は <a href="http://www.yesodweb.com/blog/2012/06/conduit-0-5" class="uri">http://www.yesodweb.com/blog/2012/06/conduit-0-5</a> の翻訳です。</p>
 <hr />
 <p><a href="http://hackage.haskell.org/package/conduit-0.5.0">conduit-0.5</a> をリリースしました。 <code>conduit</code>はストリームデータを扱うためのライブラリです。 <code>conduit</code>を用いると、様々な形のデータを生成、変形、消費するような処理を、 簡単に組み合わせることができるようになります。 <code>enumerator</code>/<code>iteratee</code>パラダイムと同じ問題を解決することを目的に作られましたが、 アプローチはこれらのものとは異なります。 <code>conduit</code>は簡単に理解して利用できるものになることを一番の目的としています。 遅延I/Oとは異なり、リソースの即時開放を保証し、 また、純粋なコードに例外を持ち込みません。</p>
 <p>今回のリリースで<code>Source</code>、<code>Sink</code>、<code>Conduit</code>のそれぞれを作るための、 シンプルで効率の良い、高レベルのインターフェースが提供されるようになりました。 コンストラクタ（Haskellのデータコンストラクタ）をダイレクトに用いる必要は もう殆どなくなったはずです。 床下（訳注：Conduitの持つ機能のこと）には、 上流の結果を受け取ったり、<code>Leftover</code>（訳注：データの食い残し）を明示的に無視するといった、 より強力な機能が組み込まれました。 これらの変更は、Conduitを<code>Category</code>(訳注：圏を表す<a href="http://hackage.haskell.org/packages/archive/base/4.5.1.0/doc/html/Control-Category.html">Haskellの型クラス</a>) として振る舞うことを可能にします（訳注：今のところ実装はされていない模様）。</p>
@@ -294,6 +296,7 @@ proxy fromClient0 toClient <span class="fu">=</span> <span class="kw">do</span>
   yield <span class="st">&quot;Connected to server&quot;</span> <span class="fu">$$$$</span> toClient
   (fromServer0 <span class="fu">$$$$</span> toClient) <span class="ot">`race_`</span> (fromClient0 <span class="fu">$$$$+-</span> toServer)</code></pre>
 </blockquote>
+</div>
 
 <br>
 
