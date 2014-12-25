@@ -1,6 +1,15 @@
 body {
-  font-size: 16px;
+  font-size: 18px;
   font-family: "Open Sans",Calibri,Candara,Arial,Meiryo,sans-serif;
+}
+
+.post-content {
+  width: 700px;
+  line-height: 1.7;
+}
+
+p {
+  margin-bottom: 1em;
 }
 
 ul.nav {
