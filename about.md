@@ -2,47 +2,38 @@
 title: About Me
 ---
 
-## Hideyuki Tanaka / 田中英行 (a.k.a. tanakh)
+# Hideyuki Tanaka / 田中英行 (a.k.a. tanakh)
 
 I am a software engineer in Japan. My current interests are functional
 programming, type-theory and compiler implementation.
 
-## Links
+# Links
 
 -   [Twitter (\@tanakh)](http://twitter.com/tanakh)
--   [github (tanakh)](http://github.com/tanakh)
+-   [GitHub (tanakh)](http://github.com/tanakh)
+-   [Qiita (tanakh)](http://qiita.com/tanakh)
 -   [TopCoder (haskell-master)](http://www.topcoder.com/tc?module=MemberProfile&cr=22627322)
--   [codeforces (tanakh)](http://codeforces.com/profile/tanakh)
+-   [Codeforces (tanakh)](http://codeforces.com/profile/tanakh)
 -   [Old Blog (Japanese)](http://d.hatena.ne.jp/tanakh/)
 
-## Softwares
+# Softwares
 
 -   Haskell Implementation of [MessagePack](http://msgpack.org/)
     -   [msgpack](http://hackage.haskell.org/package/msgpack)
     -   [msgpack-rpc](http://hackage.haskell.org/package/msgpack-rpc)
-
--   [cmdline: A Command Line Parser for
-    C++](http://github.com/tanakh/cmdline)
--   [Shu-thing: A vector shooter
-    game](http://hackage.haskell.org/package/Shu-thing)
--   [hoe: Haskell One-liner
-    Evaluator](http://hackage.haskell.org/package/hoe)
+-   [cmdline: A Command Line Parser fo C++](http://github.com/tanakh/cmdline)
+-   [Shu-thing: A vector shooter game](http://hackage.haskell.org/package/Shu-thing)
+-   [hoe: Haskell One-liner Evaluator](http://hackage.haskell.org/package/hoe)
 -   NES Emulator
     -   [C++ Implementation](http://github.com/tanakh/bjne)
     -   [Java Implementation](http://github.com/tanakh/bjne-java)
-
 -   [Gameboy Advance Emulator](http://fxp.hp.infoseek.co.jp/gbae18/)
--   [HSDL: A SDL binding for
-    Haskell](http://fxp.hp.infoseek.co.jp/haskell/HSDL/) (obsoleted, use
-    [it](http://hackage.haskell.org/package/SDL))
--   [oscm: A Scheme Interpreter written in
-    OCaml](http://fxp.hp.infoseek.co.jp/ocaml/oscm/)
--   [HongoDB: A Simple Key Value
-    Store](http://tanakh.github.com/HongoDB/)
+-   [oscm: A Scheme Interpreter written in OCaml](http://fxp.hp.infoseek.co.jp/ocaml/oscm/)
+-   [HongoDB: A Simple Key Value Store](http://tanakh.github.com/HongoDB/)
 
-## Skills
+# Skills
 
-### Programming Languages
+## Programming Languages
 
 -   Haskell, C/C++, x86/64 asm (well)
 -   OCaml (w/o O), Scheme, Java, Scala, C\#, F\#, Python, PHP, Lua
@@ -51,7 +42,7 @@ programming, type-theory and compiler implementation.
 -   Ruby, JavaScript, Perl (readonly)
 -   Coq, Agda (learning)
 
-## Education
+# Education
 
 -   2006-2007 [Graduate School of Information Science and
     Technology](http://www.i.u-tokyo.ac.jp/index_e.shtml), [The
@@ -62,9 +53,9 @@ programming, type-theory and compiler implementation.
 -   1998-2000 [Rakunan High
     School](http://www.rakunan-h.ed.jp/high/index.html)
 
-## Experiences
+# Experiences
 
-### ACM International Collegiate Programming Contest (ACM-ICPC)
+## ACM International Collegiate Programming Contest (ACM-ICPC)
 
 Team "Combat" from Kyoto University.
 
@@ -77,7 +68,7 @@ Team "Combat" from Kyoto University.
 -   2005-2006 World Finals: [19th
     Place](http://icpc.baylor.edu/past/icpc2006/Finals/Standings.html)
 
-### The ICFP Programming Contest
+## The ICFP Programming Contest
 
 -   2004: [3rd Place as team
     "hasKilled"](http://alliance.seas.upenn.edu/~plclub/cgi-bin/contest/results.php)
@@ -90,7 +81,7 @@ Team "Combat" from Kyoto University.
     discriminating hackers."
 -   2011: [3rd Place as team "atomically $ save Madoka"](http://www.icfpcontest.org/2011/09/results.html)
 
-### Others
+## Others
 
 -   [第一回京都大学総長賞 (1st Annual President Prize of Kyoto
     University)](http://www.kyoto-u.ac.jp/GAD/topic/data05/tpc060320_1/tpc060320_1.htm)
