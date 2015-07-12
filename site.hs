@@ -16,7 +16,7 @@ main = hakyllWith config $ do
         route   idRoute
         compile compressCssCompiler
 
-    match ("img/**" .||. "js/**" .||. "pub/**" .||. "robots.txt" .||. "favicon.ico" .||. "404.html") $ do
+    match ("img/**" .||. "js/**" .||. "pub/**" .||. "robots.txt" .||. "favicon.ico" .||. "404.html" .||. "CNAME") $ do
         route   idRoute
         compile copyFileCompiler
 
