@@ -5,14 +5,9 @@
 {-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE OverloadedStrings  #-}
 
-import           Control.Monad  (when)
-import           Data.Binary    (Binary (..))
-import           Data.Char      (toLower)
+import           Data.Char   (toLower)
 import           Data.Monoid
-import           Data.Typeable  (Typeable (..))
 import           Hakyll
-import           System.Exit    (ExitCode (..))
-import           System.Process (system)
 
 --------------------------------------------------------------------------------
 main :: IO ()
@@ -45,7 +40,7 @@ main = hakyllWith config $ do
         compile $ do
             let archiveCtx =
                     field "posts" (\_ -> postList tags "posts/*.md" recentFirst) <>
-                    constField "title" "Archives"              <>
+                    constField "title" "Archives" <>
                     defaultContext
 
             makeItem ""
