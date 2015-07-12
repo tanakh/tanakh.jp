@@ -1,9 +1,12 @@
-{-# LANGUAGE OverloadedStrings #-}
+#!/usr/bin/env stack
+-- stack --resolver=lts-2.17 runghc --package hakyll
+
 {-# LANGUAGE ExtendedDefaultRules #-}
+{-# LANGUAGE OverloadedStrings    #-}
 {-# OPTIONS_GHC -fno-warn-type-defaults #-}
-import Shelly
-import qualified Data.Text as T
-import Control.Monad
+import           Control.Monad
+import qualified Data.Text     as T
+import           Shelly
 
 default (T.Text)
 

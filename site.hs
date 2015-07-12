@@ -1,15 +1,18 @@
+#!/usr/bin/env stack
+-- stack --resolver=lts-2.17 runghc --package hakyll
+
 --------------------------------------------------------------------------------
 {-# LANGUAGE DeriveDataTypeable #-}
 {-# LANGUAGE OverloadedStrings  #-}
 
-import           Control.Monad (when)
-import           Data.Binary   (Binary (..))
-import           Data.Char     (toLower)
-import           Data.Monoid   (mappend, mconcat)
-import           Data.Typeable (Typeable (..))
+import           Control.Monad  (when)
+import           Data.Binary    (Binary (..))
+import           Data.Char      (toLower)
+import           Data.Monoid
+import           Data.Typeable  (Typeable (..))
 import           Hakyll
-import           System.Cmd    (system)
-import           System.Exit   (ExitCode (..))
+import           System.Exit    (ExitCode (..))
+import           System.Process (system)
 
 --------------------------------------------------------------------------------
 main :: IO ()
@@ -21,7 +24,6 @@ main = hakyllWith config $ do
     match ("img/**" .||. "js/**" .||. "pub/**" .||. "robots.txt" .||. "favicon.ico" .||. "404.html") $ do
         route   idRoute
         compile copyFileCompiler
-
 
     match (fromList ["about.md", "contact.md", "pub.md"]) $ do
         route   $ setExtension "html"
@@ -42,8 +44,8 @@ main = hakyllWith config $ do
         route idRoute
         compile $ do
             let archiveCtx =
-                    field "posts" (\_ -> postList tags "posts/*.md" recentFirst) `mappend`
-                    constField "title" "Archives"              `mappend`
+                    field "posts" (\_ -> postList tags "posts/*.md" recentFirst) <>
+                    constField "title" "Archives"              <>
                     defaultContext
 
             makeItem ""
@@ -58,10 +60,6 @@ main = hakyllWith config $ do
             >>= loadAndApplyTemplate "templates/default.html" defaultContext
             >>= relativizeUrls
 
-    -- match "tools/*.hs" $ do
-    --     route $ setExtension "js"
-    --     compile fayCompiler
-
     match "tools/*.js" $ do
         route   idRoute
         compile copyFileCompiler
@@ -70,8 +68,8 @@ main = hakyllWith config $ do
         route idRoute
         compile $ do
             let toolsCtx =
-                    field "posts" (\_ -> toolList "tools/*.html" recentFirst) `mappend`
-                    constField "title" "適当ツールズ" `mappend`
+                    field "posts" (\_ -> toolList "tools/*.html" recentFirst) <>
+                    constField "title" "適当ツールズ" <>
                     defaultContext
 
             makeItem ""
@@ -89,8 +87,8 @@ main = hakyllWith config $ do
             list <- postList tags pattern recentFirst
             makeItem ""
                 >>= loadAndApplyTemplate "templates/archive.html"
-                        (constField "title" title `mappend`
-                            constField "posts" list `mappend`
+                        (constField "title" title <>
+                            constField "posts" list <>
                             defaultContext)
                 >>= loadAndApplyTemplate "templates/default.html" defaultContext
                 >>= relativizeUrls
@@ -139,30 +137,3 @@ config :: Configuration
 config = defaultConfiguration
     { deployCommand = "cabal run deploy"
     }
-
---------------------------------------------------------------------------------
--- | This will copy any file directly by using a system call
-data FayFile = FayFile
-    deriving (Show, Eq, Ord, Typeable)
-
-
---------------------------------------------------------------------------------
-instance Binary FayFile where
-    put FayFile = return ()
-    get         = return FayFile
-
-
---------------------------------------------------------------------------------
-instance Writable FayFile where
-    write dst item = do
-        ec <- system $
-            "fay --package fay-jquery,fay-text"
-            ++ " -o " ++ dst ++ " "
-            ++ toFilePath (itemIdentifier item)
-        when (ec /= ExitSuccess) $ do
-          print ec
-
-
---------------------------------------------------------------------------------
-fayCompiler :: Compiler (Item FayFile)
-fayCompiler = makeItem FayFile
