@@ -2,12 +2,23 @@
 title: Publications
 ---
 
-## 書籍
+# 書籍
 
-* [すごいHaskellたのしく学ぼう!](http://estore.ohmsha.co.jp/titles/978427406885P) Miran Lipovača著 田中英行・村主崇行共訳
-    <div class="amazlet-box" style="margin-bottom:0px;"><div class="amazlet-image" style="float:left;margin:0px 12px 1px 0px;"><a href="http://www.amazon.co.jp/exec/obidos/ASIN/4274068854/peropero0b-22/ref=nosim/" name="amazletlink" target="_blank"><img src="http://ecx.images-amazon.com/images/I/51P6NdS4IGL._SL160_.jpg" alt="すごいHaskellたのしく学ぼう!" style="border: none;" /></a></div><div class="amazlet-info" style="line-height:120%; margin-bottom: 10px"><div class="amazlet-name" style="margin-bottom:10px;line-height:120%"><a href="http://www.amazon.co.jp/exec/obidos/ASIN/4274068854/peropero0b-22/ref=nosim/" name="amazletlink" target="_blank">すごいHaskellたのしく学ぼう!</a><div class="amazlet-powered-date" style="font-size:80%;margin-top:5px;line-height:120%">posted with <a href="http://www.amazlet.com/" title="amazlet" target="_blank">amazlet</a> at 13.05.07</div></div><div class="amazlet-detail">Miran Lipovača <br />オーム社 <br />売り上げランキング: 18,374<br /></div><div class="amazlet-sub-info" style="float: left;"><div class="amazlet-link" style="margin-top: 5px"><a href="http://www.amazon.co.jp/exec/obidos/ASIN/4274068854/peropero0b-22/ref=nosim/" name="amazletlink" target="_blank">Amazon.co.jpで詳細を見る</a></div></div></div><div class="amazlet-footer" style="clear: left"></div></div>
+## 翻訳
 
-## 講演・発表資料
+* [すごいHaskellたのしく学ぼう!](http://estore.ohmsha.co.jp/titles/978427406885P) Miran Lipovača著 共訳
+
+    <a href="http://www.amazon.co.jp/gp/product/4274068854/ref=as_li_tf_il?ie=UTF8&camp=247&creative=1211&creativeASIN=4274068854&linkCode=as2&tag=peropero0b-22"><img border="0" src="http://ws-fe.amazon-adsystem.com/widgets/q?_encoding=UTF8&ASIN=4274068854&Format=_SL160_&ID=AsinImage&MarketPlace=JP&ServiceVersion=20070822&WS=1&tag=peropero0b-22" ></a><img src="http://ir-jp.amazon-adsystem.com/e/ir?t=peropero0b-22&l=as2&o=9&a=4274068854" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />
+
+* [Haskellによる並列・並行プログラミング]() Simon Marlow著 共訳
+
+    <a href="http://www.amazon.co.jp/gp/product/4873116899/ref=as_li_ss_il?ie=UTF8&camp=247&creative=7399&creativeASIN=4873116899&linkCode=as2&tag=peropero0b-22"><img border="0" src="http://ws-fe.amazon-adsystem.com/widgets/q?_encoding=UTF8&ASIN=4873116899&Format=_SL160_&ID=AsinImage&MarketPlace=JP&ServiceVersion=20070822&WS=1&tag=peropero0b-22" ></a><img src="http://ir-jp.amazon-adsystem.com/e/ir?t=peropero0b-22&l=as2&o=9&a=4873116899" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />
+
+# 講演・発表資料
+
+* [XPath in Lens](http://www.slideshare.net/tanakh/xpath-inlens) @[Lens&Prism勉強会](http://connpass.com/event/13929/)
+
+* [IdrisでWebアプリを書く](http://www.slideshare.net/tanakh/idrisweb) @[天下一altJS武闘会](http://connpass.com/event/6402/)
 
 * [プログラミング言語の今](http://www.slideshare.net/pfi/pfi-seminar20130228-16829939) @PFIセミナー 2013/02/28
 
@@ -44,6 +55,10 @@ title: Publications
 * [シープラスプラス特別版](http://www.slideshare.net/pfi/pfi-seminar-2010-1-7) @PFI社内セミナー(外部向け発表) 2010/01/07
 
 ## その他
+
+* [簡約 λカ娘 巻の七](http://www.paraiso-lang.org/ikmsm/books/c86.html) @コミックマーケット86(2014夏)
+
+* [簡約!? λカ娘 - 始まりの総集編](http://www.paraiso-lang.org/ikmsm/books/omnibus-beginnings.html) 総集編
 
 * [簡約! λカ娘(4)](http://www.paraiso-lang.org/ikmsm/books/c83.html) @コミックマーケット83（2012冬）
 
