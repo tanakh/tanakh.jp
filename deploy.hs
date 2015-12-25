@@ -1,5 +1,5 @@
 #!/usr/bin/env stack
--- stack --resolver=lts-2.17 runghc --package hakyll
+-- stack --resolver=lts-2.17 runghc --package shelly
 
 {-# LANGUAGE ExtendedDefaultRules #-}
 {-# LANGUAGE OverloadedStrings    #-}
@@ -16,7 +16,7 @@ git_ = command1_ "git" []
 main :: IO ()
 main = shelly $ do
   git_ "checkout" ["master"]
-  run_ "cabal" ["run", "tanakh-jp", "rebuild"]
+  run_ "stack" ["./site.hs", "rebuild"]
   git_ "checkout" ["gh-pages"]
 
   files <- lsT "_site"
