@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <title>Run Rust code on PEZY-SC processor - 純粋関数空間</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="../css/bootstrap-responsive.min.css" rel="stylesheet" media="screen">
+    <link href="../css/default.css" rel="stylesheet" media="screen">
+    <link href="../css/syntax.css" rel="stylesheet" media="screen">
+    <link href="../css/docs.css" rel="stylesheet" media="screen">
+
+    <script type="text/javascript" src="http://s.hatena.ne.jp/js/HatenaStar.js"></script>
+    <script type="text/javascript">
+        Hatena.Star.Token = '448676af7a3fe5b6511e9789fbaed5a26da61054';
+        Hatena.Star.SiteConfig = {
+            entryNodes: {
+                '.post-title': {
+                    uri: 'document.location',
+                    title: 'document.title',
+                    container: 'parent'
+                }
+            }
+        };
+    </script>
+  </head>
+  <body>
+    <script src="http://code.jquery.com/jquery.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+
+    <div class="container-fluid">
+        <div class="navbar">
+            <div class="navbar-inner">
+                <a class="brand" href="../">tanakh.jp</a>
+
+                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+
+                <div class="nav-collapse">
+                    <ul class="nav">
+                        <li><a href="../">Home</a></li>
+                        <li><a href="../about.html">About</a></li>
+                        <li><a href="../contact.html">Contact</a></li>
+                        <li><a href="../pub.html">Publications</a></li>
+                        <li><a href="../tools.html">Tools</a></li>
+                        <li><a href="../archive.html">Archive</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="row-fluid">
+            <div class="span2"></div>
+            <div class="span8">
+                <div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+<h2 class="post-title">Run Rust code on PEZY-SC processor</h2>
+
+<p>
+  <div class="info">Posted on December 20, 2016, Tags: <a href="../tags/rust.html">rust</a></div>
+</p>
+
+<!-- Social Buttons -->
+<div class="social">
+    <div class="hatena">
+        <a href="http://b.hatena.ne.jp/entry/tanakh.jp/posts/2016-12-20-rust-pezy-sc.html" class="hatena-bookmark-button" data-hatena-bookmark-title="Run Rust code on PEZY-SC processor - tanakh.jp" data-hatena-bookmark-layout="standard-balloon" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+    </div>
+    <div class="facebook">
+        <div class="fb-like" data-href="http://tanakh.jp/posts/2016-12-20-rust-pezy-sc.html" data-send="false" data-layout="button_count" data-width="450" data-show-faces="false" data-font="arial"></div>
+    </div>
+    <div class="gplus">
+        <!-- +1 ボタン を表示したい位置に次のタグを貼り付けてください。 -->
+        <div class="g-plusone" data-size="medium" data-href="http://tanakh.jp/posts/2016-12-20-rust-pezy-sc.html"></div>
+        <!-- 最後の +1 ボタン タグの後に次のタグを貼り付けてください。 -->
+        <script type="text/javascript">
+          (function() {
+            var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+            po.src = 'https://apis.google.com/js/plusone.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+          })();
+        </script>
+    </div>
+    <div class="twitter">
+        <a href="https://twitter.com/share" class="twitter-share-button" data-via="tanakh" data-lang="ja">ツイート</a>
+        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+    </div>
+</div>
+
+<hr>
+
+<div class="post-content">
+<p>これは<a href="http://qiita.com/advent-calendar/2016/rust-lang-2">Rust その2 Advent Calendar</a>の16日目の記事です。日付と投稿日がかみ合っていなくてすみません。</p>
+<h1 id="概要">概要</h1>
+<p><a href="http://pezy.co.jp/products/pezy-sc.html">PEZY-SC</a>というメニーコアプロセッサーでRustのコードを動かしてみたというお話です。</p>
+<h1 id="pezy-scとは">PEZY-SCとは</h1>
+<p>PEZY-SCとは、<a href="http://pezy.co.jp/">PEZY Computing</a>が開発したメニーコアプロセッサーです。1024コアのRISCプロセッサーで、各コア8スレッドのSMTになっており、トータルで8192スレッドが同時に動きます。ピーク性能は倍制度1.5TFlops、単精度3TFlopsで、これを用いたシステムが電力効率の良いスパコンとしてGreen500などで良い成績を収めています。現在さらに性能を向上させたPEZY-SC2を開発中です。</p>
+<p>高い演算スループットと電力効率を目指しながらも、SIMDを用いない完全なMIMDプロセッサーで、ある意味コンピューター科学の常識に反しているようなユニークな設計だと思います。</p>
+<p>現在のところは残念ながら広く一般に利用できる状況にはありません。というかこんな記事を書いておきながら言うのもなんですが、この記事を見てくださっているほとんどの人は使ってみるすべがないと思います。Shoubuというスパコンの一般利用が始まっているので、<a href="http://accc.riken.jp/shoubu_info/application/">こちらの利用申請</a> から申し込んでいただくと、もしかしたら使えるかもしれません。興味のある方はぜひ。</p>
+<h1 id="現状のpezy-scのプログラム開発環境">現状のPEZY-SCのプログラム開発環境</h1>
+<p>OpenCLのAPIのようなAPIが用意されており、それでホストとデバイス向けのコードを書いて実行します。</p>
+<p>ホストコードは一般的なOpenCLのプログラムと同様に、デバイスオブジェクトやプログラムオブジェクトの作成を行って、デバイスのカーネル関数を起動します。</p>
+<p>デバイスコードはOpenCLで用いられるOpenCL Cではなく、普通のC++で記述します。言語としては普通のC++が使えますが、ランタイムのサポートがないので、標準ライブラリの大部分は使えません。とはいえ、テンプレート関数やラムダ式などは問題無く使えますし、関数の再帰呼び出しやif文などもGPGPUとは違い気兼ねなく使うことができるので、かなり普通のプログラミングと同じような感覚でプログラムを書くことができます。</p>
+<h1 id="pezy-scでrustを動かす方針">PEZY-SCでRustを動かす方針</h1>
+<p>さて、いよいよ本題のRustですが、実はもうすでに動かすための要素は世の中に存在しているので、それらを適当に繋げるだけで動いてくれるはずです。</p>
+<p>まず、PEZY-SCのSDKでは、コード生成をLLVMのバックエンドとして実装しています。フロントエンドとしてClangを使っているので、それでC++のコードからPEZY-SC向けにコンパイルできるという形です。</p>
+<p>ということは、RustからLLVMのIRなりBitcodeなりを出力できれば、それをバックエンドに食わせて、PEZY-SCのネイティブコードが出力できるはずです。そして都合が良いことに、RustはバックエンドとしてLLVMを用いています。コンパイラにLLVMのIRやBitcodeを出力するオプションもあります。つまりそれらを使うだけで、Rust to PEZY-SCのネイティブコンパイラが完成します。世の中便利になったものです。</p>
+<p>また、通常はコンパイルしたコードを動かそうと思うと、各言語処理系のランタイムを移植する必要が出てきますが、これも非常にありがたいことに、Rustはとてもランタイムが小さい言語になっています。PEZY-SCで動かすにあたって特にうれしい点として、GCが無いというのがあります。GCがないので、当たり前ですがGCのコードを移植する手間が無くなり、また、処理系のためのメモリ管理のコードも必須ではなくなります。</p>
+<p>それに加えて、RustはCの代替を本気で狙いに行っている言語なので（？）、標準ライブラリを無効にして、ランタイムへの依存を極限にまで小さくするオプションが用意されています。これを利用すると、Rustを動かすために必要なランタイムはごく少数の関数のみになります。</p>
+<p>とは言え、こうすれば理屈の上では動くはずだ、というのと、実際に動く、との間にはものすごく大きな違いがあって、動くはずのものがなぜかすんなりとは動かないというのが世の常ですから、実際にお手軽にできるのかやってみる必要があります。実際にお手軽にできたら、Rustの理想は本当なんだと改めて実感することができるでしょう。</p>
+<h1 id="rustのコードをllvm-irにコンパイルする">RustのコードをLLVM IRにコンパイルする</h1>
+<p>まずは小さいコードで、コンパイルできる環境を作っていきます。</p>
+<p>C++で適当なPEZY-SCのコードを用意します。</p>
+<pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="dt">void</span> pzc_add(<span class="dt">int32_t</span> a, <span class="dt">int32_t</span> b, <span class="dt">int32_t</span> *c) {
+    *c = a + b;
+    flush();
+}</code></pre>
+<p>与えられた引数を足し合わせるだけの、取るに足らないコードです。これをRustで書いてみます。</p>
+<p><code>flush()</code>というのは、メモリキャッシュのフラッシュを行います。PEZY-SCではプログラム終了時にキャッシュの中身が書き出されないので、明示的に呼んでやる必要があります。またPEZY-SCのSDKでは、ホストコードから起動される関数の名前の先頭は<code>pzc_</code>で始まるというのを期待しているので、それに合わせてやります。</p>
+<pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">pub</span> <span class="kw">fn</span> pzc_add(a: <span class="kw">i32</span>, b: <span class="kw">i32</span>, c: *<span class="kw">mut</span> <span class="kw">i32</span>) {
+    <span class="kw">unsafe</span> {
+        *c = a + b;
+    }
+    flush();
+}</code></pre>
+<p>ほとんど直接的に翻訳できるのですが、Rustではポインタを扱う操作は自動的にunsafeになるので、そこを<code>unsafe</code>で囲んでやる必要があります。</p>
+<p>現在のPEZY-SCのSDKの都合なのですが、OpenCLのAPIからデバイスコードの関数の名前をルックアップする際に「C++でmangleされた後の名前を期待する」という（個人的には外したい）仕様があるので、それに合わせると、</p>
+<pre class="sourceCode rust"><code class="sourceCode rust"><span class="ot">#[</span>no_mangle<span class="ot">]</span>
+<span class="kw">pub</span> <span class="kw">fn</span> _Z7pzc_add(a: <span class="kw">i32</span>, b: <span class="kw">i32</span>, c: *<span class="kw">mut</span> <span class="kw">i32</span>) {
+    <span class="kw">unsafe</span> {
+        *c = a + b;
+    }
+    flush();
+}</code></pre>
+<p>このようになります。<code>#[no_mangle]</code>は、関数名のmanglingを行わないように指示するRustのプラグマです。このままでは<code>flush()</code>が無いといってコンパイルがこけるので、とりあえず適当に定義しておきます。また、余計な依存を発生させないように<code>#![no_std]</code>をつけておきます。</p>
+<pre class="sourceCode rust"><code class="sourceCode rust">#![no_std]
+
+<span class="kw">fn</span> flush() {}
+
+<span class="ot">#[</span>no_mangle<span class="ot">]</span>
+<span class="kw">pub</span> <span class="kw">fn</span> _Z7pzc_add(a: <span class="kw">i32</span>, b: <span class="kw">i32</span>, c: *<span class="kw">mut</span> <span class="kw">i32</span>) {
+    <span class="kw">unsafe</span> {
+        *c = a + b;
+    }
+    flush();
+}</code></pre>
+<p>これを<code>rustc</code>でコンパイルします。</p>
+<pre class="sh"><code>$ rustc -O --emit=llvm-ir --crate-type=lib test.rs</code></pre>
+<p><code>--crate-type=lib</code>をつけるとライブラリとしてコンパイルされるようになります。これがなければ<code>main</code>関数がないといってコンパイルがこけます。Rustには<code>#![no_main]</code>というプラグマもありますが、その場合は使われていない関数（<code>pub</code>が付いているものも含む）の削除などの最適化が行われるので、やはりライブラリモードとしてコンパイルする必要があります。</p>
+<p><code>--emit=llvm-ir</code>オプションで、LLVM IRを出力させます。また、<code>-O</code>で最適化オプションを有効にしています。</p>
+<p>コンパイルすると、次のような結果が得られます。</p>
+<pre class="asm"><code>; ModuleID = 'kernel.cgu-0.rs'
+source_filename = &quot;kernel.cgu-0.rs&quot;
+target datalayout = &quot;e-m:e-i64:64-f80:128-n8:16:32:64-S128&quot;
+target triple = &quot;x86_64-unknown-linux-gnu&quot;
+
+; Function Attrs: norecurse nounwind uwtable
+define void @_Z7pzc_add(i32, i32, i32* nocapture) unnamed_addr #0 {
+entry-block:
+  %3 = add i32 %1, %0
+  store i32 %3, i32* %2, align 4
+  ret void
+}
+
+attributes #0 = { norecurse nounwind uwtable }</code></pre>
+<p>ターゲットトリプルが“x86_64-unknown-linux-gnu”になっていたり、データレイアウトがそれに合わせたものになっていたりしますが、rustcのバックエンドには当然PEZY-SCのサポートなんてものは存在しないので、見なかったことにします。PEZY-SCで実行するにあたっては、とりあえずはポインタサイズが64ビットでリトルエンディアンになっていれば問題がないはずです。</p>
+<h1 id="llvm-irをpezy-scのネイティブコードにする">LLVM IRをPEZY-SCのネイティブコードにする</h1>
+<p>次に、LLVM IRをLLVMのBitcodeにします。<code>rustc</code>で直接Bitcodeを出させたほうが速いような気もしますが、今回はRustcとPEZYのSDKが利用するLLVMのバージョンがかみ合わず、うまく通らなかったので、テキストで表現されるのIR経由でBitcodeを作ることにしています。</p>
+<pre class="sh"><code>$ &lt;path-to-pzsdk&gt;/bin/llvm-as test.ll -o test.bc</code></pre>
+<p>ここではPEZY-SC付属の<code>llvm-link</code>を使います。これで生成されるBitcodeがSDKの想定するバージョンで生成されたものになります。</p>
+<p>つぎに、PEZY-SCのランタイムとリンクします。デバイス関数の起動時に実行されるスタートアップルーチンなどが含まれています。</p>
+<pre class="sh"><code>$ &lt;path-to-pzsdk&gt;/bin/llvm-link \
+    &lt;path-to-pzsdk&gt;/bin/pzcrt64.pzo test.bc -o kernel.bc</code></pre>
+<p>つぎにBitcodeをPEZY-SCのアセンブリにコンパイルします。</p>
+<pre class="sh"><code>$ &lt;path-to-pzsdk&gt;/bin/llc -O3 -march=pz64 -mcpu=sc -o kernel.s kernel.bc</code></pre>
+<p>これでアセンブリまでできました。</p>
+<pre class="asm"><code>・・・(略)・・・
+
+_Z7pzc_add:
+.function _Z7pzc_add,Void,Int32,Int32,Pointer // @_Z7pzc_add
+// BB#0:                                // %entry-block
+        i.add   r8 r9 r8
+        i64.mov         p0 x5
+        i.esw   p0 0 r8
+        CHECK_RET( lr )
+        c.ret
+.func_end16:
+        .size   _Z7pzc_add, .func_end16-_Z7pzc_add
+</code></pre>
+<p>ここまでくれば、あとはSDKの所定の方法でアセンブルしてリンクすればデバイスコードのバイナリができます。</p>
+<pre class="sh"><code>$ &lt;path-to-pzsdk&gt;/bin/clang -E -DPZ_LLVMMC_ASM -D__pezy_sc__ -xc -I &lt;path-to-pzsdk&gt;/inc -o kernel-expanded.s kernel.s
+$ &lt;path-to-pzsdk&gt;/bin/llvm-mc -filetype=obj -arch=pz64 -mcpu=sc -o kernel.hex kernel-expanded.s
+$ &lt;path-to-pzsdk&gt;/bin/pzlink -o kernel.pz kernel.hex
+</code></pre>
+<h1 id="intrinsic関数を作る">Intrinsic関数を作る</h1>
+<p>一応バイナリを生成できましたが、<code>flush()</code>関数が空なので、このままでは正しく動きません。とはいってもそんなに難しいわけではなく、インラインアセンブリで必要な命令を呼び出してやるだけです。</p>
+<pre class="sourceCode rust"><code class="sourceCode rust">#![feature(asm)]
+
+<span class="kw">fn</span> flush() {
+    <span class="kw">unsafe</span> {
+        <span class="ot">asm!</span>(<span class="st">&quot;c.wflush 5&quot;</span> :::: <span class="st">&quot;volatile&quot;</span>);
+    }
+}</code></pre>
+<p>Rustでは<code>asm!</code>マクロによってインラインアセンブリを書くことができます。ただ、この機能は現在のところunstableなので、nightlyバージョンのrustcでしか使えません。nightlyバージョンを導入する必要があって少しめんどくさそうですが、<a href="https://rustup.rs/">rustup</a>を使えば割と簡単に導入できます。</p>
+<pre class="sh"><code>$ rustup install nightly
+$ rustup default nightly</code></pre>
+<p>これでデフォルトがnightlyに切り替わります。</p>
+<p>基本的にはRustの<code>asm!</code>はgccのインラインアセンブリの使用に準拠しますが、<code>asm volatile</code>に相当するものを書いたりするために、制約の4つ目の部分が追加されています。今回はここに<code>&quot;volatile&quot;</code>と書くことで、このインラインアセンブリを<code>asm volatile</code>扱いにしています。これはキャッシュのフラッシュの指示をメモリの操作と入れ替えられないようにするためです。</p>
+<p>改めて先ほどのコードをコンパイルしなおすと、</p>
+<pre class="ll"><code>; ModuleID = 'kernel.cgu-0.rs'
+source_filename = &quot;kernel.cgu-0.rs&quot;
+target datalayout = &quot;e-m:e-i64:64-f80:128-n8:16:32:64-S128&quot;
+target triple = &quot;x86_64-unknown-linux-gnu&quot;
+
+; Function Attrs: nounwind uwtable
+define void @_Z7pzc_add(i32, i32, i32* nocapture) unnamed_addr #0 {
+entry-block:
+  %3 = add i32 %1, %0
+  store i32 %3, i32* %2, align 4
+  tail call void asm sideeffect &quot;c.wflush 5&quot;, &quot;~{dirflag},~{fpsr},~{flags}&quot;() #1, !srcloc !0
+  ret void
+}
+
+attributes #0 = { nounwind uwtable }
+attributes #1 = { nounwind }
+
+!0 = !{i32 2}</code></pre>
+<p>命令が埋め込まれているのがわかります。</p>
+<p>では、適当にホストから呼び出すコードを書いて実行します。</p>
+<pre class="sourceCode cpp"><code class="sourceCode cpp"><span class="ot">#define __CL_ENABLE_EXCEPTIONS</span>
+<span class="ot">#include &lt;cl/cl.hpp&gt;</span>
+
+<span class="ot">#include &lt;iostream&gt;</span>
+<span class="ot">#include &lt;fstream&gt;</span>
+
+<span class="dt">int</span> main()
+{
+    string bin;
+    {
+        ifstream ifs(<span class="st">&quot;kernel.pz&quot;</span>);
+        bin = string(istreambuf_iterator&lt;<span class="dt">char</span>&gt;(ifs), istreambuf_iterator&lt;<span class="dt">char</span>&gt;());
+    }
+
+    cl::Program program(cl::Context::getDefault(), {cl::Device::getDefault()},
+        {{bin.c_str(), bin.size()}});
+
+    <span class="kw">auto</span> add = cl::make_kernel&lt;<span class="dt">int32_t</span>, <span class="dt">int32_t</span>, cl::Buffer&gt;(program, <span class="st">&quot;add&quot;</span>);
+    cl::Buffer buf(CL_MEM_READ_WRITE, <span class="kw">sizeof</span>(<span class="dt">int32_t</span>));
+
+    add(cl::EnqueueArgs(<span class="dv">8192</span>), <span class="dv">123</span>, <span class="dv">456</span>, buf).wait();
+
+    <span class="dt">int32_t</span> ret;
+    enqueueReadBuffer(buf, <span class="kw">true</span>, <span class="dv">0</span>, <span class="kw">sizeof</span>(<span class="dt">int32_t</span>), &amp;ret);
+    cout &lt;&lt; <span class="st">&quot;123 + 456 = &quot;</span> &lt;&lt; ret &lt;&lt; endl;
+
+    <span class="kw">return</span> <span class="dv">0</span>;
+}</code></pre>
+<p>（Rustでやるという記事なのに、ホストがC++で申し訳ない(´･_･`)……。まあ今回ここは本題ではないので）</p>
+<pre class="sh"><code>$ clang++ -O2 -std=c++11 main.cpp \
+    -I &lt;path-to-pzsdk&gt;/inc &lt;path-to-pzsdk&gt;/lib/libpzcl.a -lpthread \
+    -o host
+$ ./host
+123 + 456 = 579</code></pre>
+<p>というわけで無事実行できました！</p>
+<h1 id="並列化する">並列化する</h1>
+<p>ミニマムなコードを動かすことに成功したので、もうちょっと複雑なコードを動かしていきます。そもそも先ほどのコードはメニーコアプロセッサーなのに全く並列に動かす意味のないコードでした。実際のところ、一応8192スレッドが起動して動いていたのですが、すべてのスレッドが全く同じポインタに、よってたかって同じ値を書き込むという、よくわからないことをするプログラムになっていました（複数のスレッドが同時に同じメモリに書き込む場合でも、それが同じ値なら安全であるし結果は決定的であるという保障はあります）。</p>
+<p>並列計算のHello, Worldに相当するものとして、ベクトルの加算を書いてみます。</p>
+<pre class="sourceCode rust"><code class="sourceCode rust">#![feature(asm, step_by)]
+#![no_std]
+
+<span class="ot">#[</span>no_mangle<span class="ot">]</span>
+<span class="kw">pub</span> <span class="kw">fn</span> _Z8pzc_vadd(a: *const <span class="kw">f64</span>, b: *const <span class="kw">f64</span>, c: *<span class="kw">mut</span> <span class="kw">f64</span>, n: usize) {
+    <span class="kw">let</span> tid = (get_pid() * get_maxtid() + get_tid()) <span class="kw">as</span> isize;
+    <span class="kw">let</span> threads = (get_maxpid() * get_maxtid()) <span class="kw">as</span> isize;
+
+    <span class="kw">for</span> i in (tid..n <span class="kw">as</span> isize).step_by(threads) {
+        <span class="kw">unsafe</span> {
+            *c.offset(i) += *a.offset(i) * *b.offset(i);
+        }
+    }
+    flush();
+}</code></pre>
+<p>長さ<code>n</code>の配列<code>a</code>, <code>b</code>, <code>c</code>を受け取り、配列の各要素について<code>c[i] += a[i] * b[i]</code>を計算するという簡単なプログラムです。配列の各要素について計算に独立性があるので、並列に計算してやることができます。ここでは <code>tid</code>番目スレッドが、<code>tid</code>, <code>tid + スレッド数</code>, <code>tid + スレッド数*2</code>, … の要素を計算することにしました。どのスレッドがどこの値を計算すればもっとも効率よく実行されるのかというのは、こういうとても単純な計算でも、プロセッサーのアーキテクチャやメモリ階層などによって変わってくるので、意外と悩ましい部分です。</p>
+<p>ここで各スレッドは、自分が何番目のスレッドなのか、全体ではいくつのスレッドが走っているのかを知る必要が出てきます。<code>get_pid()</code>や<code>get_maxpid()</code>がそのための関数です。<code>pid</code>はプロセスIDで、自分を実行しているプロセスの番号が返ります。PEZY-SCでは最大1024個のコアが使えるので、0から1023までの値を取ります。<code>tid</code>はスレッドIDで、各コアの中で何番目のスレッドなのかを返します。各コア8スレッドのSMTなので0から7の値を取ります。それぞれ取得するニーモニックがあるので、<code>flush()</code>と同様にこれもインラインアセンブリを書いてやればOKです。</p>
+<pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">fn</span> get_pid() -&gt; <span class="kw">u32</span> {
+    <span class="kw">let</span> ret: <span class="kw">u32</span>;
+    <span class="kw">unsafe</span> {
+        <span class="ot">asm!</span>(<span class="st">&quot;i.getpid $0&quot;</span>: <span class="st">&quot;=r&quot;</span>(ret));
+    }
+    ret
+}</code></pre>
+<p>今回は返り値があるので、ローカル変数を定義して、それをインラインアセンブリに渡して、結果として関数から返します。他の関数も同様です。</p>
+<pre class="sourceCode rust"><code class="sourceCode rust"><span class="kw">fn</span> get_maxpid() -&gt; <span class="kw">u32</span> {
+    <span class="kw">let</span> ret: <span class="kw">u32</span>;
+    <span class="kw">unsafe</span> {
+        <span class="ot">asm!</span>(<span class="st">&quot;i.getmaxpid $0&quot;</span>: <span class="st">&quot;=r&quot;</span>(ret));
+    }
+    ret
+}
+
+<span class="kw">fn</span> get_tid() -&gt; <span class="kw">u32</span> {
+    <span class="kw">let</span> ret: <span class="kw">u32</span>;
+    <span class="kw">unsafe</span> {
+        <span class="ot">asm!</span>(<span class="st">&quot;i.gettid $0&quot;</span>: <span class="st">&quot;=r&quot;</span>(ret));
+    }
+    ret
+}
+
+<span class="kw">fn</span> get_maxtid() -&gt; <span class="kw">u32</span> {
+    <span class="kw">let</span> ret: <span class="kw">u32</span>;
+    <span class="kw">unsafe</span> {
+        <span class="ot">asm!</span>(<span class="st">&quot;i.getmaxtid $0&quot;</span>: <span class="st">&quot;=r&quot;</span>(ret));
+    }
+    ret
+}</code></pre>
+<p>これでコンパイルが通ります。</p>
+<pre class="asm"><code>; Function Attrs: uwtable
+define void @_Z8pzc_vadd(double* nocapture readonly, double* nocapture readonly, double* nocapture, i64) unnamed_addr #1 personality i32 (...)* @rust_eh_personality {
+entry-block:
+  %4 = tail call i32 asm &quot;i.getpid $0&quot;, &quot;=r,~{dirflag},~{fpsr},~{flags}&quot;() #3, !srcloc !1
+  %5 = tail call i32 asm &quot;i.getmaxtid $0&quot;, &quot;=r,~{dirflag},~{fpsr},~{flags}&quot;() #3, !srcloc !2
+  %6 = mul i32 %5, %4
+  %7 = tail call i32 asm &quot;i.gettid $0&quot;, &quot;=r,~{dirflag},~{fpsr},~{flags}&quot;() #3, !srcloc !3
+  %8 = add i32 %6, %7
+  %9 = zext i32 %8 to i64
+  %10 = tail call i32 asm &quot;i.getmaxpid $0&quot;, &quot;=r,~{dirflag},~{fpsr},~{flags}&quot;() #3, !srcloc !4
+  %11 = tail call i32 asm &quot;i.getmaxtid $0&quot;, &quot;=r,~{dirflag},~{fpsr},~{flags}&quot;() #3, !srcloc !2
+  %12 = mul i32 %11, %10
+  %13 = zext i32 %12 to i64
+  %14 = icmp slt i64 %9, %3
+  br i1 %14, label %bb16.i.preheader, label %bb10
+
+bb16.i.preheader:                                 ; preds = %entry-block
+  br label %bb16.i
+
+bb16.i:                                           ; preds = %bb16.i.preheader, %bb16.i
+  %iter.sroa.4.023 = phi i64 [ %., %bb16.i ], [ %9, %bb16.i.preheader ]
+  %15 = tail call { i64, i1 } @llvm.sadd.with.overflow.i64(i64 %iter.sroa.4.023, i64 %13) #3
+  %16 = extractvalue { i64, i1 } %15, 1
+  %17 = extractvalue { i64, i1 } %15, 0
+  %. = select i1 %16, i64 %3, i64 %17
+  %18 = getelementptr inbounds double, double* %0, i64 %iter.sroa.4.023
+  %19 = load double, double* %18, align 8
+  %20 = getelementptr inbounds double, double* %1, i64 %iter.sroa.4.023
+  %21 = load double, double* %20, align 8
+  %22 = fmul double %19, %21
+  %23 = getelementptr inbounds double, double* %2, i64 %iter.sroa.4.023
+  %24 = load double, double* %23, align 8
+  %25 = fadd double %24, %22
+  store double %25, double* %23, align 8
+  %26 = icmp slt i64 %., %3
+  br i1 %26, label %bb16.i, label %bb10.loopexit
+
+bb10.loopexit:                                    ; preds = %bb16.i
+  br label %bb10
+
+bb10:                                             ; preds = %bb10.loopexit, %entry-block
+  tail call void asm sideeffect &quot;c.wflush 5&quot;, &quot;~{dirflag},~{fpsr},~{flags}&quot;() #3, !srcloc !0
+  ret void
+}</code></pre>
+<p>それっぽいものが出てきました。関数宣言の所に、</p>
+<pre class="sourceCode rust"><code class="sourceCode rust">define void @_Z8pzc_vadd(double* nocapture readonly, double* nocapture readonly, double* nocapture, <span class="kw">i64</span>) unnamed_addr #<span class="dv">1</span> personality <span class="kw">i32</span> (...)* @rust_eh_personality {</code></pre>
+<p><code>@rust_eh_personality</code> というのがありますが、これはどうやらエラーハンドラーに使われるもののようです。これに関連する関数が、Rustのコアが最低限必要とするランタイムで、このあたりの関数を定義してやる必要があるのですが、どうせエラーをもらっても何も出来ないので、とりあえずはコンパイルが通るように、<code>undefined reference</code>と言われた関数だけ定義してコンパイルを通すようにしました。</p>
+<pre class="sourceCode rust"><code class="sourceCode rust"><span class="ot">#[</span>no_mangle<span class="ot">]</span>
+<span class="kw">pub</span> <span class="kw">fn</span> _ZN4core9panicking5panic17h194ce5d68a8f28a1E() {}</code></pre>
+<p>また、出力されたPEZY-SCのアセンブリを見ると、</p>
+<pre class="asm"><code>	.globl	_Z8pzc_vadd
+	.p2align	3
+	.type	_Z8pzc_vadd,@function
+_Z8pzc_vadd:
+.function _Z8pzc_vadd,Void,Pointer,Pointer,Pointer,Int64 // @_Z8pzc_vadd
+// BB#0:                                // %entry-block
+	...
+	i.select r18 r14 r18
+	i.select r19 r15 r19
+	i64.sflts	x9 x7
+	d.mov 	a0 d4
+	d.mad 	d1 d1 d2 a0
+	f.esw	p0 0 f2
+	f.esw	p0 4 f3
+	i64.mov 	p0 x9
+	c.bf LBB17_2
+	...</code></pre>
+<p><code>c[i] += a[i] * b[i]</code> の計算の部分が、 <code>d.mad</code> を使うコードにコンパイルされています。<code>d.mad</code> は Fused multiply–add と呼ばれる命令で、3つの引数<code>a, b, c</code>を取り、<code>a + b * c</code>を計算する命令です。</p>
+<p>では、再び適当にホストプログラムを書いて実行します。</p>
+<pre class="sourceCode cpp"><code class="sourceCode cpp">    ...
+    <span class="kw">auto</span> vadd = cl::make_kernel&lt;cl::Buffer, cl::Buffer, cl::Buffer, size_t&gt;
+        (program, <span class="st">&quot;vadd&quot;</span>);
+    size_t n = <span class="dv">1024</span> * <span class="dv">1024</span>;
+    vector&lt;<span class="dt">double</span>&gt; a(n), b(n), c(n);
+
+    mt19937 mt;
+    uniform_real_distribution&lt;<span class="dt">double</span>&gt; dist(<span class="dv">-1</span>, <span class="dv">1</span>);
+    <span class="kw">for</span> (size_t i = <span class="dv">0</span>; i &lt; n; i++) {
+        a[i] = dist(mt);
+        b[i] = dist(mt);
+        c[i] = dist(mt);
+    }
+
+    cl::Buffer abuf(a.begin(), a.end(), <span class="kw">false</span>);
+    cl::Buffer bbuf(b.begin(), b.end(), <span class="kw">false</span>);
+    cl::Buffer cbuf(c.begin(), c.end(), <span class="kw">false</span>);
+
+    vadd(cl::EnqueueArgs(<span class="dv">8192</span>), abuf, bbuf, cbuf, n).wait();
+
+    vector&lt;<span class="dt">double</span>&gt; cret(n);
+    enqueueReadBuffer(cbuf, <span class="kw">true</span>, <span class="dv">0</span>, <span class="kw">sizeof</span>(<span class="dt">double</span>) * n, &amp;cret[<span class="dv">0</span>]);
+
+    <span class="dt">double</span> error = <span class="dv">0</span>;
+    <span class="kw">for</span> (size_t i = <span class="dv">0</span>; i &lt; n; i++) {
+        <span class="kw">auto</span> e = abs(cret[i] - (c[i] + a[i] * b[i]));
+        error += e;
+    }
+    cout &lt;&lt; <span class="st">&quot;err: &quot;</span> &lt;&lt; error &lt;&lt; endl;
+    ...</code></pre>
+<pre class="sh"><code>$ ./host
+err: 0</code></pre>
+<p>1M要素のデータに対して正しく並列に計算されたようです。</p>
+<h1 id="大きめのコード行列の乗算">大きめのコード：行列の乗算</h1>
+<p>では最後に、もう少しちゃんと役に立ちそうなコードとして、行列の乗算を書いてみます。</p>
+<p>行列の乗算は非常に簡単な計算ですが、これが最も一般受けする（？）スパコンの性能ランキング<a href="https://www.top500.org/">Top500</a>のベンチマークでかなり時間的に支配的な処理になっていたりするので、実際想像以上に重要だったりします。<a href="http://www.netlib.org/blas/">BLAS</a>という歴史ある線形代数ライブラリでの関数名から<code>dgemm</code>と呼ばれることもあります。</p>
+<p><code>dgemm</code>は、ナイーブに書くと、</p>
+<pre class="sourceCode rust"><code class="sourceCode rust"><span class="co">// Calculate alpha * A * B + beta * C</span>
+<span class="kw">fn</span> dgemm(alpha: <span class="kw">f64</span>, a: &amp;Vec&lt;Vec&lt;<span class="kw">f64</span>&gt;&gt;, b: &amp;Vec&lt;Vec&lt;<span class="kw">f64</span>&gt;&gt;,
+    beta: <span class="kw">f64</span>, c: &amp;<span class="kw">mut</span> Vec&lt;Vec&lt;<span class="kw">f64</span>&gt;&gt;
+) {
+    <span class="kw">for</span> i in (<span class="dv">0.</span>.a.len()) {
+        <span class="kw">for</span> j in (<span class="dv">0.</span>.b[<span class="dv">0</span>].len()) {
+            <span class="kw">let</span> <span class="kw">mut</span> t = <span class="dv">0.0</span>;
+            <span class="kw">for</span> k in (<span class="dv">0.</span>.b.len()) {
+                t += a[i][k] * b[k][j];
+            }
+            c[i][j] = alpha * t + beta * c[i][j];
+        }
+    }
+}</code></pre>
+<p>このように非常に単純に書けるものですが、並列にきちんと性能が出るように書こうとすると、途端にものすごくややこしくなってしまいます。書いたコードを示しておきますが、内容についての解説はこの記事の趣旨の範囲を超えるので（またPEZY-SCのアーキテクチャに大きく依存するため）割愛します。</p>
+<pre class="sourceCode rust"><code class="sourceCode rust">#![feature(asm, step_by)]
+#![no_std]
+
+<span class="co">// スレッドの同期をとる命令</span>
+<span class="kw">fn</span> syncL1() {
+    <span class="kw">unsafe</span> {
+        <span class="ot">asm!</span>(<span class="st">&quot;c.sync 2&quot;</span> :::: <span class="st">&quot;volatile&quot;</span>);
+    }
+}
+
+<span class="kw">fn</span> syncL2() {
+    <span class="kw">unsafe</span> {
+        <span class="ot">asm!</span>(<span class="st">&quot;c.sync 3&quot;</span> :::: <span class="st">&quot;volatile&quot;</span>);
+    }
+}
+
+<span class="co">// スレッドを切り替える命令</span>
+<span class="kw">fn</span> chgthread() {
+    <span class="kw">unsafe</span> {
+        <span class="ot">asm!</span>(<span class="st">&quot;c.chgthread&quot;</span> :::: <span class="st">&quot;volatile&quot;</span>);
+    }
+}
+
+<span class="co">// コンパイラが生成する0.0のリテラルをロードするコードが遅い対策</span>
+<span class="kw">fn</span> get_zero() -&gt; <span class="kw">f64</span> {
+    <span class="kw">let</span> d: <span class="kw">f64</span>;
+    <span class="kw">unsafe</span> {
+        <span class="ot">asm!</span>(<span class="st">&quot;d.itof $0 zr&quot;</span> : <span class="st">&quot;=w&quot;</span>(d));
+    }
+    d
+}
+
+<span class="ot">macro_rules!</span> set_ax {
+    ($reg: expr, $val: expr) =&gt; {
+        <span class="ot">asm!</span>(<span class="ot">concat!</span>(<span class="st">&quot;d.mov &quot;</span>, $reg, <span class="st">&quot; $0&quot;</span>): : <span class="st">&quot;w&quot;</span>($val));
+    }
+}
+
+<span class="ot">macro_rules!</span> add_ax {
+    ($reg: expr, $val: expr) =&gt; {{
+        <span class="kw">let</span> d: <span class="kw">f64</span>;
+        <span class="ot">asm!</span>(<span class="ot">concat!</span>(<span class="st">&quot;d.add $0 &quot;</span>, $reg, <span class="st">&quot; $1&quot;</span>) : <span class="st">&quot;=w&quot;</span>(d) : <span class="st">&quot;w&quot;</span>($val));
+        d
+    }}
+}
+
+<span class="ot">macro_rules!</span> do_mad_ax_ldd_px {
+    ($AX: expr, $DA: ident, $DB: ident, $LD: ident, $PTR: ident, $OFF: expr) =&gt; (
+        <span class="ot">asm!</span>(<span class="st">&quot;d.mad a$4 $2 $3 a$4; d.eldd $0 $1 $5; ## DMAD A$4 ELDD P&quot;</span>
+            : <span class="st">&quot;=w&quot;</span>($LD): <span class="st">&quot;p&quot;</span>($PTR), <span class="st">&quot;w&quot;</span>($DA), <span class="st">&quot;w&quot;</span>($DB), <span class="st">&quot;i&quot;</span>($AX), <span class="st">&quot;i&quot;</span>($OFF): <span class="st">&quot;memory&quot;</span>);
+    )
+}
+
+<span class="ot">macro_rules!</span> do_mad_ax_ldd_px_ct {
+    ($AX: expr, $DA: ident, $DB: ident, $LD: ident, $PTR: ident, $OFF: expr) =&gt; (
+        <span class="ot">asm!</span>(<span class="st">&quot;d.mad a$4 $2 $3 a$4; d.eldd.ct $0 $1 $5; ## DMAD A$4 ELDD P CT&quot;</span>
+            : <span class="st">&quot;=w&quot;</span>($LD): <span class="st">&quot;p&quot;</span>($PTR), <span class="st">&quot;w&quot;</span>($DA), <span class="st">&quot;w&quot;</span>($DB), <span class="st">&quot;i&quot;</span>($AX), <span class="st">&quot;i&quot;</span>($OFF): <span class="st">&quot;memory&quot;</span>);
+    )
+}
+
+<span class="ot">macro_rules!</span> do_mad_ax_ldd_px_local {
+    ($AX: expr, $DA: ident, $DB: ident, $LD: ident, $PTR: ident, $OFF: expr) =&gt; (
+        <span class="ot">asm!</span>(<span class="st">&quot;d.mad a$4 $2 $3 a$4; d.ldd $0 $1 $5; ## DMAD A$4 LDD P LOCAL&quot;</span>
+            : <span class="st">&quot;=w&quot;</span>($LD): <span class="st">&quot;p&quot;</span>($PTR), <span class="st">&quot;w&quot;</span>($DA), <span class="st">&quot;w&quot;</span>($DB), <span class="st">&quot;i&quot;</span>($AX), <span class="st">&quot;i&quot;</span>($OFF): <span class="st">&quot;memory&quot;</span>);
+    )
+}
+
+<span class="ot">macro_rules!</span> do_mad_ax {
+    ($AX: expr, $DA: ident, $DB: ident) =&gt; (
+        <span class="ot">asm!</span>(<span class="st">&quot;d.mad a$0 $1 $2 a$0; ## DMAD A$0 &quot;</span> :: <span class="st">&quot;i&quot;</span>($AX), <span class="st">&quot;w&quot;</span>($DA), <span class="st">&quot;w&quot;</span>($DB): <span class="st">&quot;memory&quot;</span>);
+    )
+}
+
+<span class="ot">#[</span>no_mangle<span class="ot">]</span>
+<span class="kw">pub</span> <span class="kw">unsafe</span> <span class="kw">fn</span> _Z9pzc_dgemm(
+    M: <span class="kw">u32</span>, N: <span class="kw">u32</span>, K: <span class="kw">u32</span>, alpha: <span class="kw">f64</span>, A: *const <span class="kw">f64</span>, LDA: <span class="kw">u32</span>, B: *const <span class="kw">f64</span>, LDB: <span class="kw">u32</span>, beta: <span class="kw">f64</span>,
+    C: *<span class="kw">mut</span> <span class="kw">f64</span>, LDC: <span class="kw">u32</span>
+) {
+    <span class="kw">let</span> shift = <span class="dv">1</span>;
+
+    <span class="kw">let</span> xOffset = get_tid() &amp; ((<span class="dv">1</span> &lt;&lt; (<span class="dv">3</span> - shift)) - <span class="dv">1</span>);
+    <span class="kw">let</span> xStep = get_maxtid() &gt;&gt; shift;
+
+    <span class="kw">let</span> wOffset = (get_tid() &gt;&gt; (<span class="dv">3</span> - shift)) &amp; ((<span class="dv">1</span> &lt;&lt; shift) - <span class="dv">1</span>);
+    <span class="kw">let</span> wStep = <span class="dv">1</span> &lt;&lt; shift;
+
+    <span class="kw">let</span> <span class="kw">mut</span> yOffset = <span class="dv">0</span>;
+    <span class="kw">let</span> <span class="kw">mut</span> yStep = <span class="dv">1</span>;
+    <span class="kw">let</span> <span class="kw">mut</span> zOffset = get_pid();
+    <span class="kw">let</span> <span class="kw">mut</span> zStep = get_maxpid();
+
+    <span class="kw">if</span> zStep == <span class="dv">1024</span> {
+        <span class="kw">let</span> sft = <span class="kw">if</span> K == <span class="dv">2048</span> { <span class="dv">4</span> } <span class="kw">else</span> { <span class="dv">3</span> };
+
+        yStep = <span class="dv">1</span> &lt;&lt; sft;
+        yOffset = (zOffset &gt;&gt; (<span class="dv">10</span> - sft)) &amp; ((<span class="dv">1</span> &lt;&lt; sft) - <span class="dv">1</span>);
+
+        zOffset = zOffset &amp; ((<span class="dv">1</span> &lt;&lt; (<span class="dv">10</span> - sft)) - <span class="dv">1</span>);
+        zStep = zStep &gt;&gt; sft;
+    }
+
+    <span class="kw">let</span> _pTmp0 = (<span class="dv">0x2000</span> + (<span class="dv">0x2000</span> / wStep) * wOffset) <span class="kw">as</span> *<span class="kw">mut</span> <span class="kw">f64</span>;
+
+    const MAX_C: <span class="kw">u32</span> = <span class="dv">64</span>;
+    <span class="kw">let</span> <span class="kw">mut</span> tmpC = [<span class="dv">0</span>f64; MAX_C <span class="kw">as</span> usize];
+
+    <span class="kw">let</span> blkN = (MAX_C * xStep) &gt;&gt; (<span class="kw">if</span> K &lt;= <span class="dv">512</span> { <span class="dv">2</span> } <span class="kw">else</span> { <span class="dv">1</span> });
+    <span class="kw">let</span> bK = core::cmp::min(<span class="dv">512</span> / wStep, K);
+
+    <span class="kw">for</span> iM in ((zOffset * wStep + wOffset) * <span class="dv">2.</span>.M).step_by(zStep * wStep * <span class="dv">2</span>) {
+        syncL2();
+
+        <span class="kw">for</span> offsetN in (yOffset * blkN..N).step_by(yStep * blkN) {
+            <span class="kw">for</span> r in tmpC.iter_mut() {
+                *r = get_zero();
+            }
+
+            <span class="kw">for</span> iK in (<span class="dv">0.</span>.K).step_by(bK) {
+                syncL2();
+
+                <span class="co">// Matrix A to local memory</span>
+                <span class="kw">for</span> x in (xOffset..bK / <span class="dv">2</span>).step_by(xStep) {
+                    <span class="kw">let</span> k = <span class="dv">2</span> * x + iK;
+
+                    <span class="kw">let</span> idx00 = iM + k * LDA;
+                    <span class="kw">let</span> idx01 = idx00 + LDA;
+                    <span class="kw">let</span> idx10 = idx00 + <span class="dv">1</span>;
+                    <span class="kw">let</span> idx11 = idx01 + <span class="dv">1</span>;
+
+                    <span class="kw">let</span> a00 = *A.offset(idx00 <span class="kw">as</span> isize);
+                    <span class="kw">let</span> a01 = *A.offset(idx01 <span class="kw">as</span> isize);
+                    <span class="kw">let</span> a10 = *A.offset(idx10 <span class="kw">as</span> isize);
+                    <span class="kw">let</span> a11 = *A.offset(idx11 <span class="kw">as</span> isize);
+
+                    chgthread();
+
+                    *_pTmp0.offset((<span class="dv">4</span> * x + <span class="dv">0</span>) <span class="kw">as</span> isize) = a00;
+                    *_pTmp0.offset((<span class="dv">4</span> * x + <span class="dv">1</span>) <span class="kw">as</span> isize) = a10;
+                    *_pTmp0.offset((<span class="dv">4</span> * x + <span class="dv">2</span>) <span class="kw">as</span> isize) = a01;
+                    *_pTmp0.offset((<span class="dv">4</span> * x + <span class="dv">3</span>) <span class="kw">as</span> isize) = a11;
+                }
+                syncL1();
+
+                <span class="kw">let</span> <span class="kw">mut</span> cIdx = <span class="dv">0</span>;
+                <span class="kw">for</span> idxN in (xOffset * <span class="dv">2.</span>.blkN).step_by(xStep * <span class="dv">2</span>) {
+                    <span class="kw">let</span> iN = idxN + offsetN;
+                    <span class="kw">if</span> iN &gt;= N {
+                        <span class="kw">continue</span>;
+                    }
+
+                    <span class="kw">let</span> <span class="kw">mut</span> a00j: <span class="kw">f64</span>;
+                    <span class="kw">let</span> <span class="kw">mut</span> a01j: <span class="kw">f64</span>;
+                    <span class="kw">let</span> <span class="kw">mut</span> a10j: <span class="kw">f64</span>;
+                    <span class="kw">let</span> <span class="kw">mut</span> a11j: <span class="kw">f64</span>;
+                    <span class="kw">let</span> <span class="kw">mut</span> a00k = get_zero();
+                    <span class="kw">let</span> <span class="kw">mut</span> a01k = get_zero();
+                    <span class="kw">let</span> <span class="kw">mut</span> a10k = get_zero();
+                    <span class="kw">let</span> <span class="kw">mut</span> a11k = get_zero();
+
+                    <span class="kw">let</span> <span class="kw">mut</span> b00j: <span class="kw">f64</span>;
+                    <span class="kw">let</span> <span class="kw">mut</span> b01j: <span class="kw">f64</span>;
+                    <span class="kw">let</span> <span class="kw">mut</span> b10j: <span class="kw">f64</span>;
+                    <span class="kw">let</span> <span class="kw">mut</span> b11j: <span class="kw">f64</span>;
+                    <span class="kw">let</span> <span class="kw">mut</span> b00k = get_zero();
+                    <span class="kw">let</span> <span class="kw">mut</span> b01k = get_zero();
+                    <span class="kw">let</span> <span class="kw">mut</span> b10k = get_zero();
+                    <span class="kw">let</span> <span class="kw">mut</span> b11k = get_zero();
+
+                    <span class="kw">let</span> idxB0 = iK + iN * LDB;
+
+                    <span class="kw">let</span> <span class="kw">mut</span> pB0 = B.offset(idxB0 <span class="kw">as</span> isize);
+                    <span class="kw">let</span> <span class="kw">mut</span> pB1 = B.offset((idxB0 + LDB) <span class="kw">as</span> isize);
+                    <span class="kw">let</span> <span class="kw">mut</span> pTmp0 = _pTmp0;
+
+                    <span class="ot">macro_rules!</span> do_2x2_ldd {
+    ($i: expr) =&gt; (
+        <span class="ot">do_mad_ax_ldd_px!</span>      (<span class="dv">0</span>, a00k, b00k, b00j, pB0,   (<span class="dv">0</span> + ($i + <span class="dv">0</span>) * <span class="dv">2</span>) &lt;&lt; <span class="dv">3</span>);
+        <span class="ot">do_mad_ax_ldd_px!</span>      (<span class="dv">0</span>, a01k, b01k, b01j, pB0,   (<span class="dv">1</span> + ($i + <span class="dv">0</span>) * <span class="dv">2</span>) &lt;&lt; <span class="dv">3</span>);
+        <span class="ot">do_mad_ax_ldd_px!</span>      (<span class="dv">1</span>, a10k, b00k, b10j, pB1,   (<span class="dv">0</span> + ($i + <span class="dv">0</span>) * <span class="dv">2</span>) &lt;&lt; <span class="dv">3</span>);
+        <span class="ot">do_mad_ax_ldd_px_ct!</span>   (<span class="dv">1</span>, a11k, b01k, b11j, pB1,   (<span class="dv">1</span> + ($i + <span class="dv">0</span>) * <span class="dv">2</span>) &lt;&lt; <span class="dv">3</span>);
+        <span class="ot">do_mad_ax_ldd_px_local!</span>(<span class="dv">2</span>, a00k, b10k, a00j, pTmp0, (<span class="dv">0</span> + ($i + <span class="dv">0</span>) * <span class="dv">4</span>) &lt;&lt; <span class="dv">3</span>);
+        <span class="ot">do_mad_ax_ldd_px_local!</span>(<span class="dv">2</span>, a01k, b11k, a10j, pTmp0, (<span class="dv">1</span> + ($i + <span class="dv">0</span>) * <span class="dv">4</span>) &lt;&lt; <span class="dv">3</span>);
+        <span class="ot">do_mad_ax_ldd_px_local!</span>(<span class="dv">3</span>, a10k, b10k, a01j, pTmp0, (<span class="dv">2</span> + ($i + <span class="dv">0</span>) * <span class="dv">4</span>) &lt;&lt; <span class="dv">3</span>);
+        <span class="ot">do_mad_ax_ldd_px_local!</span>(<span class="dv">3</span>, a11k, b11k, a11j, pTmp0, (<span class="dv">3</span> + ($i + <span class="dv">0</span>) * <span class="dv">4</span>) &lt;&lt; <span class="dv">3</span>);
+
+        <span class="ot">do_mad_ax_ldd_px!</span>      (<span class="dv">0</span>, a00j, b00j, b00k, pB0,   (<span class="dv">0</span> + ($i + <span class="dv">1</span>) * <span class="dv">2</span>) &lt;&lt; <span class="dv">3</span>);
+        <span class="ot">do_mad_ax_ldd_px!</span>      (<span class="dv">0</span>, a01j, b01j, b01k, pB0,   (<span class="dv">1</span> + ($i + <span class="dv">1</span>) * <span class="dv">2</span>) &lt;&lt; <span class="dv">3</span>);
+        <span class="ot">do_mad_ax_ldd_px!</span>      (<span class="dv">1</span>, a10j, b00j, b10k, pB1,   (<span class="dv">0</span> + ($i + <span class="dv">1</span>) * <span class="dv">2</span>) &lt;&lt; <span class="dv">3</span>);
+        <span class="ot">do_mad_ax_ldd_px_ct!</span>   (<span class="dv">1</span>, a11j, b01j, b11k, pB1,   (<span class="dv">1</span> + ($i + <span class="dv">1</span>) * <span class="dv">2</span>) &lt;&lt; <span class="dv">3</span>);
+        <span class="ot">do_mad_ax_ldd_px_local!</span>(<span class="dv">2</span>, a00j, b10j, a00k, pTmp0, (<span class="dv">0</span> + ($i + <span class="dv">1</span>) * <span class="dv">4</span>) &lt;&lt; <span class="dv">3</span>);
+        <span class="ot">do_mad_ax_ldd_px_local!</span>(<span class="dv">2</span>, a01j, b11j, a10k, pTmp0, (<span class="dv">1</span> + ($i + <span class="dv">1</span>) * <span class="dv">4</span>) &lt;&lt; <span class="dv">3</span>);
+        <span class="ot">do_mad_ax_ldd_px_local!</span>(<span class="dv">3</span>, a10j, b10j, a01k, pTmp0, (<span class="dv">2</span> + ($i + <span class="dv">1</span>) * <span class="dv">4</span>) &lt;&lt; <span class="dv">3</span>);
+        <span class="ot">do_mad_ax_ldd_px_local!</span>(<span class="dv">3</span>, a11j, b11j, a11k, pTmp0, (<span class="dv">3</span> + ($i + <span class="dv">1</span>) * <span class="dv">4</span>) &lt;&lt; <span class="dv">3</span>);
+    )
+}
+                    <span class="ot">set_ax!</span>(<span class="st">&quot;a0&quot;</span>, get_zero());
+                    <span class="ot">set_ax!</span>(<span class="st">&quot;a1&quot;</span>, get_zero());
+                    <span class="ot">set_ax!</span>(<span class="st">&quot;a2&quot;</span>, get_zero());
+                    <span class="ot">set_ax!</span>(<span class="st">&quot;a3&quot;</span>, get_zero());
+
+                    <span class="kw">for</span> _ in (<span class="dv">0.</span>.bK).step_by(<span class="dv">4</span> * <span class="dv">2</span> * <span class="dv">2</span> * <span class="dv">2</span>) {
+                        <span class="ot">do_2x2_ldd!</span>(<span class="dv">0</span>);
+                        <span class="ot">do_2x2_ldd!</span>(<span class="dv">2</span>);
+                        <span class="ot">do_2x2_ldd!</span>(<span class="dv">4</span>);
+                        <span class="ot">do_2x2_ldd!</span>(<span class="dv">6</span>);
+                        <span class="ot">do_2x2_ldd!</span>(<span class="dv">8</span>);
+                        <span class="ot">do_2x2_ldd!</span>(<span class="dv">10</span>);
+                        <span class="ot">do_2x2_ldd!</span>(<span class="dv">12</span>);
+                        <span class="ot">do_2x2_ldd!</span>(<span class="dv">14</span>);
+
+                        pB0 = pB0.offset(<span class="dv">32</span>);
+                        pB1 = pB1.offset(<span class="dv">32</span>);
+                        pTmp0 = pTmp0.offset(<span class="dv">64</span>);
+                    }
+
+                    <span class="ot">do_mad_ax!</span>(<span class="dv">0</span>, a00k, b00k);
+                    <span class="ot">do_mad_ax!</span>(<span class="dv">0</span>, a01k, b01k);
+                    <span class="ot">do_mad_ax!</span>(<span class="dv">1</span>, a10k, b00k);
+                    <span class="ot">do_mad_ax!</span>(<span class="dv">1</span>, a11k, b01k);
+                    <span class="ot">do_mad_ax!</span>(<span class="dv">2</span>, a00k, b10k);
+                    <span class="ot">do_mad_ax!</span>(<span class="dv">2</span>, a01k, b11k);
+                    <span class="ot">do_mad_ax!</span>(<span class="dv">3</span>, a10k, b10k);
+                    <span class="ot">do_mad_ax!</span>(<span class="dv">3</span>, a11k, b11k);
+
+                    a00k = tmpC[cIdx + <span class="dv">0</span>];
+                    a01k = tmpC[cIdx + <span class="dv">1</span>];
+                    a10k = tmpC[cIdx + <span class="dv">2</span>];
+                    a11k = tmpC[cIdx + <span class="dv">3</span>];
+
+                    b00k = <span class="ot">add_ax!</span>(<span class="st">&quot;a0&quot;</span>, a00k);
+                    b01k = <span class="ot">add_ax!</span>(<span class="st">&quot;a1&quot;</span>, a01k);
+                    b10k = <span class="ot">add_ax!</span>(<span class="st">&quot;a2&quot;</span>, a10k);
+                    b11k = <span class="ot">add_ax!</span>(<span class="st">&quot;a3&quot;</span>, a11k);
+
+                    tmpC[cIdx + <span class="dv">0</span>] = b00k;
+                    tmpC[cIdx + <span class="dv">1</span>] = b01k;
+                    tmpC[cIdx + <span class="dv">2</span>] = b10k;
+                    tmpC[cIdx + <span class="dv">3</span>] = b11k;
+
+                    <span class="kw">if</span> iK + bK &gt;= K {
+                        <span class="kw">let</span> idx00 = iM + iN * LDC;
+                        <span class="kw">let</span> idx01 = idx00 + <span class="dv">1</span>;
+                        <span class="kw">let</span> idx10 = idx00 + LDC;
+                        <span class="kw">let</span> idx11 = idx10 + <span class="dv">1</span>;
+
+                        *C.offset(idx00 <span class="kw">as</span> isize) = alpha * b00k + beta * *C.offset(idx00 <span class="kw">as</span> isize);
+                        *C.offset(idx01 <span class="kw">as</span> isize) = alpha * b01k + beta * *C.offset(idx01 <span class="kw">as</span> isize);
+                        *C.offset(idx10 <span class="kw">as</span> isize) = alpha * b10k + beta * *C.offset(idx10 <span class="kw">as</span> isize);
+                        *C.offset(idx11 <span class="kw">as</span> isize) = alpha * b11k + beta * *C.offset(idx11 <span class="kw">as</span> isize);
+                    }
+
+                    chgthread();
+                    cIdx += <span class="dv">4</span>;
+                }
+            }
+        }
+    }
+    flush();
+}</code></pre>
+<p>ホストコードを書いて実行します。</p>
+<pre class="sourceCode cpp"><code class="sourceCode cpp">    ...
+    cl::Kernel k(program, <span class="st">&quot;dgemm&quot;</span>);
+    clExtSetPerThreadStackSize(k(), <span class="dv">1024</span>);
+
+    <span class="kw">auto</span> dgemm = cl::make_kernel&lt;
+        <span class="dt">int32_t</span>, <span class="dt">int32_t</span>, <span class="dt">int32_t</span>,
+        <span class="dt">double</span>, cl::Buffer, <span class="dt">int32_t</span>, cl::Buffer, <span class="dt">int32_t</span>,
+        <span class="dt">double</span>, cl::Buffer, <span class="dt">int32_t</span>&gt;(k);
+
+    size_t n = <span class="dv">2048</span>;
+    size_t pad = <span class="dv">384</span>;
+    size_t stride = n + pad;
+
+    vector&lt;<span class="dt">double</span>&gt; a(n * stride);
+    vector&lt;<span class="dt">double</span>&gt; b(n * stride);
+    vector&lt;<span class="dt">double</span>&gt; c(n * stride);
+
+    mt19937 mt;
+    uniform_real_distribution&lt;<span class="dt">double</span>&gt; dist(<span class="dv">-1</span>, <span class="dv">1</span>);
+    <span class="kw">for</span> (size_t i = <span class="dv">0</span>; i &lt; n * stride; i++) {
+        a[i] = dist(mt);
+        b[i] = dist(mt);
+        c[i] = dist(mt);
+    }
+    cl::Buffer abuf(a.begin(), a.end(), <span class="kw">false</span>);
+    cl::Buffer bbuf(b.begin(), b.end(), <span class="kw">false</span>);
+    cl::Buffer cbuf(c.begin(), c.end(), <span class="kw">false</span>);
+
+    <span class="kw">auto</span> start = chrono::system_clock::now();
+    dgemm(cl::EnqueueArgs(<span class="dv">8192</span>), n, n, n, <span class="dv">-1</span>, abuf, stride, bbuf, stride, <span class="dv">1</span>, cbuf, stride).wait();
+    <span class="kw">auto</span> end = chrono::system_clock::now();
+
+    <span class="dt">double</span> elapsed = chrono::duration_cast&lt;chrono::duration&lt;<span class="dt">double</span>&gt;&gt;(end-start).count();
+    <span class="dt">double</span> flops = <span class="fl">2.0</span> * n * n * n / elapsed;
+
+    cout &lt;&lt; <span class="st">&quot;elapsed: &quot;</span> &lt;&lt; elapsed &lt;&lt; <span class="st">&quot; seconds, &quot;</span> &lt;&lt; flops / <span class="fl">1e9</span> &lt;&lt; <span class="st">&quot; GFlops&quot;</span> &lt;&lt; endl;
+
+    vector&lt;<span class="dt">double</span>&gt; cret(n * stride);
+    enqueueReadBuffer(cbuf, <span class="kw">true</span>, <span class="dv">0</span>, <span class="kw">sizeof</span>(<span class="dt">double</span>) * n, &amp;cret[<span class="dv">0</span>]);
+
+    gemm_naive(n, n, n, <span class="dv">-1</span>, a, stride, b, stride, <span class="dv">1</span>, c, stride);
+
+    <span class="dt">double</span> err = <span class="dv">0</span>;
+    <span class="kw">for</span> (size_t i = <span class="dv">0</span>; i &lt; c.size(); i++) {
+        err += abs(cret[i] - c[i]);
+    }
+
+    cout &lt;&lt; <span class="st">&quot;err: &quot;</span> &lt;&lt; err &lt;&lt; endl;
+    ...
+}</code></pre>
+<p>ここでは行列サイズ2048×2048の乗算を行っています。行われる浮動小数点演算の数は、行列サイズを<code>N</code>とすると、<code>2*N^3</code>回なので、これを所要時間で割れば実効性能が得られます。</p>
+<pre><code>$ ./host
+elapsed: 0.0166524 seconds, 1031.67 GFlops
+err: 7.1111e-08</code></pre>
+<p>2048×2048の行列の乗算にかかった時間がおよそ16.65ミリ秒ほどで、実効性能は1031.67GFlopsと出ました。定格でのPEZY-SCの倍精度演算のピーク値が1.5TFlopsですので、これはなかなか悪くない値です。実際ベースにしたC++版のコードでも1.1TFlopsに達しない程度ですので、Rust化による性能低下はごくわずか、あるいはRust版のコードもきちんと生成されるアセンブリコードを見てチューニングすれば、ほとんどないものとして扱えるようになるのではないかと思います。</p>
+<h1 id="まとめ所感">まとめ・所感</h1>
+<p>というわけで、RustのコードをPEZY-SCというプロセッサーで動かすことに成功しました。</p>
+<p>Rustの処理系はバックエンドにLLVMを用いており、PEZY-SCの処理系はLLVMのバックエンドとして実装されているので、理屈の上では、これらを繋いでやるだけでRustのコードがPEZY-SCになるはずで、実際にやってみたところほとんどその理屈の通りにコンパイルして実行することが出来ました。</p>
+<p>理屈の上では上手く行くはずのものでも、実際にすんなりと動いてくれたことは、ある意味では予想に反していたというか、Rustって素晴らしいという認識を新たにしました。</p>
+<p>そういうわけで、皆さんもRustをいろいろな環境で動かして遊んでみてください。組み込み等でもRustのようなリッチな型を持つ言語を使えると言うことは、きっと新しい可能性をもたらしてくれるはずです。</p>
+</div>
+
+<br>
+
+<script type="text/javascript"><!--
+google_ad_client = "ca-pub-2554934724722249";
+/* normal */
+google_ad_slot = "6131209617";
+google_ad_width = 728;
+google_ad_height = 90;
+//-->
+</script>
+<script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+</script>
+
+<br>
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'tanakh-jp'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+<script type="text/javascript">
+/* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+var disqus_shortname = 'tanakh-jp'; // required: replace example with your forum shortname
+
+/* * * DON'T EDIT BELOW THIS LINE * * */
+(function () {
+    var s = document.createElement('script'); s.async = true;
+    s.type = 'text/javascript';
+    s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+}());
+</script>
+
+            </div>
+            <div class="span2"></div>
+        </div>
+
+        <hr>
+
+        <footer class="footer">
+            <center>
+            <p>
+                Copyright (c) 2011-2015, Hideyuki Tanaka (@<a href="https://twitter.com/tanakh">tanakh</a>)
+            </p>
+            <p>
+                Site proudly generated by <a href="http://jaspervdj.be/hakyll">Hakyll</a>.<br>
+                Served by <a href="http://mew.org/~kazu/proj/mighttpd/en/">Mighttpd2</a>.<br>
+                Tools are made with <a href="http://fay-lang.org/">Fay</a>.<br>
+                This site uses <a href="http://twitter.github.io/bootstrap/">Twitter Bootstrap</a>, and theme from <a href="http://bootswatch.com/">Bootswatch</a>.<br>
+            <p>
+            </center>
+        </footer>
+    </div>
+
+    <script type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-26679036-1']);
+      _gaq.push(['_setDomainName', 'tanakh.jp']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+    </script>
+
+  </body>
+</html>
